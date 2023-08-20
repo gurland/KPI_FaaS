@@ -1,0 +1,2 @@
+class Code:
+    content: str
