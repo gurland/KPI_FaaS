@@ -1,0 +1,90 @@
+<mxfile host="app.diagrams.net" modified="2023-09-25T11:37:03.487Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" etag="z0Vr8efb-e1ewhAfi4-f" version="21.3.4" type="device">
+  <diagram name="Page-1" id="y-IEpzpSFTas2U37_VpN">
+    <mxGraphModel dx="1804" dy="617" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="KMrAhKljUxcad8yyep4I-18" value="Services" parent="0" />
+        <mxCell id="KMrAhKljUxcad8yyep4I-19" value="Function Runtime service" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="KMrAhKljUxcad8yyep4I-18">
+          <mxGeometry x="360" y="300" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="KMrAhKljUxcad8yyep4I-18" source="KMrAhKljUxcad8yyep4I-20" target="KMrAhKljUxcad8yyep4I-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-34" value="2. gRPC call&lt;br&gt;getToken(username, password)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="KMrAhKljUxcad8yyep4I-33">
+          <mxGeometry x="0.1083" relative="1" as="geometry">
+            <mxPoint x="-43" y="-20" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-39" value="5. gRPC call&lt;br&gt;createFunctionRuntime(tag, Dockerfile)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.688;entryY=-0.017;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="KMrAhKljUxcad8yyep4I-18" source="KMrAhKljUxcad8yyep4I-20" target="KMrAhKljUxcad8yyep4I-19">
+          <mxGeometry x="0.0135" y="-120" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-20" value="Gateway API" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="KMrAhKljUxcad8yyep4I-18">
+          <mxGeometry x="380" y="200" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="KMrAhKljUxcad8yyep4I-18" source="KMrAhKljUxcad8yyep4I-21" target="KMrAhKljUxcad8yyep4I-20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-38" value="4. POST /runtimes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="KMrAhKljUxcad8yyep4I-37">
+          <mxGeometry x="0.05" y="1" relative="1" as="geometry">
+            <mxPoint x="49" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-21" value="Frontend" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="KMrAhKljUxcad8yyep4I-18">
+          <mxGeometry x="380" y="100" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-22" value="Load Balancer&lt;br&gt;service" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="KMrAhKljUxcad8yyep4I-18">
+          <mxGeometry x="80" y="300" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-23" value="Warm Function Runtime" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="KMrAhKljUxcad8yyep4I-18">
+          <mxGeometry x="80" y="400" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-24" value="Warm Function Runtime" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="KMrAhKljUxcad8yyep4I-18">
+          <mxGeometry x="220" y="400" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-25" value="Warm Function Runtime" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="KMrAhKljUxcad8yyep4I-18">
+          <mxGeometry x="-70" y="400" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-26" value="Users service" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="KMrAhKljUxcad8yyep4I-18">
+          <mxGeometry x="610" y="300" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-27" value="Triggers service" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="KMrAhKljUxcad8yyep4I-18">
+          <mxGeometry x="80" y="210" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-28" value="HTTP reverse proxy" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="KMrAhKljUxcad8yyep4I-18">
+          <mxGeometry x="-40" y="100" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-29" value="Crontab service" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="KMrAhKljUxcad8yyep4I-18">
+          <mxGeometry x="80" y="100" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="KMrAhKljUxcad8yyep4I-18" source="KMrAhKljUxcad8yyep4I-21" target="KMrAhKljUxcad8yyep4I-21">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="410" y="30" />
+              <mxPoint x="470" y="30" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-36" value="3. Check if token role is admin&lt;br&gt;if so, allow user to create new runtime" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="KMrAhKljUxcad8yyep4I-35">
+          <mxGeometry x="0.05" relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-30" value="Use Case: Create new runtime" parent="0" />
+        <mxCell id="KMrAhKljUxcad8yyep4I-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="KMrAhKljUxcad8yyep4I-30" source="KMrAhKljUxcad8yyep4I-21" target="KMrAhKljUxcad8yyep4I-20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-32" value="1. GET /token" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="KMrAhKljUxcad8yyep4I-31">
+          <mxGeometry x="-0.45" y="-1" relative="1" as="geometry">
+            <mxPoint x="-39" y="9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KMrAhKljUxcad8yyep4I-40" value="Function Runtime Registry" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="KMrAhKljUxcad8yyep4I-30">
+          <mxGeometry x="360" y="400" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
