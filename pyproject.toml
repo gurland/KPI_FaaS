@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "kpi-faas"
+version = "0.0.1"
+description = "Function as a service platform"
+authors = ["Stanislav Bobokalo"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+sqlalchemy-cockroachdb = "^2.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
