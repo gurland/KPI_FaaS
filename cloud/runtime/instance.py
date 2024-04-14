@@ -1,4 +1,4 @@
 class Runtime:
-    """Represents a concrete, running runtime"""
+    """Represents a concrete, warm runtime"""
     is_warm: bool
     environment: dict
