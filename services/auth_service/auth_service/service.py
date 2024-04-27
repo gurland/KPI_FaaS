@@ -1,7 +1,7 @@
 from grpclib import GRPCError, Status
 from sqlalchemy.orm import Session
 
-from .contracts.faas import AuthServiceBase, UserCredentialsRequest, User
+from .contracts.faas import AuthServiceBase, UserCredentialsRequest, User, UserRole
 from .models import UserModel, engine
 import bcrypt
 
@@ -24,7 +24,8 @@ class AuthService(AuthServiceBase):
             password_hash = bcrypt.hashpw(request.password.encode(), bcrypt.gensalt(10))
             new_user = UserModel(
                 username=request.username,
-                password_hash=password_hash.decode()
+                password_hash=password_hash.decode(),
+                role=UserRole.ADMIN if request.username == "admin" else UserRole.USER
             )
             session.add(new_user)
             session.commit()
