@@ -8,8 +8,8 @@ enum UserRole {
 }
 
 message User {
-  string username = 1;
-  string user_id = 2;
+  uint32 user_id = 1;
+  string username = 2;
   UserRole role = 3;
 }
 
