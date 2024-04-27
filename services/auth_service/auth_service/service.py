@@ -40,6 +40,12 @@ class AuthService(AuthServiceBase):
             ).first()
 
             if existing_user:
+                if not existing_user.check_password(password=request.password):
+                    raise GRPCError(
+                        Status.INVALID_ARGUMENT,
+                        f"Entered password for user {request.username} is invalid",
+                    )
+
                 return existing_user.to_user_message()
 
         raise GRPCError(

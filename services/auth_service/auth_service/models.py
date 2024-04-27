@@ -1,3 +1,4 @@
+import bcrypt
 from sqlalchemy import create_engine
 from sqlalchemy import Column
 from sqlalchemy.sql.sqltypes import String, Enum
@@ -24,6 +25,12 @@ class UserModel(Base):
 
     def __repr__(self):
         return f"<User(id={self.id}, username={self.username})>"
+
+    def check_password(self, password: str) -> bool:
+        return bcrypt.checkpw(
+            password.encode(),
+            self.password_hash.encode()
+        )
 
     def to_user_message(self) -> User:
         return User(
