@@ -24,7 +24,7 @@ class AuthService(AuthServiceBase):
             password_hash = bcrypt.hashpw(request.password.encode(), bcrypt.gensalt(10))
             new_user = UserModel(
                 username=request.username,
-                password_hash=password_hash
+                password_hash=password_hash.decode()
             )
             session.add(new_user)
             session.commit()
