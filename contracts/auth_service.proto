@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package faas;
+
+enum UserRole {
+  USER = 0;
+  ADMIN = 1;
+}
+
+message User {
+  uint32 user_id = 1;
+  string username = 2;
+  UserRole role = 3;
+}
+
+message UserCredentialsRequest {
+  string username = 1;
+  string password = 2;
+}
+
+
+service AuthService {
+  rpc CreateUser(UserCredentialsRequest) returns (User);
+  rpc GetUser(UserCredentialsRequest) returns (User);
+}

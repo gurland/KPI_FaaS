@@ -1,17 +1,15 @@
 [tool.poetry]
-name = "kpi-faas"
-version = "0.0.1"
-description = "Function as a service platform"
-authors = ["Stanislav Bobokalo"]
+name = "auth-service"
+version = "0.1.0"
+description = ""
+authors = ["Stanislav Bobokalo <stas.gurland@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
-sqlalchemy-cockroachdb = "^2.0.1"
-grpcio-tools = "^1.62.2"
+python = "^3.11 <3.12"
 betterproto = {version = "2.0.0b6", extras = ["compiler"]}
-
-
+sqlalchemy = "^2.0.29"
+bcrypt = "^4.1.2"
 
 [build-system]
 requires = ["poetry-core"]
