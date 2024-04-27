@@ -4,7 +4,7 @@ from sqlalchemy.sql.sqltypes import String, Enum
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from .contracts.faas import UserRole
+from .contracts.faas import UserRole, User
 
 
 engine = create_engine("sqlite+pysqlite:///:memory:", echo=True)
@@ -24,6 +24,11 @@ class UserModel(Base):
 
     def __repr__(self):
         return f"<User(id={self.id}, username={self.username})>"
+
+    def to_user_message(self) -> User:
+        return User(
+            user_id=self.id, username=self.username, role=self.role
+        )
 
 
 Base.metadata.create_all(engine)
