@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+package faas;
+
+// Used to specify empty request/response rpc types
+message Empty {}
