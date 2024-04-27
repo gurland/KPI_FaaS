@@ -1,19 +1,25 @@
+from grpclib import GRPCError, Status
 from sqlalchemy.orm import Session
 
-from .contracts.faas import AuthServiceBase, UserCredentialsRequest, User, UserRole
+from .contracts.faas import AuthServiceBase, UserCredentialsRequest, User
 from .models import UserModel, engine
 import bcrypt
 
 
 class AuthService(AuthServiceBase):
-    async def create_user(self, request: UserCredentialsRequest) -> User:
+    async def create_user(
+            self, request: UserCredentialsRequest
+    ) -> User:
         with Session(engine) as session:
-            existing_user = session.query(UserModel).filter(
+            existing_user: UserModel | None = session.query(UserModel).filter(
                 UserModel.username == request.username
             ).first()
 
             if existing_user:
-                raise ValueError(f"User with username {request.username} already exists")
+                raise GRPCError(
+                    Status.ALREADY_EXISTS,
+                    f"User with username {request.username} already exists",
+                )
 
             password_hash = bcrypt.hashpw(request.password.encode(), bcrypt.gensalt(10))
             new_user = UserModel(
@@ -23,4 +29,20 @@ class AuthService(AuthServiceBase):
             session.add(new_user)
             session.commit()
 
-        return User(user_id=new_user.id, username=new_user.username, role=new_user.role)
+            return new_user.to_user_message()
+
+    async def get_user(
+        self, request: UserCredentialsRequest
+    ) -> User:
+        with Session(engine) as session:
+            existing_user: UserModel | None = session.query(UserModel).filter(
+                UserModel.username == request.username
+            ).first()
+
+            if existing_user:
+                return existing_user.to_user_message()
+
+        raise GRPCError(
+            Status.NOT_FOUND,
+            f"User with username {request.username} does not exist",
+        )
