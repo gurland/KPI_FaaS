@@ -1,7 +1,7 @@
 from grpclib import GRPCError, Status
 from sqlalchemy.orm import Session
 
-from .contracts.faas import AuthServiceBase, UserCredentialsRequest, User, UserRole
+from .contracts.faas import AuthServiceBase, UserCredentialsRequest, User, UserRole, VerifyUserRequest
 from .models import UserModel, engine
 import bcrypt
 
@@ -18,7 +18,7 @@ class AuthService(AuthServiceBase):
             if existing_user:
                 raise GRPCError(
                     Status.ALREADY_EXISTS,
-                    f"User with username {request.username} already exists",
+                    f"User with username '{request.username}' already exists",
                 )
 
             password_hash = bcrypt.hashpw(request.password.encode(), bcrypt.gensalt(10))
@@ -44,12 +44,26 @@ class AuthService(AuthServiceBase):
                 if not existing_user.check_password(password=request.password):
                     raise GRPCError(
                         Status.INVALID_ARGUMENT,
-                        f"Entered password for user {request.username} is invalid",
+                        f"Entered password for user '{request.username}' is invalid",
                     )
 
                 return existing_user.to_user_message()
 
         raise GRPCError(
             Status.NOT_FOUND,
-            f"User with username {request.username} does not exist",
+            f"User with username '{request.username}' does not exist",
         )
+
+    async def verify_user(self, request: VerifyUserRequest) -> User:
+        with Session(engine) as session:
+            existing_user: UserModel | None = session.query(UserModel).filter(
+                UserModel.id == request.user_id
+            ).first()
+
+            if not existing_user:
+                raise GRPCError(
+                    Status.NOT_FOUND,
+                    f"User with ID '{request.user_id}' does not exist",
+                )
+
+            return existing_user.to_user_message()
