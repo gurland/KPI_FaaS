@@ -1,6 +1,5 @@
 import { authTokenManager } from '@/auth';
-import { User, redirectSignedInUser } from '@/server';
-import { authService } from '@/server/services';
+import { redirectSignedInUser } from '@/server';
 import {
 	type Actions,
 	type RequestEvent,
@@ -8,7 +7,6 @@ import {
 	type Redirect,
 	fail
 } from '@sveltejs/kit';
-import { ClientError } from 'nice-grpc';
 
 type RegisterFormData = {
 	username: FormDataEntryValue;
@@ -21,7 +19,7 @@ export const actions: Actions = {
 	default: async (
 		event: RequestEvent
 	): Promise<RegisterFormData | ActionFailure<RegisterFormData> | Redirect> => {
-		const { cookies, request } = event;
+		const { request } = event;
 		const signupFormData = await request.formData();
 		const username = signupFormData.get('username') ?? '';
 		const password = signupFormData.get('password') ?? '';
@@ -33,22 +31,18 @@ export const actions: Actions = {
 			passwordConfirm
 		};
 
-		let user: User | undefined;
-
 		try {
-			user = await authService.createUser({
+			await authTokenManager.registerUser(event, {
 				username: username.toString(),
 				password: password.toString()
 			});
-
-			authTokenManager.setToken(event, user);
 		} catch (e) {
-			if (e instanceof ClientError) {
+			if (e instanceof Error) {
 				return fail(400, { ...registerResponse, errorMessage: e.message });
 			}
 		}
 
-		if (user) {
+		if (event.locals.user) {
 			return redirectSignedInUser(event);
 		}
 

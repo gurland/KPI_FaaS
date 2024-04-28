@@ -1,5 +1,5 @@
 import { authTokenManager } from '@/auth';
-import { User, authService, getRpcMetaData, redirectSignedInUser, runtimeService } from '@/server';
+import { redirectSignedInUser } from '@/server';
 import {
 	type Actions,
 	type RequestEvent,
@@ -7,7 +7,6 @@ import {
 	type Redirect,
 	fail
 } from '@sveltejs/kit';
-import { ClientError } from 'nice-grpc';
 
 type LoginFormData = {
 	username: FormDataEntryValue;
@@ -29,23 +28,18 @@ export const actions: Actions = {
 			password
 		};
 
-		let user: User | undefined;
-
 		try {
-			user = await authService.getUser({
+			await authTokenManager.loginUser(event, {
 				username: username.toString(),
 				password: password.toString()
 			});
-
-			authTokenManager.setToken(event, user);
 		} catch (e) {
 			if (e instanceof Error) {
 				return fail(400, { ...loginResponse, errorMessage: e.message });
 			}
 		}
 
-		if (user) {
-			console.log('user1', user);
+		if (event.locals.user) {
 			return redirectSignedInUser(event);
 		}
 
