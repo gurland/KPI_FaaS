@@ -5,8 +5,6 @@ import { type Handle } from '@sveltejs/kit';
 export const handle: Handle = async function ({ event, resolve }) {
 	const isUserSigned = await authTokenManager.verifyUser(event);
 
-	console.log('isUserSigned', isUserSigned);
-
 	if (!isUserSigned && event.route.id?.startsWith('/(protected)')) {
 		return redirectSignedOutUser(event);
 	}
