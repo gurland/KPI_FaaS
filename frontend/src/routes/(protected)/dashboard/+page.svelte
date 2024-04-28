@@ -24,13 +24,14 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
+	import { page } from '$app/stores';
 </script>
 
 <div class="grid h-screen w-full pl-[53px]">
 	<aside class="inset-y fixed left-0 z-20 flex h-full flex-col border-r">
 		<div class="border-b p-2">
 			<Button variant="outline" size="icon" aria-label="Home">
-				<Triangle class="fill-foreground size-5" />
+				<Triangle class="size-5 fill-foreground" />
 			</Button>
 		</div>
 		<nav class="grid gap-1 p-2">
@@ -39,7 +40,7 @@
 					<Button
 						variant="ghost"
 						size="icon"
-						class="bg-muted rounded-lg"
+						class="rounded-lg bg-muted"
 						aria-label="Playground"
 						builders={[builder]}
 					>
@@ -132,12 +133,14 @@
 						<SquareUser class="size-5" />
 					</Button>
 				</Tooltip.Trigger>
-				<Tooltip.Content side="right" sideOffset={5}>Account</Tooltip.Content>
+				<Tooltip.Content side="right" sideOffset={5}
+					>Account ({$page.data.user?.username})</Tooltip.Content
+				>
 			</Tooltip.Root>
 		</nav>
 	</aside>
 	<div class="flex flex-col">
-		<header class="bg-background sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b px-4">
+		<header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
 			<h1 class="text-xl font-semibold">Playground</h1>
 			<Drawer.Root>
 				<Drawer.Trigger asChild let:builder>
@@ -164,12 +167,12 @@
 									</Select.Trigger>
 									<Select.Content>
 										<Select.Item value="genesis" label="Neural Genesis">
-											<div class="text-muted-foreground flex items-start gap-3">
+											<div class="flex items-start gap-3 text-muted-foreground">
 												<Rabbit class="size-5" />
 												<div class="grid gap-0.5">
 													<p>
 														Neural
-														<span class="text-foreground font-medium"> Genesis </span>
+														<span class="font-medium text-foreground"> Genesis </span>
 													</p>
 													<p class="text-xs" data-description>
 														Our fastest model for general use cases.
@@ -178,12 +181,12 @@
 											</div>
 										</Select.Item>
 										<Select.Item value="explorer" label="Neural Explorer">
-											<div class="text-muted-foreground flex items-start gap-3">
+											<div class="flex items-start gap-3 text-muted-foreground">
 												<Bird class="size-5" />
 												<div class="grid gap-0.5">
 													<p>
 														Neural
-														<span class="text-foreground font-medium"> Explorer </span>
+														<span class="font-medium text-foreground"> Explorer </span>
 													</p>
 													<p class="text-xs" data-description>
 														Performance and speed for efficiency.
@@ -192,12 +195,12 @@
 											</div>
 										</Select.Item>
 										<Select.Item value="quantum" label="Neural Quantum">
-											<div class="text-muted-foreground flex items-start gap-3">
+											<div class="flex items-start gap-3 text-muted-foreground">
 												<Turtle class="size-5" />
 												<div class="grid gap-0.5">
 													<p>
 														Neural
-														<span class="text-foreground font-medium"> Quantum </span>
+														<span class="font-medium text-foreground"> Quantum </span>
 													</p>
 													<p class="text-xs" data-description>
 														The most powerful model for complex computations.
@@ -262,12 +265,12 @@
 								</Select.Trigger>
 								<Select.Content>
 									<Select.Item value="genesis" label="Neural Genesis">
-										<div class="text-muted-foreground flex items-start gap-3">
+										<div class="flex items-start gap-3 text-muted-foreground">
 											<Rabbit class="size-5" />
 											<div class="grid gap-0.5">
 												<p>
 													Neural
-													<span class="text-foreground font-medium"> Genesis </span>
+													<span class="font-medium text-foreground"> Genesis </span>
 												</p>
 												<p class="text-xs" data-description>
 													Our fastest model for general use cases.
@@ -276,12 +279,12 @@
 										</div>
 									</Select.Item>
 									<Select.Item value="explorer" label="Neural Explorer">
-										<div class="text-muted-foreground flex items-start gap-3">
+										<div class="flex items-start gap-3 text-muted-foreground">
 											<Bird class="size-5" />
 											<div class="grid gap-0.5">
 												<p>
 													Neural
-													<span class="text-foreground font-medium"> Explorer </span>
+													<span class="font-medium text-foreground"> Explorer </span>
 												</p>
 												<p class="text-xs" data-description>
 													Performance and speed for efficiency.
@@ -290,12 +293,12 @@
 										</div>
 									</Select.Item>
 									<Select.Item value="quantum">
-										<div class="text-muted-foreground flex items-start gap-3">
+										<div class="flex items-start gap-3 text-muted-foreground">
 											<Turtle class="size-5" />
 											<div class="grid gap-0.5">
 												<p>
 													Neural
-													<span class="text-foreground font-medium"> Quantum </span>
+													<span class="font-medium text-foreground"> Quantum </span>
 												</p>
 												<p class="text-xs" data-description>
 													The most powerful model for complex computations.
@@ -344,12 +347,12 @@
 				</form>
 			</div>
 			<div
-				class="bg-muted/50 relative flex h-full min-h-[50vh] flex-col rounded-xl p-4 lg:col-span-2"
+				class="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-2"
 			>
 				<Badge variant="outline" class="absolute right-3 top-3">Output</Badge>
 				<div class="flex-1" />
 				<form
-					class="bg-background focus-within:ring-ring relative overflow-hidden rounded-lg border focus-within:ring-1"
+					class="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring"
 				>
 					<Label for="message" class="sr-only">Message</Label>
 					<Textarea

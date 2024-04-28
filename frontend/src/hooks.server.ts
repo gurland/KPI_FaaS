@@ -1,19 +1,18 @@
 import { authTokenManager } from '@/auth';
-import { redirect, type Handle } from '@sveltejs/kit';
+import { redirectSignedInUser, redirectSignedOutUser } from '@/server';
+import { type Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async function ({ event, resolve }) {
-	const path = event.url.pathname;
-	const auth = authTokenManager.verifyToken(event.cookies);
-	event.locals.auth = auth;
+	const user = authTokenManager.verifyToken(event.cookies);
+	event.locals.user = user;
 
-	if (!auth && path.startsWith('/dashboard')) {
-		throw redirect(302, '/login');
+	if (!user && event.route.id?.startsWith('/(protected)')) {
+		return redirectSignedOutUser(event);
 	}
 
-	if (auth && (path.startsWith('/register') || path.startsWith('/login'))) {
-		throw redirect(302, '/dashboard');
+	if (user && event.route.id?.startsWith('/(auth)')) {
+		return redirectSignedInUser(event);
 	}
 
-	console.log(event.locals);
 	return resolve(event);
 };

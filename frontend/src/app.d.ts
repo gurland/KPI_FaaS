@@ -1,15 +1,17 @@
 // See https://kit.svelte.dev/docs/types#app
 
-import type { AuthTokenPayload } from '@/types';
+import type { User } from '@/server';
 
 // for information about these interfaces
 declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			auth?: AuthTokenPayload;
+			user?: User;
 		}
-		// interface PageData {}
+		interface PageData {
+			user?: User;
+		}
 		// interface PageState {}
 		// interface Platform {}
 	}

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
-import type { AuthTokenPayload } from '@/types';
 import type { Cookies } from '@sveltejs/kit';
+import type { User } from '@/server';
 
 const JWT_SECRET = 'SECRET_INGREDIENT';
 
@@ -8,7 +8,7 @@ class AuthTokenManager {
 	#authTokenCookieName = 'auth_token';
 	#authTokenExpiration = 60;
 
-	setToken(cookies: Cookies, payload: AuthTokenPayload) {
+	setToken(cookies: Cookies, payload: User) {
 		const authToken = jwt.sign(payload, JWT_SECRET, {
 			expiresIn: this.#authTokenExpiration
 		});
@@ -29,7 +29,7 @@ class AuthTokenManager {
 		}
 
 		try {
-			const payload = jwt.verify(authToken, JWT_SECRET) as AuthTokenPayload;
+			const payload = jwt.verify(authToken, JWT_SECRET) as User;
 			return payload;
 		} catch (error) {
 			return undefined;
