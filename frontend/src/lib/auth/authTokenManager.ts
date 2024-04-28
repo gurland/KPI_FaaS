@@ -6,7 +6,7 @@ const JWT_SECRET = 'SECRET_INGREDIENT';
 
 class AuthTokenManager {
 	#authTokenCookieName = 'auth_token';
-	#authTokenExpiration = 60;
+	#authTokenExpiration = 60 * 60 * 24 * 7;
 
 	setToken(cookies: Cookies, payload: User) {
 		const authToken = jwt.sign(payload, JWT_SECRET, {
