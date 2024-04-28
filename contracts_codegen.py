@@ -5,6 +5,7 @@ from grpc_tools import protoc
 
 SERVICES = [
     Path("services") / "auth_service" / "auth_service" / "contracts",
+    Path("services") / "runtime_service" / "runtime_service" / "contracts",
 ]
 
 TS_SERVICES = [
@@ -36,6 +37,19 @@ for service_contracts_path in SERVICES:
 #         "",
 #         f"--plugin={GEN_TS_PATH}",
 #         f"--proto_path={contracts_path}",
-#         f"--ts_proto_out={service_contracts_path}",
+#         "--ts_proto_opt=outputServices=grpc-js",
+#         "--ts_proto_opt=esModuleInterop=true",
+#         "--ts_proto_opt=returnObservable=false",
+#         f"--ts_proto_out=.",
+#         *proto_paths
+#     ))
+#
+#     print(*(
+#         "",
+#         f"--plugin={GEN_TS_PATH}",
+#         f"--proto_path={contracts_path}",
+#         "--ts_proto_opt=outputServices=grpc-js",
+#         "--ts_proto_opt=returnObservable=false"
+#         f"--ts_proto_out=.",
 #         *proto_paths
 #     ))
