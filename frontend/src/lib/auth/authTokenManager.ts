@@ -22,7 +22,7 @@ class AuthTokenManager {
 
 	async verifyUser(event: RequestEvent) {
 		const authToken = event.cookies.get(this.#authTokenCookieName);
-		console.log(authToken);
+
 		if (!authToken) {
 			return false;
 		}
@@ -35,12 +35,26 @@ class AuthTokenManager {
 				throw new Error('Token is outdated');
 			}
 		} catch (error) {
-			console.error('verifyUser', error);
 			this.#revokeToken(event);
 			return false;
 		}
 
 		return true;
+	}
+
+	getUserFromToken(event: RequestEvent) {
+		const authToken = event.cookies.get(this.#authTokenCookieName);
+
+		if (!authToken) {
+			return undefined;
+		}
+
+		try {
+			const user = jwt.verify(authToken, JWT_SECRET) as User;
+			return user;
+		} catch (error) {
+			return undefined;
+		}
 	}
 
 	#setToken(event: RequestEvent, payload: User) {
@@ -63,8 +77,6 @@ class AuthTokenManager {
 			maxAge: 0,
 			sameSite: 'strict'
 		});
-
-		return undefined;
 	}
 }
 

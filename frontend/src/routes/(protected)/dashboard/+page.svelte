@@ -25,10 +25,11 @@
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
 	import { page } from '$app/stores';
-	import { Container, LoaderCircleIcon } from 'lucide-svelte';
+	import { CircleAlert, Container, LoaderCircleIcon } from 'lucide-svelte';
 	import type { ActionData } from './$types';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 	let isFormLoading = false;
 
@@ -40,7 +41,7 @@
 		};
 	};
 
-	export let formData: ActionData;
+	export let form: ActionData;
 </script>
 
 <div class="grid h-screen w-full pl-[53px]">
@@ -104,6 +105,13 @@
 			<h1 class="text-xl font-semibold">Playground</h1>
 		</header>
 		<main class="mx-auto grid w-full max-w-lg grid-cols-1 gap-4 overflow-auto p-4">
+			{#if form?.errorMessage}
+				<Alert variant="destructive" class="mx-auto mb-4 min-w-full">
+					<CircleAlert class="h-4 w-4" />
+					<AlertTitle>Error</AlertTitle>
+					<AlertDescription>{form?.errorMessage}</AlertDescription>
+				</Alert>
+			{/if}
 			<form
 				class="m-auto grid min-w-full items-center gap-6"
 				method="post"
@@ -119,7 +127,7 @@
 							name="tag"
 							type="text"
 							placeholder="Docker image tag"
-							value={formData?.tag}
+							value={form?.tag}
 						/>
 					</div>
 
@@ -130,7 +138,7 @@
 							name="dockerfile"
 							placeholder="Dockerfile content here"
 							class="min-h-[9.5rem]"
-							value={formData?.dockerfile?.toString()}
+							value={form?.dockerfile?.toString()}
 						/>
 					</div>
 					<Button type="submit" class="w-full" disabled={isFormLoading}>

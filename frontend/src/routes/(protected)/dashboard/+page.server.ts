@@ -28,21 +28,17 @@ export const actions: Actions = {
 			dockerfile
 		};
 
-		console.log('createRuntimeResponse', createRuntimeResponse);
-		//let runtime: Runtime | undefined;
-
 		try {
-			const runtime = await runtimeService.createRuntime(
+			await runtimeService.createRuntime(
 				{
 					tag: tag.toString(),
 					dockerfile: dockerfile.toString()
 				},
 				{ metadata: getRpcMetaData(event) }
 			);
-			console.log('runtime', runtime);
 		} catch (e) {
 			if (e instanceof Error) {
-				console.error('createRuntime', e);
+				console.error(e);
 				return fail(400, { ...createRuntimeResponse, errorMessage: e.message });
 			}
 		}
