@@ -11,6 +11,7 @@ message User {
   uint32 user_id = 1;
   string username = 2;
   UserRole role = 3;
+  uint32 updated_at_timestamp = 4;
 }
 
 message UserCredentialsRequest {
@@ -18,8 +19,13 @@ message UserCredentialsRequest {
   string password = 2;
 }
 
+message VerifyUserRequest {
+  uint32 user_id = 1;
+}
+
 
 service AuthService {
   rpc CreateUser(UserCredentialsRequest) returns (User);
   rpc GetUser(UserCredentialsRequest) returns (User);
+  rpc VerifyUser(VerifyUserRequest) returns (User);
 }
