@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-import "auth_service.proto";
 import "common.proto";
 
 package faas;
@@ -8,15 +7,21 @@ package faas;
 message CreateRuntimeRequest {
   string tag = 1;
   string dockerfile = 2;
-  User user = 3;
 }
 
-message Runtime {
+message BriefRuntime {
   string tag = 1;
   string registry_url = 2;
 }
 
+message DetailedRuntime {
+  string tag = 1;
+  string registry_url = 2;
+  string dockerfile = 3;
+}
+
 service RuntimeService {
-  rpc CreateRuntime(CreateRuntimeRequest) returns (Runtime);
-  rpc GetRuntimeTags(Empty) returns (stream Runtime);
+  rpc CreateRuntime(CreateRuntimeRequest) returns (BriefRuntime);
+  rpc GetRuntimeTags(Empty) returns (stream BriefRuntime);
+  rpc GetRuntimeDetails(BriefRuntime) returns (DetailedRuntime);
 }
