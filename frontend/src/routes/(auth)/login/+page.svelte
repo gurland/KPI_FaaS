@@ -3,11 +3,12 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { LoaderCircleIcon } from 'lucide-svelte';
+	import { CircleAlert, LoaderCircleIcon } from 'lucide-svelte';
 
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import type { ActionData } from './$types';
+	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 	let isFormLoading = false;
 
@@ -22,7 +23,15 @@
 	export let form: ActionData;
 </script>
 
-<Card.Root class="mx-auto max-w-sm">
+{#if form?.errorMessage}
+	<Alert variant="destructive" class="mx-auto mb-4 min-w-full">
+		<CircleAlert class="h-4 w-4" />
+		<AlertTitle>Error</AlertTitle>
+		<AlertDescription>{form?.errorMessage}</AlertDescription>
+	</Alert>
+{/if}
+
+<Card.Root class="mx-auto min-w-full">
 	<Card.Header>
 		<Card.Title class="text-2xl">Login</Card.Title>
 		<Card.Description>Enter your username and password below</Card.Description>
@@ -60,11 +69,6 @@
 				</Button>
 			</div>
 		</form>
-		{#if form?.errorMessage}
-			<p>
-				{form?.errorMessage}
-			</p>
-		{/if}
 		<div class="mt-4 text-center text-sm">
 			Don&apos;t have an account?
 			<a href="/register" class="underline"> Sign up </a>

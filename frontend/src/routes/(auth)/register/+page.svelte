@@ -3,10 +3,11 @@
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { LoaderCircleIcon } from 'lucide-svelte';
+	import { CircleAlert, LoaderCircleIcon } from 'lucide-svelte';
 
 	import { enhance } from '$app/forms';
 	import type { ActionData, SubmitFunction } from './$types';
+	import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 	let isFormLoading = false;
 
@@ -21,7 +22,15 @@
 	export let form: ActionData;
 </script>
 
-<Card.Root class="mx-auto max-w-sm">
+{#if form?.errorMessage}
+	<Alert variant="destructive" class="mx-auto mb-4 min-w-full">
+		<CircleAlert class="h-4 w-4" />
+		<AlertTitle>Error</AlertTitle>
+		<AlertDescription>{form?.errorMessage}</AlertDescription>
+	</Alert>
+{/if}
+
+<Card.Root class="mx-auto  min-w-full">
 	<Card.Header>
 		<Card.Title class="text-xl">Sign Up</Card.Title>
 		<Card.Description>Enter your information to create an account</Card.Description>
@@ -70,11 +79,6 @@
 				</Button>
 			</div>
 		</form>
-		{#if form?.errorMessage}
-			<p>
-				{form?.errorMessage}
-			</p>
-		{/if}
 		<div class="mt-4 text-center text-sm">
 			Already have an account?
 			<a href="/login" class="underline"> Sign in </a>
