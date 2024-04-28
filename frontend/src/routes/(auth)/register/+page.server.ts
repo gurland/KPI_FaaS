@@ -41,7 +41,7 @@ export const actions: Actions = {
 				password: password.toString()
 			});
 
-			authTokenManager.setToken(cookies, user);
+			authTokenManager.setToken(event, user);
 		} catch (e) {
 			if (e instanceof ClientError) {
 				return fail(400, { ...registerResponse, errorMessage: e.message });

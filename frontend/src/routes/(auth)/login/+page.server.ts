@@ -1,5 +1,5 @@
 import { authTokenManager } from '@/auth';
-import { User, authService, redirectSignedInUser } from '@/server';
+import { User, authService, getRpcMetaData, redirectSignedInUser, runtimeService } from '@/server';
 import {
 	type Actions,
 	type RequestEvent,
@@ -19,7 +19,7 @@ export const actions: Actions = {
 	default: async (
 		event: RequestEvent
 	): Promise<LoginFormData | ActionFailure<LoginFormData> | Redirect> => {
-		const { cookies, request } = event;
+		const { request } = event;
 		const loginFormData = await request.formData();
 		const username = loginFormData.get('username') ?? '';
 		const password = loginFormData.get('password') ?? '';
@@ -37,15 +37,16 @@ export const actions: Actions = {
 				password: password.toString()
 			});
 
-			authTokenManager.setToken(cookies, user);
+			authTokenManager.setToken(event, user);
 		} catch (e) {
-			if (e instanceof ClientError) {
+			if (e instanceof Error) {
 				return fail(400, { ...loginResponse, errorMessage: e.message });
 			}
 		}
 
 		if (user) {
-			redirectSignedInUser(event);
+			console.log('user1', user);
+			return redirectSignedInUser(event);
 		}
 
 		return loginResponse;

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import type { Cookies } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
 import type { User } from '@/server';
 
 const JWT_SECRET = 'SECRET_INGREDIENT';
@@ -8,12 +8,12 @@ class AuthTokenManager {
 	#authTokenCookieName = 'auth_token';
 	#authTokenExpiration = 60 * 60 * 24 * 7;
 
-	setToken(cookies: Cookies, payload: User) {
+	setToken(event: RequestEvent, payload: User) {
 		const authToken = jwt.sign(payload, JWT_SECRET, {
 			expiresIn: this.#authTokenExpiration
 		});
 
-		cookies.set(this.#authTokenCookieName, authToken, {
+		event.cookies.set(this.#authTokenCookieName, authToken, {
 			path: '/',
 			httpOnly: true,
 			maxAge: this.#authTokenExpiration,
@@ -21,8 +21,8 @@ class AuthTokenManager {
 		});
 	}
 
-	verifyToken(cookies: Cookies) {
-		const authToken = cookies.get(this.#authTokenCookieName);
+	verifyToken(event: RequestEvent) {
+		const authToken = event.cookies.get(this.#authTokenCookieName);
 
 		if (!authToken) {
 			return undefined;
@@ -34,6 +34,16 @@ class AuthTokenManager {
 		} catch (error) {
 			return undefined;
 		}
+	}
+	revokeToken(event: RequestEvent) {
+		event.cookies.set(this.#authTokenCookieName, '', {
+			path: '/',
+			httpOnly: true,
+			maxAge: 0,
+			sameSite: 'strict'
+		});
+
+		return undefined;
 	}
 }
 

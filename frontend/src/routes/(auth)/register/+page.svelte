@@ -30,7 +30,7 @@
 	</Alert>
 {/if}
 
-<Card.Root class="mx-auto  min-w-full">
+<Card.Root class="mx-auto min-w-full">
 	<Card.Header>
 		<Card.Title class="text-xl">Sign Up</Card.Title>
 		<Card.Description>Enter your information to create an account</Card.Description>
