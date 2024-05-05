@@ -1,8 +1,8 @@
 import { fail, type ActionFailure, type Redirect } from '@sveltejs/kit';
-import type { Actions, RequestEvent } from './$types';
+import type { Actions, PageServerLoadEvent, RequestEvent } from './$types';
 import { getRpcMetaData, runtimeService } from '@/server/index.js';
 
-export function load({ locals }) {
+export function load({ locals }: PageServerLoadEvent) {
 	return {
 		user: locals.user
 	};

@@ -10,6 +10,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
+		"tsc": "tsc --noEmit",
 		"gen:grpc:old": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --proto_path=./../contracts --ts_proto_opt=outputServices=grpc-js --ts_proto_opt=esModuleInterop=true --ts_proto_out=./src/lib/server/rpc ./../contracts/auth_service.proto",
 		"gen:grpc": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --proto_path=./../contracts --ts_proto_opt=outputServices=nice-grpc,outputServices=generic-definitions,useExactTypes=false,esModuleInterop=true --ts_proto_out=./src/lib/server/rpc ./../contracts/*.proto"
 	},
