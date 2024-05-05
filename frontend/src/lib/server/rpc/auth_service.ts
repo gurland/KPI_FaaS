@@ -53,6 +53,12 @@ export interface VerifyUserRequest {
   userId: number;
 }
 
+export interface ChangeUserPasswordRequest {
+  userId: number;
+  oldPassword: string;
+  newPassword: string;
+}
+
 function createBaseUser(): User {
   return { userId: 0, username: "", role: 0, updatedAtTimestamp: 0 };
 }
@@ -288,6 +294,95 @@ export const VerifyUserRequest = {
   },
 };
 
+function createBaseChangeUserPasswordRequest(): ChangeUserPasswordRequest {
+  return { userId: 0, oldPassword: "", newPassword: "" };
+}
+
+export const ChangeUserPasswordRequest = {
+  encode(message: ChangeUserPasswordRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.userId !== 0) {
+      writer.uint32(8).uint32(message.userId);
+    }
+    if (message.oldPassword !== "") {
+      writer.uint32(18).string(message.oldPassword);
+    }
+    if (message.newPassword !== "") {
+      writer.uint32(26).string(message.newPassword);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ChangeUserPasswordRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseChangeUserPasswordRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.userId = reader.uint32();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.oldPassword = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.newPassword = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ChangeUserPasswordRequest {
+    return {
+      userId: isSet(object.userId) ? globalThis.Number(object.userId) : 0,
+      oldPassword: isSet(object.oldPassword) ? globalThis.String(object.oldPassword) : "",
+      newPassword: isSet(object.newPassword) ? globalThis.String(object.newPassword) : "",
+    };
+  },
+
+  toJSON(message: ChangeUserPasswordRequest): unknown {
+    const obj: any = {};
+    if (message.userId !== 0) {
+      obj.userId = Math.round(message.userId);
+    }
+    if (message.oldPassword !== "") {
+      obj.oldPassword = message.oldPassword;
+    }
+    if (message.newPassword !== "") {
+      obj.newPassword = message.newPassword;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<ChangeUserPasswordRequest>): ChangeUserPasswordRequest {
+    return ChangeUserPasswordRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<ChangeUserPasswordRequest>): ChangeUserPasswordRequest {
+    const message = createBaseChangeUserPasswordRequest();
+    message.userId = object.userId ?? 0;
+    message.oldPassword = object.oldPassword ?? "";
+    message.newPassword = object.newPassword ?? "";
+    return message;
+  },
+};
+
 export type AuthServiceDefinition = typeof AuthServiceDefinition;
 export const AuthServiceDefinition = {
   name: "AuthService",
@@ -317,6 +412,14 @@ export const AuthServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    changeUserPassword: {
+      name: "ChangeUserPassword",
+      requestType: ChangeUserPasswordRequest,
+      requestStream: false,
+      responseType: User,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
@@ -324,12 +427,20 @@ export interface AuthServiceImplementation<CallContextExt = {}> {
   createUser(request: UserCredentialsRequest, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
   getUser(request: UserCredentialsRequest, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
   verifyUser(request: VerifyUserRequest, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
+  changeUserPassword(
+    request: ChangeUserPasswordRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<User>>;
 }
 
 export interface AuthServiceClient<CallOptionsExt = {}> {
   createUser(request: DeepPartial<UserCredentialsRequest>, options?: CallOptions & CallOptionsExt): Promise<User>;
   getUser(request: DeepPartial<UserCredentialsRequest>, options?: CallOptions & CallOptionsExt): Promise<User>;
   verifyUser(request: DeepPartial<VerifyUserRequest>, options?: CallOptions & CallOptionsExt): Promise<User>;
+  changeUserPassword(
+    request: DeepPartial<ChangeUserPasswordRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<User>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
