@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package faas;
+
+
+message CrontabTriggerConfiguration {
+  string cron_expression = 1;
+  uint32 function_id = 2;
+  string description = 3;
+}
+
+message CrontabTrigger {
+  uint32 trigger_id = 1;
+  uint32 function_id = 2;
+  string cron_expression = 3;
+  string description = 4;
+}
+
+service CrontabTriggerService {
+  rpc CreateCrontabTrigger(CrontabTriggerConfiguration) returns (Empty);
+}
