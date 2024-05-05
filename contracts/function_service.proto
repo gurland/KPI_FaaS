@@ -23,9 +23,22 @@ message BriefFunction {
   string function_name = 3;
 }
 
+message ChangeFunctionCodeRequest {
+  uint32 function_id = 1;
+  string code = 2;
+}
+
+message ChangeFunctionRuntime {
+  uint32 function_id = 1;
+  string runtime_tag = 2;
+}
+
 service FunctionService {
   rpc CreateFunction(FunctionConfiguration) returns (DetailedFunction);
-  rpc EditFunction(FunctionConfiguration) returns (DetailedFunction);
+
+  rpc ChangeFunctionCode(ChangeFunctionCodeRequest) returns (DetailedFunction);
+  rpc ChangeFunctionRuntime(ChangeFunctionRuntime) returns (DetailedFunction);
+
   rpc DeleteFunction(BriefFunction) returns (Empty);
   rpc GetFunction(BriefFunction) returns (DetailedFunction);
   rpc GetFunctions(Empty) returns (stream BriefFunction);
