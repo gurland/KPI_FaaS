@@ -1,6 +1,6 @@
 import { fail, type ActionFailure, type Redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoadEvent, RequestEvent } from './$types';
-import { getRpcMetaData, runtimeService } from '@/server/index.js';
+import { getRpcMetaData, runtimeService } from '@/server';
 
 export async function load(event: PageServerLoadEvent) {
 	const runtimesStream = runtimeService.getRuntimeTags({}, { metadata: getRpcMetaData(event) });
