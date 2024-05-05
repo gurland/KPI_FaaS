@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "crontab-service"
+name = "crontab-trigger-service"
 version = "0.1.0"
 description = ""
 authors = ["Stanislav Bobokalo <stanislav.b@embedd.it>"]

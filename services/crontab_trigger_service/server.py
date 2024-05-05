@@ -3,8 +3,8 @@ import logging
 
 from grpclib.utils import graceful_exit
 from grpclib.server import Server
-from crontab_service.service import CrontabService
-from crontab_service.cfg import SERVICE_PORT, SERVICE_HOST
+from crontab_trigger_service.service import CrontabService
+from crontab_trigger_service.cfg import SERVICE_PORT, SERVICE_HOST
 
 
 async def main(host: str = '127.0.0.1', port: int = 50051) -> None:

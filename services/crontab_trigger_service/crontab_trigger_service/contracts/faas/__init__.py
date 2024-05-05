@@ -46,6 +46,13 @@ class Empty(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class Logs(betterproto.Message):
+    """Used to pass logs from services/functions in a singular response"""
+
+    log_lines: List[str] = betterproto.string_field(1)
+
+
+@dataclass(eq=False, repr=False)
 class Struct(betterproto.Message):
     """
     `Struct` represents a structured data value, consisting of fields which map
@@ -144,11 +151,6 @@ class DetailedRuntime(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
-class Logs(betterproto.Message):
-    log_lines: List[str] = betterproto.string_field(1)
-
-
-@dataclass(eq=False, repr=False)
 class UpdatedRuntimeResponse(betterproto.Message):
     runtime: "DetailedRuntime" = betterproto.message_field(1)
     logs: "Logs" = betterproto.message_field(2)
@@ -164,6 +166,7 @@ class InvokeFunctionRequest(betterproto.Message):
 @dataclass(eq=False, repr=False)
 class InvocationResult(betterproto.Message):
     returned_value: "Value" = betterproto.message_field(1)
+    log_lines: "Logs" = betterproto.message_field(2)
 
 
 @dataclass(eq=False, repr=False)
@@ -325,23 +328,6 @@ class RuntimeServiceStub(betterproto.ServiceStub):
             "/faas.RuntimeService/EditRuntime",
             runtime_configuration,
             UpdatedRuntimeResponse,
-            timeout=timeout,
-            deadline=deadline,
-            metadata=metadata,
-        )
-
-    async def delete_runtime(
-        self,
-        brief_runtime: "BriefRuntime",
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
-    ) -> "Empty":
-        return await self._unary_unary(
-            "/faas.RuntimeService/DeleteRuntime",
-            brief_runtime,
-            Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -598,9 +584,6 @@ class RuntimeServiceBase(ServiceBase):
     ) -> "UpdatedRuntimeResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
-    async def delete_runtime(self, brief_runtime: "BriefRuntime") -> "Empty":
-        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
-
     async def get_runtime_details(
         self, brief_runtime: "BriefRuntime"
     ) -> "DetailedRuntime":
@@ -624,13 +607,6 @@ class RuntimeServiceBase(ServiceBase):
     ) -> None:
         request = await stream.recv_message()
         response = await self.edit_runtime(request)
-        await stream.send_message(response)
-
-    async def __rpc_delete_runtime(
-        self, stream: "grpclib.server.Stream[BriefRuntime, Empty]"
-    ) -> None:
-        request = await stream.recv_message()
-        response = await self.delete_runtime(request)
         await stream.send_message(response)
 
     async def __rpc_get_runtime_details(
@@ -663,12 +639,6 @@ class RuntimeServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 RuntimeConfiguration,
                 UpdatedRuntimeResponse,
-            ),
-            "/faas.RuntimeService/DeleteRuntime": grpclib.const.Handler(
-                self.__rpc_delete_runtime,
-                grpclib.const.Cardinality.UNARY_UNARY,
-                BriefRuntime,
-                Empty,
             ),
             "/faas.RuntimeService/GetRuntimeDetails": grpclib.const.Handler(
                 self.__rpc_get_runtime_details,
