@@ -25,13 +25,59 @@
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
 	import { page } from '$app/stores';
-	import { CircleAlert, Container, LoaderCircleIcon } from 'lucide-svelte';
+	import { CircleAlert, Container, LoaderCircleIcon, PlusIcon } from 'lucide-svelte';
+	import type { ActionData } from './$types';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+	import {
+		Table,
+		TableCaption,
+		TableHeader,
+		TableHead,
+		TableBody,
+		TableRow,
+		TableCell
+	} from '@/components/ui/table';
+
+	$: runtimes = $page.data.runtimes ?? [];
 </script>
 
-<header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
-	<h1 class="text-xl font-semibold">Dashboard</h1>
+<header
+	class="sticky top-0 z-10 flex h-[57px] items-center justify-between gap-1 border-b bg-background px-4"
+>
+	<h1 class="text-xl font-semibold">Runtimes</h1>
+	<Tooltip.Root>
+		<Tooltip.Trigger asChild let:builder>
+			<Button
+				variant="ghost"
+				size="icon"
+				class="rounded-lg"
+				aria-label="Functions"
+				builders={[builder]}
+				href="/dashboard/runtimes/create"
+			>
+				<PlusIcon class="size-5" />
+			</Button>
+		</Tooltip.Trigger>
+		<Tooltip.Content side="right" sideOffset={5}>Create new runtime</Tooltip.Content>
+	</Tooltip.Root>
 </header>
-<main class="mx-auto grid w-full max-w-lg grid-cols-1 gap-4 overflow-auto p-4">Dashboard page</main>
+<main class="mx-auto grid w-full max-w-lg grid-cols-1 gap-4 overflow-auto p-4">
+	<Table>
+		<TableHeader>
+			<TableRow>
+				<TableHead>Tag</TableHead>
+				<TableHead>Registry url</TableHead>
+			</TableRow>
+		</TableHeader>
+		<TableBody>
+			{#each runtimes as runtime, i (i)}
+				<TableRow>
+					<TableCell>{runtime.tag}</TableCell>
+					<TableCell>{runtime.registryUrl}</TableCell>
+				</TableRow>
+			{/each}
+		</TableBody>
+	</Table>
+</main>
