@@ -14,7 +14,7 @@ const authMiddleware: ClientMiddleware = async function* (call, options) {
 
 const clientFactory = createClientFactory().use(authMiddleware);
 
-const channel = createChannel('192.168.1.219:50061');
+const channel = createChannel('192.168.1.218:50061');
 
 export const runtimeService: RuntimeServiceClient = clientFactory.create(
 	RuntimeServiceDefinition,

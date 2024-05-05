@@ -34,6 +34,7 @@ class AuthTokenManager {
 			if (user.updatedAtTimestamp !== userVerified.updatedAtTimestamp) {
 				throw new Error('Token is outdated');
 			}
+			event.locals.user = userVerified;
 		} catch (error) {
 			this.#revokeToken(event);
 			return false;
@@ -68,6 +69,7 @@ class AuthTokenManager {
 			maxAge: this.#authTokenExpiration,
 			sameSite: 'strict'
 		});
+		event.locals.user = payload;
 	}
 
 	#revokeToken(event: RequestEvent) {
@@ -77,6 +79,7 @@ class AuthTokenManager {
 			maxAge: 0,
 			sameSite: 'strict'
 		});
+		event.locals.user = undefined;
 	}
 }
 

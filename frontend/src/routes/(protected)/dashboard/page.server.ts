@@ -1,16 +1,16 @@
 import { fail, type ActionFailure, type Redirect } from '@sveltejs/kit';
-import type { Actions, RequestEvent } from './$types';
+import type { Actions, PageServerLoadEvent, RequestEvent } from './$types';
 import { getRpcMetaData, runtimeService } from '@/server/index.js';
 
-export function load({ locals }) {
+export function load({ locals }: PageServerLoadEvent) {
 	return {
 		user: locals.user
 	};
 }
 
 type CreateRuntimeFormData = {
-	tag: string;
-	dockerfile: string;
+	tag: FormDataEntryValue;
+	dockerfile: FormDataEntryValue;
 	errorMessage?: string;
 };
 
@@ -20,8 +20,8 @@ export const actions: Actions = {
 	): Promise<CreateRuntimeFormData | ActionFailure<CreateRuntimeFormData> | Redirect> => {
 		const { request } = event;
 		const signupFormData = await request.formData();
-		const tag = signupFormData.get('tag') + '';
-		const dockerfile = signupFormData.get('dockerfile') + '';
+		const tag = signupFormData.get('tag') ?? '';
+		const dockerfile = signupFormData.get('dockerfile') ?? '';
 
 		const createRuntimeResponse: CreateRuntimeFormData = {
 			tag,

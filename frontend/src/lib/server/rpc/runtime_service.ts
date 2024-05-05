@@ -1,44 +1,50 @@
 /* eslint-disable */
 import { type CallContext, type CallOptions } from "nice-grpc-common";
 import _m0 from "protobufjs/minimal";
-import { User } from "./auth_service";
-import { Empty } from "./common";
+import { Empty, Logs } from "./common";
 
 export const protobufPackage = "faas";
 
-export interface CreateRuntimeRequest {
+export interface RuntimeConfiguration {
   tag: string;
   dockerfile: string;
-  user: User | undefined;
 }
 
-export interface Runtime {
+export interface BriefRuntime {
   tag: string;
   registryUrl: string;
 }
 
-function createBaseCreateRuntimeRequest(): CreateRuntimeRequest {
-  return { tag: "", dockerfile: "", user: undefined };
+export interface DetailedRuntime {
+  tag: string;
+  registryUrl: string;
+  dockerfile: string;
 }
 
-export const CreateRuntimeRequest = {
-  encode(message: CreateRuntimeRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export interface UpdatedRuntimeResponse {
+  runtime: DetailedRuntime | undefined;
+  logs: Logs | undefined;
+}
+
+function createBaseRuntimeConfiguration(): RuntimeConfiguration {
+  return { tag: "", dockerfile: "" };
+}
+
+export const RuntimeConfiguration = {
+  encode(message: RuntimeConfiguration, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.tag !== "") {
       writer.uint32(10).string(message.tag);
     }
     if (message.dockerfile !== "") {
       writer.uint32(18).string(message.dockerfile);
     }
-    if (message.user !== undefined) {
-      User.encode(message.user, writer.uint32(26).fork()).ldelim();
-    }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): CreateRuntimeRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): RuntimeConfiguration {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseCreateRuntimeRequest();
+    const message = createBaseRuntimeConfiguration();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -56,13 +62,6 @@ export const CreateRuntimeRequest = {
 
           message.dockerfile = reader.string();
           continue;
-        case 3:
-          if (tag !== 26) {
-            break;
-          }
-
-          message.user = User.decode(reader, reader.uint32());
-          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -72,15 +71,14 @@ export const CreateRuntimeRequest = {
     return message;
   },
 
-  fromJSON(object: any): CreateRuntimeRequest {
+  fromJSON(object: any): RuntimeConfiguration {
     return {
       tag: isSet(object.tag) ? globalThis.String(object.tag) : "",
       dockerfile: isSet(object.dockerfile) ? globalThis.String(object.dockerfile) : "",
-      user: isSet(object.user) ? User.fromJSON(object.user) : undefined,
     };
   },
 
-  toJSON(message: CreateRuntimeRequest): unknown {
+  toJSON(message: RuntimeConfiguration): unknown {
     const obj: any = {};
     if (message.tag !== "") {
       obj.tag = message.tag;
@@ -88,30 +86,26 @@ export const CreateRuntimeRequest = {
     if (message.dockerfile !== "") {
       obj.dockerfile = message.dockerfile;
     }
-    if (message.user !== undefined) {
-      obj.user = User.toJSON(message.user);
-    }
     return obj;
   },
 
-  create(base?: DeepPartial<CreateRuntimeRequest>): CreateRuntimeRequest {
-    return CreateRuntimeRequest.fromPartial(base ?? {});
+  create(base?: DeepPartial<RuntimeConfiguration>): RuntimeConfiguration {
+    return RuntimeConfiguration.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<CreateRuntimeRequest>): CreateRuntimeRequest {
-    const message = createBaseCreateRuntimeRequest();
+  fromPartial(object: DeepPartial<RuntimeConfiguration>): RuntimeConfiguration {
+    const message = createBaseRuntimeConfiguration();
     message.tag = object.tag ?? "";
     message.dockerfile = object.dockerfile ?? "";
-    message.user = (object.user !== undefined && object.user !== null) ? User.fromPartial(object.user) : undefined;
     return message;
   },
 };
 
-function createBaseRuntime(): Runtime {
+function createBaseBriefRuntime(): BriefRuntime {
   return { tag: "", registryUrl: "" };
 }
 
-export const Runtime = {
-  encode(message: Runtime, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const BriefRuntime = {
+  encode(message: BriefRuntime, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.tag !== "") {
       writer.uint32(10).string(message.tag);
     }
@@ -121,10 +115,10 @@ export const Runtime = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): Runtime {
+  decode(input: _m0.Reader | Uint8Array, length?: number): BriefRuntime {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseRuntime();
+    const message = createBaseBriefRuntime();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -151,14 +145,14 @@ export const Runtime = {
     return message;
   },
 
-  fromJSON(object: any): Runtime {
+  fromJSON(object: any): BriefRuntime {
     return {
       tag: isSet(object.tag) ? globalThis.String(object.tag) : "",
       registryUrl: isSet(object.registryUrl) ? globalThis.String(object.registryUrl) : "",
     };
   },
 
-  toJSON(message: Runtime): unknown {
+  toJSON(message: BriefRuntime): unknown {
     const obj: any = {};
     if (message.tag !== "") {
       obj.tag = message.tag;
@@ -169,13 +163,178 @@ export const Runtime = {
     return obj;
   },
 
-  create(base?: DeepPartial<Runtime>): Runtime {
-    return Runtime.fromPartial(base ?? {});
+  create(base?: DeepPartial<BriefRuntime>): BriefRuntime {
+    return BriefRuntime.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<Runtime>): Runtime {
-    const message = createBaseRuntime();
+  fromPartial(object: DeepPartial<BriefRuntime>): BriefRuntime {
+    const message = createBaseBriefRuntime();
     message.tag = object.tag ?? "";
     message.registryUrl = object.registryUrl ?? "";
+    return message;
+  },
+};
+
+function createBaseDetailedRuntime(): DetailedRuntime {
+  return { tag: "", registryUrl: "", dockerfile: "" };
+}
+
+export const DetailedRuntime = {
+  encode(message: DetailedRuntime, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.tag !== "") {
+      writer.uint32(10).string(message.tag);
+    }
+    if (message.registryUrl !== "") {
+      writer.uint32(18).string(message.registryUrl);
+    }
+    if (message.dockerfile !== "") {
+      writer.uint32(26).string(message.dockerfile);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DetailedRuntime {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDetailedRuntime();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.tag = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.registryUrl = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.dockerfile = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DetailedRuntime {
+    return {
+      tag: isSet(object.tag) ? globalThis.String(object.tag) : "",
+      registryUrl: isSet(object.registryUrl) ? globalThis.String(object.registryUrl) : "",
+      dockerfile: isSet(object.dockerfile) ? globalThis.String(object.dockerfile) : "",
+    };
+  },
+
+  toJSON(message: DetailedRuntime): unknown {
+    const obj: any = {};
+    if (message.tag !== "") {
+      obj.tag = message.tag;
+    }
+    if (message.registryUrl !== "") {
+      obj.registryUrl = message.registryUrl;
+    }
+    if (message.dockerfile !== "") {
+      obj.dockerfile = message.dockerfile;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<DetailedRuntime>): DetailedRuntime {
+    return DetailedRuntime.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<DetailedRuntime>): DetailedRuntime {
+    const message = createBaseDetailedRuntime();
+    message.tag = object.tag ?? "";
+    message.registryUrl = object.registryUrl ?? "";
+    message.dockerfile = object.dockerfile ?? "";
+    return message;
+  },
+};
+
+function createBaseUpdatedRuntimeResponse(): UpdatedRuntimeResponse {
+  return { runtime: undefined, logs: undefined };
+}
+
+export const UpdatedRuntimeResponse = {
+  encode(message: UpdatedRuntimeResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.runtime !== undefined) {
+      DetailedRuntime.encode(message.runtime, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.logs !== undefined) {
+      Logs.encode(message.logs, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UpdatedRuntimeResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdatedRuntimeResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.runtime = DetailedRuntime.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.logs = Logs.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdatedRuntimeResponse {
+    return {
+      runtime: isSet(object.runtime) ? DetailedRuntime.fromJSON(object.runtime) : undefined,
+      logs: isSet(object.logs) ? Logs.fromJSON(object.logs) : undefined,
+    };
+  },
+
+  toJSON(message: UpdatedRuntimeResponse): unknown {
+    const obj: any = {};
+    if (message.runtime !== undefined) {
+      obj.runtime = DetailedRuntime.toJSON(message.runtime);
+    }
+    if (message.logs !== undefined) {
+      obj.logs = Logs.toJSON(message.logs);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UpdatedRuntimeResponse>): UpdatedRuntimeResponse {
+    return UpdatedRuntimeResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<UpdatedRuntimeResponse>): UpdatedRuntimeResponse {
+    const message = createBaseUpdatedRuntimeResponse();
+    message.runtime = (object.runtime !== undefined && object.runtime !== null)
+      ? DetailedRuntime.fromPartial(object.runtime)
+      : undefined;
+    message.logs = (object.logs !== undefined && object.logs !== null) ? Logs.fromPartial(object.logs) : undefined;
     return message;
   },
 };
@@ -187,9 +346,26 @@ export const RuntimeServiceDefinition = {
   methods: {
     createRuntime: {
       name: "CreateRuntime",
-      requestType: CreateRuntimeRequest,
+      requestType: RuntimeConfiguration,
       requestStream: false,
-      responseType: Runtime,
+      responseType: UpdatedRuntimeResponse,
+      responseStream: false,
+      options: {},
+    },
+    editRuntime: {
+      name: "EditRuntime",
+      requestType: RuntimeConfiguration,
+      requestStream: false,
+      responseType: UpdatedRuntimeResponse,
+      responseStream: false,
+      options: {},
+    },
+    /** rpc DeleteRuntime(BriefRuntime) returns (Empty);  TODO: Find a correct way to remove images from registry */
+    getRuntimeDetails: {
+      name: "GetRuntimeDetails",
+      requestType: BriefRuntime,
+      requestStream: false,
+      responseType: DetailedRuntime,
       responseStream: false,
       options: {},
     },
@@ -197,7 +373,7 @@ export const RuntimeServiceDefinition = {
       name: "GetRuntimeTags",
       requestType: Empty,
       requestStream: false,
-      responseType: Runtime,
+      responseType: BriefRuntime,
       responseStream: true,
       options: {},
     },
@@ -205,16 +381,40 @@ export const RuntimeServiceDefinition = {
 } as const;
 
 export interface RuntimeServiceImplementation<CallContextExt = {}> {
-  createRuntime(request: CreateRuntimeRequest, context: CallContext & CallContextExt): Promise<DeepPartial<Runtime>>;
+  createRuntime(
+    request: RuntimeConfiguration,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<UpdatedRuntimeResponse>>;
+  editRuntime(
+    request: RuntimeConfiguration,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<UpdatedRuntimeResponse>>;
+  /** rpc DeleteRuntime(BriefRuntime) returns (Empty);  TODO: Find a correct way to remove images from registry */
+  getRuntimeDetails(
+    request: BriefRuntime,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<DetailedRuntime>>;
   getRuntimeTags(
     request: Empty,
     context: CallContext & CallContextExt,
-  ): ServerStreamingMethodResult<DeepPartial<Runtime>>;
+  ): ServerStreamingMethodResult<DeepPartial<BriefRuntime>>;
 }
 
 export interface RuntimeServiceClient<CallOptionsExt = {}> {
-  createRuntime(request: DeepPartial<CreateRuntimeRequest>, options?: CallOptions & CallOptionsExt): Promise<Runtime>;
-  getRuntimeTags(request: DeepPartial<Empty>, options?: CallOptions & CallOptionsExt): AsyncIterable<Runtime>;
+  createRuntime(
+    request: DeepPartial<RuntimeConfiguration>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<UpdatedRuntimeResponse>;
+  editRuntime(
+    request: DeepPartial<RuntimeConfiguration>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<UpdatedRuntimeResponse>;
+  /** rpc DeleteRuntime(BriefRuntime) returns (Empty);  TODO: Find a correct way to remove images from registry */
+  getRuntimeDetails(
+    request: DeepPartial<BriefRuntime>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<DetailedRuntime>;
+  getRuntimeTags(request: DeepPartial<Empty>, options?: CallOptions & CallOptionsExt): AsyncIterable<BriefRuntime>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
