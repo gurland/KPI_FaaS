@@ -10,7 +10,8 @@ from sqlalchemy.orm import Session
 
 from .cfg import DOCKER_REGISTRY_URL
 from .docker_image import DockerImage
-from .contracts.faas import RuntimeServiceBase, CreateRuntimeRequest, BriefRuntime, DetailedRuntime, Empty, User
+from .contracts.faas import RuntimeServiceBase, RuntimeConfiguration, BriefRuntime, DetailedRuntime, Empty, \
+    UpdatedRuntimeResponse, Logs
 from .models import RuntimeModel, engine
 import docker
 
@@ -65,11 +66,9 @@ class RuntimeService(RuntimeServiceBase):
 
         return new_mapping
 
-
-
     async def create_runtime(
-        self, request: CreateRuntimeRequest, metadata: MetadataLike = None
-    ) -> BriefRuntime:
+            self, request: RuntimeConfiguration, metadata: MetadataLike = None
+    ) -> UpdatedRuntimeResponse:
         with Session(engine) as session:
             existing_runtime: RuntimeModel | None = session.query(RuntimeModel).filter(
                 RuntimeModel.tag == request.tag
@@ -82,30 +81,83 @@ class RuntimeService(RuntimeServiceBase):
                 )
 
         user_id = metadata.get("user-id")
-        print(user_id, metadata)
 
-        container = DockerImage(tag=request.tag, dockerfile=request.dockerfile, registry_url=DOCKER_REGISTRY_URL)
-        container.build()
-        container.push()
-
-        # TODO: add correct database record creation
-
-        return BriefRuntime(
-            tag=request.tag, registry_url="qweqwe"
+        image = DockerImage(
+            tag=request.tag,
+            dockerfile=request.dockerfile,
+            base_registry_url=DOCKER_REGISTRY_URL
         )
+
+        try:
+            image.build()
+            image_url = image.push()
+        except Exception as e:
+            raise GRPCError(
+                Status.INVALID_ARGUMENT,
+                f"Could not properly build or push the image. Error: {e}"
+            )
 
         new_runtime = RuntimeModel(
-            user_id=request.user.user_id,
+            user_id=user_id,
             tag=request.tag,
-            registry_url=request.registry_url,
+            registry_url=image_url,
             dockerfile=request.dockerfile,
         )
+
         session.add(new_runtime)
         session.commit()
-        return new_runtime.to_runtime_message()
 
-    async def get_runtime_tags(self, _request: Empty) -> AsyncIterator[BriefRuntime]:
+        return UpdatedRuntimeResponse(
+            runtime=new_runtime.to_deatiled_runtime(),
+            logs=Logs(
+                log_lines=image.logs
+            )
+        )
+
+    async def edit_runtime(
+            self, request: RuntimeConfiguration, metadata: MetadataLike = None
+    ) -> UpdatedRuntimeResponse:
         with Session(engine) as session:
-            runtime_models_query = select(RuntimeModel)
+            existing_runtime: RuntimeModel | None = session.query(RuntimeModel).filter(
+                RuntimeModel.tag == request.tag
+            ).first()
+
+            if not existing_runtime:
+                raise GRPCError(
+                    Status.NOT_FOUND,
+                    f"Runtime with tag '{request.tag}' does not exist",
+                )
+
+            image = DockerImage(
+                tag=request.tag,
+                dockerfile=request.dockerfile,
+                base_registry_url=DOCKER_REGISTRY_URL
+            )
+
+            try:
+                image.build()
+                image_url = image.push()
+            except Exception as e:
+                raise GRPCError(
+                    Status.INVALID_ARGUMENT,
+                    f"Could not properly build or push the image. Error: {e}"
+                )
+
+            existing_runtime.dockerfile = request.dockerfile
+            existing_runtime.registry_url = image_url
+            session.commit()
+
+            return UpdatedRuntimeResponse(
+                runtime=existing_runtime.to_deatiled_runtime(),
+                logs=Logs(
+                    log_lines=image.logs
+                )
+            )
+
+    async def get_runtime_tags(
+            self, _request: Empty, metadata: MetadataLike = None
+    ) -> AsyncIterator[BriefRuntime]:
+        with Session(engine) as session:
+            runtime_models_query = select(RuntimeModel).where(RuntimeModel.user_id == user_id)
             for runtime_model in session.scalars(runtime_models_query):
                 yield runtime_model.to_brief_runtime()
