@@ -28,7 +28,7 @@ message ChangeFunctionCodeRequest {
   string code = 2;
 }
 
-message ChangeFunctionRuntime {
+message ChangeFunctionRuntimeRequest {
   uint32 function_id = 1;
   string runtime_tag = 2;
 }
@@ -37,7 +37,7 @@ service FunctionService {
   rpc CreateFunction(FunctionConfiguration) returns (DetailedFunction);
 
   rpc ChangeFunctionCode(ChangeFunctionCodeRequest) returns (DetailedFunction);
-  rpc ChangeFunctionRuntime(ChangeFunctionRuntime) returns (DetailedFunction);
+  rpc ChangeFunctionRuntime(ChangeFunctionRuntimeRequest) returns (DetailedFunction);
 
   rpc DeleteFunction(BriefFunction) returns (Empty);
   rpc GetFunction(BriefFunction) returns (DetailedFunction);
