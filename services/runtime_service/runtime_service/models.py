@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from .contracts.faas import BriefRuntime, DetailedRuntime
 
-engine = create_engine("sqlite+pysqlite:///:memory:", echo=True)
+engine = create_engine("sqlite+pysqlite:///:memory:")
 
 
 class Base(DeclarativeBase):
