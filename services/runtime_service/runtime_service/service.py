@@ -158,6 +158,6 @@ class RuntimeService(RuntimeServiceBase):
             self, _request: Empty, metadata: MetadataLike = None
     ) -> AsyncIterator[BriefRuntime]:
         with Session(engine) as session:
-            runtime_models_query = select(RuntimeModel).where(RuntimeModel.user_id == user_id)
+            runtime_models_query = select(RuntimeModel)
             for runtime_model in session.scalars(runtime_models_query):
                 yield runtime_model.to_brief_runtime()
