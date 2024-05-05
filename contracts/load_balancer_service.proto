@@ -1,0 +1,35 @@
+// Is responsible for handling a pool of EdgeNodes that are able to start runtimes.
+// It keeps track of warm runtimes.
+// When a trigger occur the Load Balancer should have
+//    Runtime tag;
+//    Function code;
+//    Trigger Context;
+// We get a warm runtime
+
+
+// Each EdgeNode is capable of caching a runtime and a function
+
+syntax = "proto3";
+
+import "common.proto";
+import "function_service.proto";
+import "runtime_service.proto";
+
+package faas;
+
+
+message InvokeFunctionRequest {
+  DetailedFunction function = 1;
+  BriefRuntime runtime = 2;
+  Value trigger_context = 3;
+}
+
+message InvocationResult {
+  Value returned_value = 1;
+  Logs log_lines = 2;
+}
+
+
+service LoadBalancerService {
+  rpc InvokeFunction(InvokeFunctionRequest) returns (InvocationResult);
+}
