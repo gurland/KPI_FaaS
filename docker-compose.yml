@@ -6,6 +6,8 @@ services:
       - "5555:5000"
     volumes:
       - /mnt/faas-registry:/var/lib/registry
+    environment:
+      - REGISTRY_STORAGE_DELETE_ENABLED=true
 
   registry-ui:
     image: joxit/docker-registry-ui:main
