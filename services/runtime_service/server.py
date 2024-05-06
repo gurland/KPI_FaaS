@@ -15,7 +15,6 @@ async def main(host: str = '127.0.0.1', port: int = 50051) -> None:
         print(f'Serving on {host}:{port}')
         await server.wait_closed()
 
-logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
 if __name__ == '__main__':
     asyncio.run(main(

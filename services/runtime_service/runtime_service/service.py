@@ -4,11 +4,11 @@ import io
 
 import grpclib
 from betterproto.grpc.grpclib_client import MetadataLike
-from sqlalchemy import select
+from sqlalchemy import select, func
 from grpclib import GRPCError, Status
 from sqlalchemy.orm import Session
 
-from .cfg import DOCKER_REGISTRY_URL
+from .cfg import DOCKER_REGISTRY_URL, logger
 from .docker_image import DockerImage
 from .contracts.faas import RuntimeServiceBase, RuntimeConfiguration, BriefRuntime, DetailedRuntime, Empty, \
     UpdatedRuntimeResponse, Logs
@@ -159,5 +159,25 @@ class RuntimeService(RuntimeServiceBase):
     ) -> AsyncIterator[BriefRuntime]:
         with Session(engine) as session:
             runtime_models_query = select(RuntimeModel)
+            count = session.query(func.count(RuntimeModel.tag)).scalar()
+
+            logger.info("count: %s", count)
             for runtime_model in session.scalars(runtime_models_query):
+                logger.info(f"Found runtime model: {runtime_model}")
                 yield runtime_model.to_brief_runtime()
+
+    async def get_runtime_details(
+        self, request: BriefRuntime, metadata: MetadataLike = None
+    ) -> DetailedRuntime:
+        with Session(engine) as session:
+            existing_runtime: RuntimeModel | None = session.query(RuntimeModel).filter(
+                RuntimeModel.tag == request.tag
+            ).first()
+
+            if not existing_runtime:
+                raise GRPCError(
+                    Status.NOT_FOUND,
+                    f"Runtime with tag '{request.tag}' does not exist",
+                )
+
+            return existing_runtime.to_deatiled_runtime()
