@@ -23,6 +23,10 @@ message BriefFunction {
   string function_name = 3;
 }
 
+message GetFunctionDetailsRequest {
+  uint32 function_id = 1;
+}
+
 message ChangeFunctionCodeRequest {
   uint32 function_id = 1;
   string code = 2;
@@ -40,6 +44,6 @@ service FunctionService {
   rpc ChangeFunctionRuntime(ChangeFunctionRuntimeRequest) returns (DetailedFunction);
 
   rpc DeleteFunction(BriefFunction) returns (Empty);
-  rpc GetFunction(BriefFunction) returns (DetailedFunction);
+  rpc GetFunction(GetFunctionDetailsRequest) returns (DetailedFunction);
   rpc GetFunctions(Empty) returns (stream BriefFunction);
 }
