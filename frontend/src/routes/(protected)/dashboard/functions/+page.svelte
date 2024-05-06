@@ -39,17 +39,16 @@
 		TableRow,
 		TableCell
 	} from '@/components/ui/table';
-	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
-	$: runtimes = data.runtimes;
+	const { briefFunctions } = data;
 </script>
 
 <header
 	class="sticky top-0 z-10 flex h-[57px] items-center justify-between gap-1 border-b bg-background px-4"
 >
-	<h1 class="text-xl font-semibold">Runtimes</h1>
+	<h1 class="text-xl font-semibold">Functions</h1>
 	<Tooltip.Root>
 		<Tooltip.Trigger asChild let:builder>
 			<Button
@@ -58,31 +57,29 @@
 				class="rounded-lg"
 				aria-label="Functions"
 				builders={[builder]}
-				href="/dashboard/runtimes/create"
+				href="/dashboard/functions/create"
 			>
 				<PlusIcon class="size-5" />
 			</Button>
 		</Tooltip.Trigger>
-		<Tooltip.Content side="right" sideOffset={5}>Create new runtime</Tooltip.Content>
+		<Tooltip.Content side="right" sideOffset={5}>Create new function</Tooltip.Content>
 	</Tooltip.Root>
 </header>
 <main class="mx-auto grid w-full max-w-lg grid-cols-1 gap-4 overflow-auto p-4">
 	<Table>
 		<TableHeader>
 			<TableRow>
-				<TableHead>Tag</TableHead>
-				<TableHead>Registry url</TableHead>
+				<TableHead>Id</TableHead>
+				<TableHead>Name</TableHead>
+				<TableHead>Runtime</TableHead>
 			</TableRow>
 		</TableHeader>
 		<TableBody>
-			{#each runtimes as runtime, i (i)}
-				<TableRow
-					on:click={() => {
-						goto(`/dashboard/runtimes/${runtime.tag}`);
-					}}
-				>
-					<TableCell>{runtime.tag}</TableCell>
-					<TableCell>{runtime.registryUrl}</TableCell>
+			{#each briefFunctions as briefFunction, i (i)}
+				<TableRow>
+					<TableCell>{briefFunction.functionId}</TableCell>
+					<TableCell>{briefFunction.functionName}</TableCell>
+					<TableCell>{briefFunction.runtimeTag}</TableCell>
 				</TableRow>
 			{/each}
 		</TableBody>

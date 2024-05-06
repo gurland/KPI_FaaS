@@ -1,16 +1,6 @@
 import { RuntimeServiceDefinition, type RuntimeServiceClient } from '@/server/rpc/runtime_service';
-
-import { Metadata, createChannel, createClientFactory, type ClientMiddleware } from 'nice-grpc';
-import type { User } from '../rpc/auth_service';
-
-const authMiddleware: ClientMiddleware = async function* (call, options) {
-	const userMetaData = options.metadata?.get('user') ?? '{"user-id": null}';
-	const user = JSON.parse(userMetaData) as User;
-
-	return yield* call.next(call.request, {
-		metadata: new Metadata({ ['user-id']: user.userId.toString() })
-	});
-};
+import { createChannel, createClientFactory } from 'nice-grpc';
+import { authMiddleware } from './middlewares';
 
 const clientFactory = createClientFactory().use(authMiddleware);
 

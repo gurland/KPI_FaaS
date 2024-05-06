@@ -7,25 +7,35 @@ export const protobufPackage = "faas";
 
 export interface FunctionConfiguration {
   functionName: string;
-  runtimeTag: number;
+  runtimeTag: string;
   code: string;
 }
 
 export interface DetailedFunction {
   functionId: number;
-  runtimeTag: number;
+  runtimeTag: string;
   functionName: string;
   code: string;
 }
 
 export interface BriefFunction {
   functionId: number;
-  runtimeTag: number;
+  runtimeTag: string;
   functionName: string;
 }
 
+export interface ChangeFunctionCodeRequest {
+  functionId: number;
+  code: string;
+}
+
+export interface ChangeFunctionRuntimeRequest {
+  functionId: number;
+  runtimeTag: string;
+}
+
 function createBaseFunctionConfiguration(): FunctionConfiguration {
-  return { functionName: "", runtimeTag: 0, code: "" };
+  return { functionName: "", runtimeTag: "", code: "" };
 }
 
 export const FunctionConfiguration = {
@@ -33,8 +43,8 @@ export const FunctionConfiguration = {
     if (message.functionName !== "") {
       writer.uint32(10).string(message.functionName);
     }
-    if (message.runtimeTag !== 0) {
-      writer.uint32(16).uint32(message.runtimeTag);
+    if (message.runtimeTag !== "") {
+      writer.uint32(18).string(message.runtimeTag);
     }
     if (message.code !== "") {
       writer.uint32(26).string(message.code);
@@ -57,11 +67,11 @@ export const FunctionConfiguration = {
           message.functionName = reader.string();
           continue;
         case 2:
-          if (tag !== 16) {
+          if (tag !== 18) {
             break;
           }
 
-          message.runtimeTag = reader.uint32();
+          message.runtimeTag = reader.string();
           continue;
         case 3:
           if (tag !== 26) {
@@ -82,7 +92,7 @@ export const FunctionConfiguration = {
   fromJSON(object: any): FunctionConfiguration {
     return {
       functionName: isSet(object.functionName) ? globalThis.String(object.functionName) : "",
-      runtimeTag: isSet(object.runtimeTag) ? globalThis.Number(object.runtimeTag) : 0,
+      runtimeTag: isSet(object.runtimeTag) ? globalThis.String(object.runtimeTag) : "",
       code: isSet(object.code) ? globalThis.String(object.code) : "",
     };
   },
@@ -92,8 +102,8 @@ export const FunctionConfiguration = {
     if (message.functionName !== "") {
       obj.functionName = message.functionName;
     }
-    if (message.runtimeTag !== 0) {
-      obj.runtimeTag = Math.round(message.runtimeTag);
+    if (message.runtimeTag !== "") {
+      obj.runtimeTag = message.runtimeTag;
     }
     if (message.code !== "") {
       obj.code = message.code;
@@ -107,14 +117,14 @@ export const FunctionConfiguration = {
   fromPartial(object: DeepPartial<FunctionConfiguration>): FunctionConfiguration {
     const message = createBaseFunctionConfiguration();
     message.functionName = object.functionName ?? "";
-    message.runtimeTag = object.runtimeTag ?? 0;
+    message.runtimeTag = object.runtimeTag ?? "";
     message.code = object.code ?? "";
     return message;
   },
 };
 
 function createBaseDetailedFunction(): DetailedFunction {
-  return { functionId: 0, runtimeTag: 0, functionName: "", code: "" };
+  return { functionId: 0, runtimeTag: "", functionName: "", code: "" };
 }
 
 export const DetailedFunction = {
@@ -122,8 +132,8 @@ export const DetailedFunction = {
     if (message.functionId !== 0) {
       writer.uint32(8).uint32(message.functionId);
     }
-    if (message.runtimeTag !== 0) {
-      writer.uint32(16).uint32(message.runtimeTag);
+    if (message.runtimeTag !== "") {
+      writer.uint32(18).string(message.runtimeTag);
     }
     if (message.functionName !== "") {
       writer.uint32(26).string(message.functionName);
@@ -149,11 +159,11 @@ export const DetailedFunction = {
           message.functionId = reader.uint32();
           continue;
         case 2:
-          if (tag !== 16) {
+          if (tag !== 18) {
             break;
           }
 
-          message.runtimeTag = reader.uint32();
+          message.runtimeTag = reader.string();
           continue;
         case 3:
           if (tag !== 26) {
@@ -181,7 +191,7 @@ export const DetailedFunction = {
   fromJSON(object: any): DetailedFunction {
     return {
       functionId: isSet(object.functionId) ? globalThis.Number(object.functionId) : 0,
-      runtimeTag: isSet(object.runtimeTag) ? globalThis.Number(object.runtimeTag) : 0,
+      runtimeTag: isSet(object.runtimeTag) ? globalThis.String(object.runtimeTag) : "",
       functionName: isSet(object.functionName) ? globalThis.String(object.functionName) : "",
       code: isSet(object.code) ? globalThis.String(object.code) : "",
     };
@@ -192,8 +202,8 @@ export const DetailedFunction = {
     if (message.functionId !== 0) {
       obj.functionId = Math.round(message.functionId);
     }
-    if (message.runtimeTag !== 0) {
-      obj.runtimeTag = Math.round(message.runtimeTag);
+    if (message.runtimeTag !== "") {
+      obj.runtimeTag = message.runtimeTag;
     }
     if (message.functionName !== "") {
       obj.functionName = message.functionName;
@@ -210,7 +220,7 @@ export const DetailedFunction = {
   fromPartial(object: DeepPartial<DetailedFunction>): DetailedFunction {
     const message = createBaseDetailedFunction();
     message.functionId = object.functionId ?? 0;
-    message.runtimeTag = object.runtimeTag ?? 0;
+    message.runtimeTag = object.runtimeTag ?? "";
     message.functionName = object.functionName ?? "";
     message.code = object.code ?? "";
     return message;
@@ -218,7 +228,7 @@ export const DetailedFunction = {
 };
 
 function createBaseBriefFunction(): BriefFunction {
-  return { functionId: 0, runtimeTag: 0, functionName: "" };
+  return { functionId: 0, runtimeTag: "", functionName: "" };
 }
 
 export const BriefFunction = {
@@ -226,8 +236,8 @@ export const BriefFunction = {
     if (message.functionId !== 0) {
       writer.uint32(8).uint32(message.functionId);
     }
-    if (message.runtimeTag !== 0) {
-      writer.uint32(16).uint32(message.runtimeTag);
+    if (message.runtimeTag !== "") {
+      writer.uint32(18).string(message.runtimeTag);
     }
     if (message.functionName !== "") {
       writer.uint32(26).string(message.functionName);
@@ -250,11 +260,11 @@ export const BriefFunction = {
           message.functionId = reader.uint32();
           continue;
         case 2:
-          if (tag !== 16) {
+          if (tag !== 18) {
             break;
           }
 
-          message.runtimeTag = reader.uint32();
+          message.runtimeTag = reader.string();
           continue;
         case 3:
           if (tag !== 26) {
@@ -275,7 +285,7 @@ export const BriefFunction = {
   fromJSON(object: any): BriefFunction {
     return {
       functionId: isSet(object.functionId) ? globalThis.Number(object.functionId) : 0,
-      runtimeTag: isSet(object.runtimeTag) ? globalThis.Number(object.runtimeTag) : 0,
+      runtimeTag: isSet(object.runtimeTag) ? globalThis.String(object.runtimeTag) : "",
       functionName: isSet(object.functionName) ? globalThis.String(object.functionName) : "",
     };
   },
@@ -285,8 +295,8 @@ export const BriefFunction = {
     if (message.functionId !== 0) {
       obj.functionId = Math.round(message.functionId);
     }
-    if (message.runtimeTag !== 0) {
-      obj.runtimeTag = Math.round(message.runtimeTag);
+    if (message.runtimeTag !== "") {
+      obj.runtimeTag = message.runtimeTag;
     }
     if (message.functionName !== "") {
       obj.functionName = message.functionName;
@@ -300,8 +310,156 @@ export const BriefFunction = {
   fromPartial(object: DeepPartial<BriefFunction>): BriefFunction {
     const message = createBaseBriefFunction();
     message.functionId = object.functionId ?? 0;
-    message.runtimeTag = object.runtimeTag ?? 0;
+    message.runtimeTag = object.runtimeTag ?? "";
     message.functionName = object.functionName ?? "";
+    return message;
+  },
+};
+
+function createBaseChangeFunctionCodeRequest(): ChangeFunctionCodeRequest {
+  return { functionId: 0, code: "" };
+}
+
+export const ChangeFunctionCodeRequest = {
+  encode(message: ChangeFunctionCodeRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.functionId !== 0) {
+      writer.uint32(8).uint32(message.functionId);
+    }
+    if (message.code !== "") {
+      writer.uint32(18).string(message.code);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ChangeFunctionCodeRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseChangeFunctionCodeRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.functionId = reader.uint32();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.code = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ChangeFunctionCodeRequest {
+    return {
+      functionId: isSet(object.functionId) ? globalThis.Number(object.functionId) : 0,
+      code: isSet(object.code) ? globalThis.String(object.code) : "",
+    };
+  },
+
+  toJSON(message: ChangeFunctionCodeRequest): unknown {
+    const obj: any = {};
+    if (message.functionId !== 0) {
+      obj.functionId = Math.round(message.functionId);
+    }
+    if (message.code !== "") {
+      obj.code = message.code;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<ChangeFunctionCodeRequest>): ChangeFunctionCodeRequest {
+    return ChangeFunctionCodeRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<ChangeFunctionCodeRequest>): ChangeFunctionCodeRequest {
+    const message = createBaseChangeFunctionCodeRequest();
+    message.functionId = object.functionId ?? 0;
+    message.code = object.code ?? "";
+    return message;
+  },
+};
+
+function createBaseChangeFunctionRuntimeRequest(): ChangeFunctionRuntimeRequest {
+  return { functionId: 0, runtimeTag: "" };
+}
+
+export const ChangeFunctionRuntimeRequest = {
+  encode(message: ChangeFunctionRuntimeRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.functionId !== 0) {
+      writer.uint32(8).uint32(message.functionId);
+    }
+    if (message.runtimeTag !== "") {
+      writer.uint32(18).string(message.runtimeTag);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ChangeFunctionRuntimeRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseChangeFunctionRuntimeRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.functionId = reader.uint32();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.runtimeTag = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ChangeFunctionRuntimeRequest {
+    return {
+      functionId: isSet(object.functionId) ? globalThis.Number(object.functionId) : 0,
+      runtimeTag: isSet(object.runtimeTag) ? globalThis.String(object.runtimeTag) : "",
+    };
+  },
+
+  toJSON(message: ChangeFunctionRuntimeRequest): unknown {
+    const obj: any = {};
+    if (message.functionId !== 0) {
+      obj.functionId = Math.round(message.functionId);
+    }
+    if (message.runtimeTag !== "") {
+      obj.runtimeTag = message.runtimeTag;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<ChangeFunctionRuntimeRequest>): ChangeFunctionRuntimeRequest {
+    return ChangeFunctionRuntimeRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<ChangeFunctionRuntimeRequest>): ChangeFunctionRuntimeRequest {
+    const message = createBaseChangeFunctionRuntimeRequest();
+    message.functionId = object.functionId ?? 0;
+    message.runtimeTag = object.runtimeTag ?? "";
     return message;
   },
 };
@@ -319,9 +477,17 @@ export const FunctionServiceDefinition = {
       responseStream: false,
       options: {},
     },
-    editFunction: {
-      name: "EditFunction",
-      requestType: FunctionConfiguration,
+    changeFunctionCode: {
+      name: "ChangeFunctionCode",
+      requestType: ChangeFunctionCodeRequest,
+      requestStream: false,
+      responseType: DetailedFunction,
+      responseStream: false,
+      options: {},
+    },
+    changeFunctionRuntime: {
+      name: "ChangeFunctionRuntime",
+      requestType: ChangeFunctionRuntimeRequest,
       requestStream: false,
       responseType: DetailedFunction,
       responseStream: false,
@@ -359,8 +525,12 @@ export interface FunctionServiceImplementation<CallContextExt = {}> {
     request: FunctionConfiguration,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<DetailedFunction>>;
-  editFunction(
-    request: FunctionConfiguration,
+  changeFunctionCode(
+    request: ChangeFunctionCodeRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<DetailedFunction>>;
+  changeFunctionRuntime(
+    request: ChangeFunctionRuntimeRequest,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<DetailedFunction>>;
   deleteFunction(request: BriefFunction, context: CallContext & CallContextExt): Promise<DeepPartial<Empty>>;
@@ -376,8 +546,12 @@ export interface FunctionServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<FunctionConfiguration>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<DetailedFunction>;
-  editFunction(
-    request: DeepPartial<FunctionConfiguration>,
+  changeFunctionCode(
+    request: DeepPartial<ChangeFunctionCodeRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<DetailedFunction>;
+  changeFunctionRuntime(
+    request: DeepPartial<ChangeFunctionRuntimeRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<DetailedFunction>;
   deleteFunction(request: DeepPartial<BriefFunction>, options?: CallOptions & CallOptionsExt): Promise<Empty>;
