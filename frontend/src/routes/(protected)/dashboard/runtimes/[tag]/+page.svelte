@@ -44,6 +44,8 @@
 	export let data: PageData;
 
 	export let form: ActionData;
+
+	const { detailedRuntime } = data;
 </script>
 
 <header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
@@ -78,7 +80,7 @@
 					name="dockerfile"
 					placeholder="Dockerfile content here"
 					class="min-h-[9.5rem]"
-					value={(form?.dockerfile ?? data.runtime?.dockerfile ?? '').toString()}
+					value={(form?.dockerfile ?? detailedRuntime?.dockerfile ?? '').toString()}
 				/>
 			</div>
 			<Button type="submit" class="w-full" disabled={isFormLoading}>

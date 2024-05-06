@@ -4,12 +4,12 @@ import { getRpcMetaData, runtimeService } from '@/server';
 
 export const load: PageServerLoad = async (event) => {
 	try {
-		const runtime = await runtimeService.getRuntimeDetails(
+		const detailedRuntime = await runtimeService.getRuntimeDetails(
 			{ tag: event.params.tag },
 			{ metadata: getRpcMetaData(event) }
 		);
 		return {
-			runtime,
+			detailedRuntime,
 			user: event.locals.user
 		};
 	} catch (e) {
