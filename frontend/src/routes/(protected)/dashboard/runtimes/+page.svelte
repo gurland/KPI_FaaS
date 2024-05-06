@@ -39,6 +39,7 @@
 		TableRow,
 		TableCell
 	} from '@/components/ui/table';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -75,7 +76,11 @@
 		</TableHeader>
 		<TableBody>
 			{#each runtimes as runtime, i (i)}
-				<TableRow>
+				<TableRow
+					on:click={() => {
+						goto(`/dashboard/runtimes/${runtime.tag}`);
+					}}
+				>
 					<TableCell>{runtime.tag}</TableCell>
 					<TableCell>{runtime.registryUrl}</TableCell>
 				</TableRow>

@@ -1,12 +1,12 @@
 import { fail, redirect, type ActionFailure, type Redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoadEvent, RequestEvent } from './$types';
+import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import { getRpcMetaData, runtimeService } from '@/server';
 
-export function load({ locals }: PageServerLoadEvent) {
+export const load: PageServerLoad = ({ locals }) => {
 	return {
 		user: locals.user
 	};
-}
+};
 
 type CreateRuntimeFormData = {
 	tag: FormDataEntryValue;
@@ -36,7 +36,6 @@ export const actions: Actions = {
 				},
 				{ metadata: getRpcMetaData(event) }
 			);
-			console.log('Redirecting to /dashboard/runtimes');
 		} catch (e) {
 			if (e instanceof Error) {
 				console.error(e);
