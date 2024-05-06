@@ -43,7 +43,7 @@
 	};
 	export let data: PageData;
 
-	export let form: ActionData = data.runtime;
+	export let form: ActionData;
 </script>
 
 <header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
