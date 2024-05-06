@@ -6,7 +6,9 @@ from grpc_tools import protoc
 SERVICES = [
     Path("services") / "auth_service" / "auth_service" / "contracts",
     Path("services") / "runtime_service" / "runtime_service" / "contracts",
-    Path("services") / "crontab_service" / "crontab_service" / "contracts",
+    Path("services") / "crontab_trigger_service" / "crontab_trigger_service" / "contracts",
+    Path("services") / "function_service" / "function_service" / "contracts",
+    Path("services") / "load_balancer_service" / "load_balancer_service" / "contracts",
 ]
 
 TS_SERVICES = [
