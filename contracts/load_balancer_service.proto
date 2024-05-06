@@ -21,15 +21,24 @@ package faas;
 message InvokeFunctionRequest {
   DetailedFunction function = 1;
   BriefRuntime runtime = 2;
-  Value trigger_context = 3;
+  string json_trigger_context = 3;
 }
 
 message InvocationResult {
-  Value returned_value = 1;
+  string json = 1;
   Logs log_lines = 2;
+}
+
+message RegisterNodeRequest {
+  string ip = 1;
+}
+
+message NodeConfiguration {
+
 }
 
 
 service LoadBalancerService {
   rpc InvokeFunction(InvokeFunctionRequest) returns (InvocationResult);
+  rpc RegisterNode(RegisterNodeRequest) returns (NodeConfiguration);
 }
