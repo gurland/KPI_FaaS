@@ -39,6 +39,7 @@
 		TableRow,
 		TableCell
 	} from '@/components/ui/table';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -76,7 +77,11 @@
 		</TableHeader>
 		<TableBody>
 			{#each briefFunctions as briefFunction, i (i)}
-				<TableRow>
+				<TableRow
+					on:click={() => {
+						goto(`/dashboard/functions/${briefFunction.functionId}`);
+					}}
+				>
 					<TableCell>{briefFunction.functionId}</TableCell>
 					<TableCell>{briefFunction.functionName}</TableCell>
 					<TableCell>{briefFunction.runtimeTag}</TableCell>

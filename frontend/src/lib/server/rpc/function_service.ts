@@ -24,6 +24,10 @@ export interface BriefFunction {
   functionName: string;
 }
 
+export interface GetFunctionDetailsRequest {
+  functionId: number;
+}
+
 export interface ChangeFunctionCodeRequest {
   functionId: number;
   code: string;
@@ -316,6 +320,63 @@ export const BriefFunction = {
   },
 };
 
+function createBaseGetFunctionDetailsRequest(): GetFunctionDetailsRequest {
+  return { functionId: 0 };
+}
+
+export const GetFunctionDetailsRequest = {
+  encode(message: GetFunctionDetailsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.functionId !== 0) {
+      writer.uint32(8).uint32(message.functionId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetFunctionDetailsRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetFunctionDetailsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.functionId = reader.uint32();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetFunctionDetailsRequest {
+    return { functionId: isSet(object.functionId) ? globalThis.Number(object.functionId) : 0 };
+  },
+
+  toJSON(message: GetFunctionDetailsRequest): unknown {
+    const obj: any = {};
+    if (message.functionId !== 0) {
+      obj.functionId = Math.round(message.functionId);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<GetFunctionDetailsRequest>): GetFunctionDetailsRequest {
+    return GetFunctionDetailsRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<GetFunctionDetailsRequest>): GetFunctionDetailsRequest {
+    const message = createBaseGetFunctionDetailsRequest();
+    message.functionId = object.functionId ?? 0;
+    return message;
+  },
+};
+
 function createBaseChangeFunctionCodeRequest(): ChangeFunctionCodeRequest {
   return { functionId: 0, code: "" };
 }
@@ -503,7 +564,7 @@ export const FunctionServiceDefinition = {
     },
     getFunction: {
       name: "GetFunction",
-      requestType: BriefFunction,
+      requestType: GetFunctionDetailsRequest,
       requestStream: false,
       responseType: DetailedFunction,
       responseStream: false,
@@ -534,7 +595,10 @@ export interface FunctionServiceImplementation<CallContextExt = {}> {
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<DetailedFunction>>;
   deleteFunction(request: BriefFunction, context: CallContext & CallContextExt): Promise<DeepPartial<Empty>>;
-  getFunction(request: BriefFunction, context: CallContext & CallContextExt): Promise<DeepPartial<DetailedFunction>>;
+  getFunction(
+    request: GetFunctionDetailsRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<DetailedFunction>>;
   getFunctions(
     request: Empty,
     context: CallContext & CallContextExt,
@@ -555,7 +619,10 @@ export interface FunctionServiceClient<CallOptionsExt = {}> {
     options?: CallOptions & CallOptionsExt,
   ): Promise<DetailedFunction>;
   deleteFunction(request: DeepPartial<BriefFunction>, options?: CallOptions & CallOptionsExt): Promise<Empty>;
-  getFunction(request: DeepPartial<BriefFunction>, options?: CallOptions & CallOptionsExt): Promise<DetailedFunction>;
+  getFunction(
+    request: DeepPartial<GetFunctionDetailsRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<DetailedFunction>;
   getFunctions(request: DeepPartial<Empty>, options?: CallOptions & CallOptionsExt): AsyncIterable<BriefFunction>;
 }
 
