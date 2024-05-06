@@ -5,7 +5,7 @@ services:
     ports:
       - "5555:5000"
     volumes:
-      - /mnt/faas-registry:/var/lib/registry
+      - ./faas-registry:/var/lib/registry
     environment:
       - REGISTRY_STORAGE_DELETE_ENABLED=true
 
