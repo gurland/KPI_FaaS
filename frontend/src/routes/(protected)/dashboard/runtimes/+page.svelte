@@ -26,7 +26,7 @@
 	import * as Select from '$lib/components/ui/select';
 	import { page } from '$app/stores';
 	import { CircleAlert, Container, LoaderCircleIcon, PlusIcon } from 'lucide-svelte';
-	import type { ActionData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -40,7 +40,9 @@
 		TableCell
 	} from '@/components/ui/table';
 
-	$: runtimes = $page.data.runtimes ?? [];
+	export let data: PageData;
+
+	$: runtimes = data.runtimes;
 </script>
 
 <header
