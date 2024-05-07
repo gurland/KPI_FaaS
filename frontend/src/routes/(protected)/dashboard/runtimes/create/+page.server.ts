@@ -19,9 +19,9 @@ export const actions: Actions = {
 		event: RequestEvent
 	): Promise<CreateRuntimeFormData | ActionFailure<CreateRuntimeFormData> | Redirect> => {
 		const { request } = event;
-		const signupFormData = await request.formData();
-		const tag = signupFormData.get('tag') ?? '';
-		const dockerfile = signupFormData.get('dockerfile') ?? '';
+		const formData = await request.formData();
+		const tag = formData.get('tag') ?? '';
+		const dockerfile = formData.get('dockerfile') ?? '';
 
 		const createRuntimeResponse: CreateRuntimeFormData = {
 			tag,

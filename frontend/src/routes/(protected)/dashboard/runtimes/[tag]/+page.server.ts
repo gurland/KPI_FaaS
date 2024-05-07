@@ -30,8 +30,8 @@ export const actions: Actions = {
 	): Promise<UpdateRuntimeFormData | ActionFailure<UpdateRuntimeFormData> | Redirect> => {
 		const { request, params } = event;
 
-		const signupFormData = await request.formData();
-		const dockerfile = signupFormData.get('dockerfile') ?? '';
+		const formData = await request.formData();
+		const dockerfile = formData.get('dockerfile') ?? '';
 
 		const updateRuntimeResponse: UpdateRuntimeFormData = {
 			dockerfile

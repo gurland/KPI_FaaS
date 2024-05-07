@@ -46,11 +46,11 @@ export const actions: Actions = {
 		const { request, params } = event;
 
 		const functionId = parseInt(params.id);
-		const signupFormData = await request.formData();
-		const runtimeTag = signupFormData.get('runtimeTag') ?? '';
-		const code = signupFormData.get('code') ?? '';
-		const codeChanged = signupFormData.has('code');
-		const runtimeTagChanged = signupFormData.has('runtimeTag');
+		const formData = await request.formData();
+		const runtimeTag = formData.get('runtimeTag') ?? '';
+		const code = formData.get('code') ?? '';
+		const codeChanged = formData.has('code');
+		const runtimeTagChanged = formData.has('runtimeTag');
 
 		const updateFunctionResponse: UpdateFunctionFormData = {
 			runtimeTag,

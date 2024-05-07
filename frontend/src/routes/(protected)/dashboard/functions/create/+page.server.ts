@@ -30,10 +30,10 @@ export const actions: Actions = {
 		event: RequestEvent
 	): Promise<CreateFunctionFormData | ActionFailure<CreateFunctionFormData> | Redirect> => {
 		const { request } = event;
-		const signupFormData = await request.formData();
-		const runtimeTag = signupFormData.get('runtimeTag') ?? '';
-		const functionName = signupFormData.get('functionName') ?? '';
-		const code = signupFormData.get('code') ?? '';
+		const formData = await request.formData();
+		const runtimeTag = formData.get('runtimeTag') ?? '';
+		const functionName = formData.get('functionName') ?? '';
+		const code = formData.get('code') ?? '';
 
 		const createFunctionResponse: CreateFunctionFormData = {
 			functionName,

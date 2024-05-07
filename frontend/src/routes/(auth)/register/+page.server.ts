@@ -20,10 +20,10 @@ export const actions: Actions = {
 		event: RequestEvent
 	): Promise<RegisterFormData | ActionFailure<RegisterFormData> | Redirect> => {
 		const { request } = event;
-		const signupFormData = await request.formData();
-		const username = signupFormData.get('username') ?? '';
-		const password = signupFormData.get('password') ?? '';
-		const passwordConfirm = signupFormData.get('passwordConfirm') ?? '';
+		const formData = await request.formData();
+		const username = formData.get('username') ?? '';
+		const password = formData.get('password') ?? '';
+		const passwordConfirm = formData.get('passwordConfirm') ?? '';
 
 		const registerResponse: RegisterFormData = {
 			username,
