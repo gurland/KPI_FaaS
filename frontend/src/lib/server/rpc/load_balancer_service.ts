@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { type CallContext, type CallOptions } from "nice-grpc-common";
 import _m0 from "protobufjs/minimal";
-import { Logs, Value } from "./common";
+import { Logs } from "./common";
 import { DetailedFunction } from "./function_service";
 import { BriefRuntime } from "./runtime_service";
 
@@ -10,16 +10,23 @@ export const protobufPackage = "faas";
 export interface InvokeFunctionRequest {
   function: DetailedFunction | undefined;
   runtime: BriefRuntime | undefined;
-  triggerContext: Value | undefined;
+  jsonTriggerContext: string;
 }
 
 export interface InvocationResult {
-  returnedValue: Value | undefined;
+  json: string;
   logLines: Logs | undefined;
 }
 
+export interface RegisterNodeRequest {
+  ip: string;
+}
+
+export interface NodeConfiguration {
+}
+
 function createBaseInvokeFunctionRequest(): InvokeFunctionRequest {
-  return { function: undefined, runtime: undefined, triggerContext: undefined };
+  return { function: undefined, runtime: undefined, jsonTriggerContext: "" };
 }
 
 export const InvokeFunctionRequest = {
@@ -30,8 +37,8 @@ export const InvokeFunctionRequest = {
     if (message.runtime !== undefined) {
       BriefRuntime.encode(message.runtime, writer.uint32(18).fork()).ldelim();
     }
-    if (message.triggerContext !== undefined) {
-      Value.encode(message.triggerContext, writer.uint32(26).fork()).ldelim();
+    if (message.jsonTriggerContext !== "") {
+      writer.uint32(26).string(message.jsonTriggerContext);
     }
     return writer;
   },
@@ -62,7 +69,7 @@ export const InvokeFunctionRequest = {
             break;
           }
 
-          message.triggerContext = Value.decode(reader, reader.uint32());
+          message.jsonTriggerContext = reader.string();
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -77,7 +84,7 @@ export const InvokeFunctionRequest = {
     return {
       function: isSet(object.function) ? DetailedFunction.fromJSON(object.function) : undefined,
       runtime: isSet(object.runtime) ? BriefRuntime.fromJSON(object.runtime) : undefined,
-      triggerContext: isSet(object.triggerContext) ? Value.fromJSON(object.triggerContext) : undefined,
+      jsonTriggerContext: isSet(object.jsonTriggerContext) ? globalThis.String(object.jsonTriggerContext) : "",
     };
   },
 
@@ -89,8 +96,8 @@ export const InvokeFunctionRequest = {
     if (message.runtime !== undefined) {
       obj.runtime = BriefRuntime.toJSON(message.runtime);
     }
-    if (message.triggerContext !== undefined) {
-      obj.triggerContext = Value.toJSON(message.triggerContext);
+    if (message.jsonTriggerContext !== "") {
+      obj.jsonTriggerContext = message.jsonTriggerContext;
     }
     return obj;
   },
@@ -106,21 +113,19 @@ export const InvokeFunctionRequest = {
     message.runtime = (object.runtime !== undefined && object.runtime !== null)
       ? BriefRuntime.fromPartial(object.runtime)
       : undefined;
-    message.triggerContext = (object.triggerContext !== undefined && object.triggerContext !== null)
-      ? Value.fromPartial(object.triggerContext)
-      : undefined;
+    message.jsonTriggerContext = object.jsonTriggerContext ?? "";
     return message;
   },
 };
 
 function createBaseInvocationResult(): InvocationResult {
-  return { returnedValue: undefined, logLines: undefined };
+  return { json: "", logLines: undefined };
 }
 
 export const InvocationResult = {
   encode(message: InvocationResult, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.returnedValue !== undefined) {
-      Value.encode(message.returnedValue, writer.uint32(10).fork()).ldelim();
+    if (message.json !== "") {
+      writer.uint32(10).string(message.json);
     }
     if (message.logLines !== undefined) {
       Logs.encode(message.logLines, writer.uint32(18).fork()).ldelim();
@@ -140,7 +145,7 @@ export const InvocationResult = {
             break;
           }
 
-          message.returnedValue = Value.decode(reader, reader.uint32());
+          message.json = reader.string();
           continue;
         case 2:
           if (tag !== 18) {
@@ -160,15 +165,15 @@ export const InvocationResult = {
 
   fromJSON(object: any): InvocationResult {
     return {
-      returnedValue: isSet(object.returnedValue) ? Value.fromJSON(object.returnedValue) : undefined,
+      json: isSet(object.json) ? globalThis.String(object.json) : "",
       logLines: isSet(object.logLines) ? Logs.fromJSON(object.logLines) : undefined,
     };
   },
 
   toJSON(message: InvocationResult): unknown {
     const obj: any = {};
-    if (message.returnedValue !== undefined) {
-      obj.returnedValue = Value.toJSON(message.returnedValue);
+    if (message.json !== "") {
+      obj.json = message.json;
     }
     if (message.logLines !== undefined) {
       obj.logLines = Logs.toJSON(message.logLines);
@@ -181,12 +186,110 @@ export const InvocationResult = {
   },
   fromPartial(object: DeepPartial<InvocationResult>): InvocationResult {
     const message = createBaseInvocationResult();
-    message.returnedValue = (object.returnedValue !== undefined && object.returnedValue !== null)
-      ? Value.fromPartial(object.returnedValue)
-      : undefined;
+    message.json = object.json ?? "";
     message.logLines = (object.logLines !== undefined && object.logLines !== null)
       ? Logs.fromPartial(object.logLines)
       : undefined;
+    return message;
+  },
+};
+
+function createBaseRegisterNodeRequest(): RegisterNodeRequest {
+  return { ip: "" };
+}
+
+export const RegisterNodeRequest = {
+  encode(message: RegisterNodeRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.ip !== "") {
+      writer.uint32(10).string(message.ip);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): RegisterNodeRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRegisterNodeRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.ip = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RegisterNodeRequest {
+    return { ip: isSet(object.ip) ? globalThis.String(object.ip) : "" };
+  },
+
+  toJSON(message: RegisterNodeRequest): unknown {
+    const obj: any = {};
+    if (message.ip !== "") {
+      obj.ip = message.ip;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<RegisterNodeRequest>): RegisterNodeRequest {
+    return RegisterNodeRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<RegisterNodeRequest>): RegisterNodeRequest {
+    const message = createBaseRegisterNodeRequest();
+    message.ip = object.ip ?? "";
+    return message;
+  },
+};
+
+function createBaseNodeConfiguration(): NodeConfiguration {
+  return {};
+}
+
+export const NodeConfiguration = {
+  encode(_: NodeConfiguration, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): NodeConfiguration {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseNodeConfiguration();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(_: any): NodeConfiguration {
+    return {};
+  },
+
+  toJSON(_: NodeConfiguration): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create(base?: DeepPartial<NodeConfiguration>): NodeConfiguration {
+    return NodeConfiguration.fromPartial(base ?? {});
+  },
+  fromPartial(_: DeepPartial<NodeConfiguration>): NodeConfiguration {
+    const message = createBaseNodeConfiguration();
     return message;
   },
 };
@@ -204,6 +307,14 @@ export const LoadBalancerServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    registerNode: {
+      name: "RegisterNode",
+      requestType: RegisterNodeRequest,
+      requestStream: false,
+      responseType: NodeConfiguration,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
@@ -212,6 +323,10 @@ export interface LoadBalancerServiceImplementation<CallContextExt = {}> {
     request: InvokeFunctionRequest,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<InvocationResult>>;
+  registerNode(
+    request: RegisterNodeRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<NodeConfiguration>>;
 }
 
 export interface LoadBalancerServiceClient<CallOptionsExt = {}> {
@@ -219,6 +334,10 @@ export interface LoadBalancerServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<InvokeFunctionRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<InvocationResult>;
+  registerNode(
+    request: DeepPartial<RegisterNodeRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<NodeConfiguration>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
