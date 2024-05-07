@@ -1,7 +1,8 @@
 import { AuthServiceDefinition, type AuthServiceClient } from '@/server/rpc/auth_service';
 
 import { createChannel, createClient } from 'nice-grpc';
+import { ServiceName, getServiceAddress } from './utils';
 
-const channel = createChannel('192.168.1.218:50051');
+const channel = createChannel(getServiceAddress(ServiceName.Auth));
 
 export const authService: AuthServiceClient = createClient(AuthServiceDefinition, channel);
