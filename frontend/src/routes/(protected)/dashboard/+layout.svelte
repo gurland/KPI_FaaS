@@ -1,37 +1,11 @@
 <script lang="ts">
 	import Triangle from 'lucide-svelte/icons/triangle';
-	import Bot from 'lucide-svelte/icons/bot';
-	import SquareTerminal from 'lucide-svelte/icons/square-terminal';
-	import CodeXML from 'lucide-svelte/icons/code-xml';
-	import Settings2 from 'lucide-svelte/icons/settings-2';
 	import LifeBuoy from 'lucide-svelte/icons/life-buoy';
-	import Book from 'lucide-svelte/icons/book';
 	import SquareUser from 'lucide-svelte/icons/square-user';
-	import Settings from 'lucide-svelte/icons/settings';
-	import Rabbit from 'lucide-svelte/icons/rabbit';
-	import Bird from 'lucide-svelte/icons/bird';
-	import Turtle from 'lucide-svelte/icons/turtle';
-	import Share from 'lucide-svelte/icons/share';
-	import Paperclip from 'lucide-svelte/icons/paperclip';
-	import Mic from 'lucide-svelte/icons/mic';
-	import CornerDownLeft from 'lucide-svelte/icons/corner-down-left';
 
-	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	import * as Drawer from '$lib/components/ui/drawer';
-	import { Input } from '$lib/components/ui/input';
-	import { Textarea } from '$lib/components/ui/textarea';
-	import { Label } from '$lib/components/ui/label';
-	import * as Select from '$lib/components/ui/select';
-	import {
-		CircleAlert,
-		Container,
-		ContainerIcon,
-		FunctionSquareIcon,
-		Zap,
-		ZapIcon
-	} from 'lucide-svelte';
+	import { ContainerIcon, FunctionSquareIcon, ZapIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 
 	$: isDashboardPath = $page.url.pathname === '/dashboard';

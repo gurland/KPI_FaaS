@@ -1,34 +1,4 @@
 <script lang="ts">
-	import Triangle from 'lucide-svelte/icons/triangle';
-	import Bot from 'lucide-svelte/icons/bot';
-	import SquareTerminal from 'lucide-svelte/icons/square-terminal';
-	import CodeXML from 'lucide-svelte/icons/code-xml';
-	import Settings2 from 'lucide-svelte/icons/settings-2';
-	import LifeBuoy from 'lucide-svelte/icons/life-buoy';
-	import Book from 'lucide-svelte/icons/book';
-	import SquareUser from 'lucide-svelte/icons/square-user';
-	import Settings from 'lucide-svelte/icons/settings';
-	import Rabbit from 'lucide-svelte/icons/rabbit';
-	import Bird from 'lucide-svelte/icons/bird';
-	import Turtle from 'lucide-svelte/icons/turtle';
-	import Share from 'lucide-svelte/icons/share';
-	import Paperclip from 'lucide-svelte/icons/paperclip';
-	import Mic from 'lucide-svelte/icons/mic';
-	import CornerDownLeft from 'lucide-svelte/icons/corner-down-left';
-
-	import { Badge } from '$lib/components/ui/badge';
-	import { Button } from '$lib/components/ui/button';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-	import * as Drawer from '$lib/components/ui/drawer';
-	import { Input } from '$lib/components/ui/input';
-	import { Textarea } from '$lib/components/ui/textarea';
-	import { Label } from '$lib/components/ui/label';
-	import * as Select from '$lib/components/ui/select';
-	import { page } from '$app/stores';
-	import { CircleAlert, Container, LoaderCircleIcon } from 'lucide-svelte';
-	import { enhance } from '$app/forms';
-	import type { SubmitFunction } from '@sveltejs/kit';
-	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 </script>
 
 <header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">

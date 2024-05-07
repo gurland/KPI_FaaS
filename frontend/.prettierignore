@@ -2,3 +2,6 @@
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+src/lib/components/ui
+src/lib/server/rpc
