@@ -6,7 +6,7 @@ import "function_service.proto";
 package faas;
 
 message ApiGatewayTriggerConfiguration {
-  BriefFunction function = 1;
+  uint32 function_id = 1;
   string name = 2;
 }
 
