@@ -38,7 +38,7 @@
 		<Tooltip.Content side="right" sideOffset={5}>Create new function</Tooltip.Content>
 	</Tooltip.Root>
 </header>
-<main class="mx-auto grid w-full max-w-lg grid-cols-1 gap-4 overflow-auto p-4">
+<main class="mx-auto grid w-full max-w-xl grid-cols-1 gap-4 overflow-auto p-4">
 	<Table>
 		<TableHeader>
 			<TableRow>

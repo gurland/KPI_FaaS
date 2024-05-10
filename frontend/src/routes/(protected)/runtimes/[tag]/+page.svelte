@@ -33,7 +33,7 @@
 	<h1 class="text-xl font-semibold">Edit runtime</h1>
 </header>
 
-<main class="mx-auto grid w-full max-w-lg grid-cols-1 gap-4 overflow-auto p-4">
+<main class="mx-auto grid w-full max-w-xl grid-cols-1 gap-4 overflow-auto p-4">
 	{#if form?.errorMessage}
 		<Alert variant="destructive" class="mx-auto mb-4 min-w-full">
 			<CircleAlert class="h-4 w-4" />
