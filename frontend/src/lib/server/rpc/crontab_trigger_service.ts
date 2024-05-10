@@ -22,6 +22,10 @@ export interface DeleteCrontabTriggerRequest {
   triggerId: number;
 }
 
+export interface GetCrontabTriggersRequest {
+  functionId: number;
+}
+
 function createBaseCrontabTriggerConfiguration(): CrontabTriggerConfiguration {
   return { cronExpression: "", functionId: 0, description: "" };
 }
@@ -272,6 +276,63 @@ export const DeleteCrontabTriggerRequest = {
   },
 };
 
+function createBaseGetCrontabTriggersRequest(): GetCrontabTriggersRequest {
+  return { functionId: 0 };
+}
+
+export const GetCrontabTriggersRequest = {
+  encode(message: GetCrontabTriggersRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.functionId !== 0) {
+      writer.uint32(8).uint32(message.functionId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetCrontabTriggersRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetCrontabTriggersRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.functionId = reader.uint32();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetCrontabTriggersRequest {
+    return { functionId: isSet(object.functionId) ? globalThis.Number(object.functionId) : 0 };
+  },
+
+  toJSON(message: GetCrontabTriggersRequest): unknown {
+    const obj: any = {};
+    if (message.functionId !== 0) {
+      obj.functionId = Math.round(message.functionId);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<GetCrontabTriggersRequest>): GetCrontabTriggersRequest {
+    return GetCrontabTriggersRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<GetCrontabTriggersRequest>): GetCrontabTriggersRequest {
+    const message = createBaseGetCrontabTriggersRequest();
+    message.functionId = object.functionId ?? 0;
+    return message;
+  },
+};
+
 export type CrontabTriggerServiceDefinition = typeof CrontabTriggerServiceDefinition;
 export const CrontabTriggerServiceDefinition = {
   name: "CrontabTriggerService",
@@ -293,6 +354,14 @@ export const CrontabTriggerServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    getCrontabTriggers: {
+      name: "GetCrontabTriggers",
+      requestType: GetCrontabTriggersRequest,
+      requestStream: false,
+      responseType: CrontabTrigger,
+      responseStream: true,
+      options: {},
+    },
   },
 } as const;
 
@@ -305,6 +374,10 @@ export interface CrontabTriggerServiceImplementation<CallContextExt = {}> {
     request: DeleteCrontabTriggerRequest,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<Empty>>;
+  getCrontabTriggers(
+    request: GetCrontabTriggersRequest,
+    context: CallContext & CallContextExt,
+  ): ServerStreamingMethodResult<DeepPartial<CrontabTrigger>>;
 }
 
 export interface CrontabTriggerServiceClient<CallOptionsExt = {}> {
@@ -316,6 +389,10 @@ export interface CrontabTriggerServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<DeleteCrontabTriggerRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<Empty>;
+  getCrontabTriggers(
+    request: DeepPartial<GetCrontabTriggersRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): AsyncIterable<CrontabTrigger>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
@@ -329,3 +406,5 @@ export type DeepPartial<T> = T extends Builtin ? T
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
 }
+
+export type ServerStreamingMethodResult<Response> = { [Symbol.asyncIterator](): AsyncIterator<Response, void> };

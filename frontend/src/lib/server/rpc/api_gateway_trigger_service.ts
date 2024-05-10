@@ -2,12 +2,11 @@
 import { type CallContext, type CallOptions } from "nice-grpc-common";
 import _m0 from "protobufjs/minimal";
 import { Empty } from "./common";
-import { BriefFunction } from "./function_service";
 
 export const protobufPackage = "faas";
 
 export interface ApiGatewayTriggerConfiguration {
-  function: BriefFunction | undefined;
+  functionId: number;
   name: string;
 }
 
@@ -21,14 +20,18 @@ export interface DeleteAPIGatewayTriggerRequest {
   triggerId: number;
 }
 
+export interface GetAPIGatewayTriggersRequest {
+  functionId: number;
+}
+
 function createBaseApiGatewayTriggerConfiguration(): ApiGatewayTriggerConfiguration {
-  return { function: undefined, name: "" };
+  return { functionId: 0, name: "" };
 }
 
 export const ApiGatewayTriggerConfiguration = {
   encode(message: ApiGatewayTriggerConfiguration, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.function !== undefined) {
-      BriefFunction.encode(message.function, writer.uint32(10).fork()).ldelim();
+    if (message.functionId !== 0) {
+      writer.uint32(8).uint32(message.functionId);
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
@@ -44,11 +47,11 @@ export const ApiGatewayTriggerConfiguration = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.function = BriefFunction.decode(reader, reader.uint32());
+          message.functionId = reader.uint32();
           continue;
         case 2:
           if (tag !== 18) {
@@ -68,15 +71,15 @@ export const ApiGatewayTriggerConfiguration = {
 
   fromJSON(object: any): ApiGatewayTriggerConfiguration {
     return {
-      function: isSet(object.function) ? BriefFunction.fromJSON(object.function) : undefined,
+      functionId: isSet(object.functionId) ? globalThis.Number(object.functionId) : 0,
       name: isSet(object.name) ? globalThis.String(object.name) : "",
     };
   },
 
   toJSON(message: ApiGatewayTriggerConfiguration): unknown {
     const obj: any = {};
-    if (message.function !== undefined) {
-      obj.function = BriefFunction.toJSON(message.function);
+    if (message.functionId !== 0) {
+      obj.functionId = Math.round(message.functionId);
     }
     if (message.name !== "") {
       obj.name = message.name;
@@ -89,9 +92,7 @@ export const ApiGatewayTriggerConfiguration = {
   },
   fromPartial(object: DeepPartial<ApiGatewayTriggerConfiguration>): ApiGatewayTriggerConfiguration {
     const message = createBaseApiGatewayTriggerConfiguration();
-    message.function = (object.function !== undefined && object.function !== null)
-      ? BriefFunction.fromPartial(object.function)
-      : undefined;
+    message.functionId = object.functionId ?? 0;
     message.name = object.name ?? "";
     return message;
   },
@@ -243,6 +244,63 @@ export const DeleteAPIGatewayTriggerRequest = {
   },
 };
 
+function createBaseGetAPIGatewayTriggersRequest(): GetAPIGatewayTriggersRequest {
+  return { functionId: 0 };
+}
+
+export const GetAPIGatewayTriggersRequest = {
+  encode(message: GetAPIGatewayTriggersRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.functionId !== 0) {
+      writer.uint32(8).uint32(message.functionId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetAPIGatewayTriggersRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetAPIGatewayTriggersRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.functionId = reader.uint32();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetAPIGatewayTriggersRequest {
+    return { functionId: isSet(object.functionId) ? globalThis.Number(object.functionId) : 0 };
+  },
+
+  toJSON(message: GetAPIGatewayTriggersRequest): unknown {
+    const obj: any = {};
+    if (message.functionId !== 0) {
+      obj.functionId = Math.round(message.functionId);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<GetAPIGatewayTriggersRequest>): GetAPIGatewayTriggersRequest {
+    return GetAPIGatewayTriggersRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<GetAPIGatewayTriggersRequest>): GetAPIGatewayTriggersRequest {
+    const message = createBaseGetAPIGatewayTriggersRequest();
+    message.functionId = object.functionId ?? 0;
+    return message;
+  },
+};
+
 export type APIGatewayServiceDefinition = typeof APIGatewayServiceDefinition;
 export const APIGatewayServiceDefinition = {
   name: "APIGatewayService",
@@ -256,12 +314,20 @@ export const APIGatewayServiceDefinition = {
       responseStream: false,
       options: {},
     },
-    deleteApiGatewayTrigger: {
-      name: "DeleteApiGatewayTrigger",
+    deleteAPIGatewayTrigger: {
+      name: "DeleteAPIGatewayTrigger",
       requestType: DeleteAPIGatewayTriggerRequest,
       requestStream: false,
       responseType: Empty,
       responseStream: false,
+      options: {},
+    },
+    getAPIGatewayTriggers: {
+      name: "GetAPIGatewayTriggers",
+      requestType: GetAPIGatewayTriggersRequest,
+      requestStream: false,
+      responseType: DetailedAPIGatewayTrigger,
+      responseStream: true,
       options: {},
     },
   },
@@ -272,10 +338,14 @@ export interface APIGatewayServiceImplementation<CallContextExt = {}> {
     request: ApiGatewayTriggerConfiguration,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<DetailedAPIGatewayTrigger>>;
-  deleteApiGatewayTrigger(
+  deleteAPIGatewayTrigger(
     request: DeleteAPIGatewayTriggerRequest,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<Empty>>;
+  getAPIGatewayTriggers(
+    request: GetAPIGatewayTriggersRequest,
+    context: CallContext & CallContextExt,
+  ): ServerStreamingMethodResult<DeepPartial<DetailedAPIGatewayTrigger>>;
 }
 
 export interface APIGatewayServiceClient<CallOptionsExt = {}> {
@@ -283,10 +353,14 @@ export interface APIGatewayServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<ApiGatewayTriggerConfiguration>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<DetailedAPIGatewayTrigger>;
-  deleteApiGatewayTrigger(
+  deleteAPIGatewayTrigger(
     request: DeepPartial<DeleteAPIGatewayTriggerRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<Empty>;
+  getAPIGatewayTriggers(
+    request: DeepPartial<GetAPIGatewayTriggersRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): AsyncIterable<DetailedAPIGatewayTrigger>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
@@ -300,3 +374,5 @@ export type DeepPartial<T> = T extends Builtin ? T
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
 }
+
+export type ServerStreamingMethodResult<Response> = { [Symbol.asyncIterator](): AsyncIterator<Response, void> };
