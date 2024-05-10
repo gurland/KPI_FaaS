@@ -322,6 +322,14 @@ export const APIGatewayServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    getAllAPIGatewayTriggers: {
+      name: "GetAllAPIGatewayTriggers",
+      requestType: Empty,
+      requestStream: false,
+      responseType: DetailedAPIGatewayTrigger,
+      responseStream: true,
+      options: {},
+    },
     getAPIGatewayTriggers: {
       name: "GetAPIGatewayTriggers",
       requestType: GetAPIGatewayTriggersRequest,
@@ -342,6 +350,10 @@ export interface APIGatewayServiceImplementation<CallContextExt = {}> {
     request: DeleteAPIGatewayTriggerRequest,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<Empty>>;
+  getAllAPIGatewayTriggers(
+    request: Empty,
+    context: CallContext & CallContextExt,
+  ): ServerStreamingMethodResult<DeepPartial<DetailedAPIGatewayTrigger>>;
   getAPIGatewayTriggers(
     request: GetAPIGatewayTriggersRequest,
     context: CallContext & CallContextExt,
@@ -357,6 +369,10 @@ export interface APIGatewayServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<DeleteAPIGatewayTriggerRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<Empty>;
+  getAllAPIGatewayTriggers(
+    request: DeepPartial<Empty>,
+    options?: CallOptions & CallOptionsExt,
+  ): AsyncIterable<DetailedAPIGatewayTrigger>;
   getAPIGatewayTriggers(
     request: DeepPartial<GetAPIGatewayTriggersRequest>,
     options?: CallOptions & CallOptionsExt,

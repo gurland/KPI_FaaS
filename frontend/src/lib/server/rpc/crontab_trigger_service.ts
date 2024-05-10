@@ -354,6 +354,14 @@ export const CrontabTriggerServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    getAllCrontabTriggers: {
+      name: "GetAllCrontabTriggers",
+      requestType: Empty,
+      requestStream: false,
+      responseType: CrontabTrigger,
+      responseStream: true,
+      options: {},
+    },
     getCrontabTriggers: {
       name: "GetCrontabTriggers",
       requestType: GetCrontabTriggersRequest,
@@ -374,6 +382,10 @@ export interface CrontabTriggerServiceImplementation<CallContextExt = {}> {
     request: DeleteCrontabTriggerRequest,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<Empty>>;
+  getAllCrontabTriggers(
+    request: Empty,
+    context: CallContext & CallContextExt,
+  ): ServerStreamingMethodResult<DeepPartial<CrontabTrigger>>;
   getCrontabTriggers(
     request: GetCrontabTriggersRequest,
     context: CallContext & CallContextExt,
@@ -389,6 +401,10 @@ export interface CrontabTriggerServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<DeleteCrontabTriggerRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<Empty>;
+  getAllCrontabTriggers(
+    request: DeepPartial<Empty>,
+    options?: CallOptions & CallOptionsExt,
+  ): AsyncIterable<CrontabTrigger>;
   getCrontabTriggers(
     request: DeepPartial<GetCrontabTriggersRequest>,
     options?: CallOptions & CallOptionsExt,
