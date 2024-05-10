@@ -1,6 +1,6 @@
 import type { Actions, PageServerLoadEvent, RequestEvent } from './$types';
 import { apiGatewayTriggerService, crontabTriggerService, getRpcMetaData } from '@/server';
-import { fail, redirect, type ActionFailure } from '@sveltejs/kit';
+import { fail, type ActionFailure } from '@sveltejs/kit';
 
 export async function load(event: PageServerLoadEvent) {
 	const crontabTriggersStream = crontabTriggerService.getAllCrontabTriggers(
@@ -52,8 +52,6 @@ export const actions: Actions = {
 				return fail(400, { errorMessage: e.message });
 			}
 		}
-
-		return redirect(303, '/triggers');
 	},
 	deleteHTTPTrigger: async (
 		event: RequestEvent
@@ -75,7 +73,5 @@ export const actions: Actions = {
 				return fail(400, { errorMessage: e.message });
 			}
 		}
-
-		return redirect(303, '/triggers');
 	}
 };

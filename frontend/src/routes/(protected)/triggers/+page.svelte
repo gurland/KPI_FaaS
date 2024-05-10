@@ -2,16 +2,23 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { CircleAlert, PlusIcon, TrashIcon } from 'lucide-svelte';
-	import type { ActionData, PageData } from './$types';
+	import type { ActionData, PageData, SubmitFunction } from './$types';
 	import { Table, TableBody, TableRow, TableCell } from '@/components/ui/table';
 	import { Alert } from '@/components/ui/alert';
 	import AlertTitle from '@/components/ui/alert/alert-title.svelte';
 	import AlertDescription from '@/components/ui/alert/alert-description.svelte';
+	import { enhance } from '$app/forms';
 
 	export let data: PageData;
 	export let form: ActionData;
 
 	const { apiGatewayTriggers, crontabTriggers } = data;
+
+	const handleSubmit: SubmitFunction = ({ formData }) => {
+		return async ({ update }) => {
+			update();
+		};
+	};
 </script>
 
 <header
@@ -42,12 +49,12 @@
 			<AlertDescription>{form?.errorMessage}</AlertDescription>
 		</Alert>
 	{/if}
-	<form method="post">
+	<form method="post" use:enhance={handleSubmit}>
 		<Table>
 			<TableBody>
 				{#each apiGatewayTriggers as apiGatewayTrigger, i (i)}
 					<TableRow>
-						<TableCell>Cron</TableCell>
+						<TableCell>HTTP</TableCell>
 						<TableCell>{apiGatewayTrigger.name}</TableCell>
 						<TableCell>{apiGatewayTrigger.url}</TableCell>
 						<TableCell>
@@ -55,14 +62,16 @@
 								formaction={`?/deleteHTTPTrigger&triggerId=${apiGatewayTrigger.triggerId}`}
 								type="submit"
 								variant="destructive"
-								size="icon"><TrashIcon /></Button
+								size="icon"
 							>
+								<TrashIcon />
+							</Button>
 						</TableCell>
 					</TableRow>
 				{/each}
 				{#each crontabTriggers as crontabTrigger, i (i)}
 					<TableRow>
-						<TableCell>HTTP</TableCell>
+						<TableCell>Cron</TableCell>
 						<TableCell>{crontabTrigger.description}</TableCell>
 						<TableCell>{crontabTrigger.cronExpression}</TableCell>
 						<TableCell>
@@ -70,8 +79,10 @@
 								formaction={`?/deleteCronTrigger&triggerId=${crontabTrigger.triggerId}`}
 								type="submit"
 								variant="destructive"
-								size="icon"><TrashIcon /></Button
+								size="icon"
 							>
+								<TrashIcon />
+							</Button>
 						</TableCell>
 					</TableRow>
 				{/each}
