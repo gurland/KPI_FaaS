@@ -110,7 +110,7 @@
 				{#if isUpdating}
 					<LoaderCircleIcon class="mr-2 h-4 w-4 animate-spin" />
 				{/if}
-				Update runtime
+				Update function
 			</Button>
 			<Button
 				type="submit"
@@ -122,7 +122,7 @@
 				{#if isDeleting}
 					<LoaderCircleIcon class="mr-2 h-4 w-4 animate-spin" />
 				{/if}
-				Delete runtime
+				Delete function
 			</Button>
 		</fieldset>
 
