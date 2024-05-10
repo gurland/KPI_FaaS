@@ -15,48 +15,46 @@
 
 	export let data: PageData;
 
-	const { briefFunctions } = data;
+	$: runtimes = data.runtimes;
 </script>
 
 <header
 	class="sticky top-0 z-10 flex h-[57px] items-center justify-between gap-1 border-b bg-background px-4"
 >
-	<h1 class="text-xl font-semibold">Functions</h1>
+	<h1 class="text-xl font-semibold">Runtimes</h1>
 	<Tooltip.Root>
 		<Tooltip.Trigger asChild let:builder>
 			<Button
 				variant="ghost"
 				size="icon"
 				class="rounded-lg"
-				aria-label="Functions"
+				aria-label="Create new runtime"
 				builders={[builder]}
-				href="/dashboard/functions/create"
+				href="/runtimes/create"
 			>
 				<PlusIcon class="size-5" />
 			</Button>
 		</Tooltip.Trigger>
-		<Tooltip.Content side="right" sideOffset={5}>Create new function</Tooltip.Content>
+		<Tooltip.Content side="right" sideOffset={5}>Create new runtime</Tooltip.Content>
 	</Tooltip.Root>
 </header>
 <main class="mx-auto grid w-full max-w-lg grid-cols-1 gap-4 overflow-auto p-4">
 	<Table>
 		<TableHeader>
 			<TableRow>
-				<TableHead>Id</TableHead>
-				<TableHead>Name</TableHead>
-				<TableHead>Runtime</TableHead>
+				<TableHead>Tag</TableHead>
+				<TableHead>Registry url</TableHead>
 			</TableRow>
 		</TableHeader>
 		<TableBody>
-			{#each briefFunctions as briefFunction, i (i)}
+			{#each runtimes as runtime, i (i)}
 				<TableRow
 					on:click={() => {
-						goto(`/dashboard/functions/${briefFunction.functionId}`);
+						goto(`/runtimes/${runtime.tag}`);
 					}}
 				>
-					<TableCell>{briefFunction.functionId}</TableCell>
-					<TableCell>{briefFunction.functionName}</TableCell>
-					<TableCell>{briefFunction.runtimeTag}</TableCell>
+					<TableCell>{runtime.tag}</TableCell>
+					<TableCell>{runtime.registryUrl}</TableCell>
 				</TableRow>
 			{/each}
 		</TableBody>

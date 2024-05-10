@@ -43,6 +43,6 @@ export const actions: Actions = {
 			}
 			return createRuntimeResponse;
 		}
-		return redirect(303, '/dashboard/runtimes');
+		return redirect(303, '/runtimes');
 	}
 };

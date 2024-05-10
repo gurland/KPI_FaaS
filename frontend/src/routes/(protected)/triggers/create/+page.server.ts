@@ -1,7 +1,6 @@
 import { fail, redirect, type ActionFailure, type Redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import { functionService, getRpcMetaData, triggerService } from '@/server';
-import type { BriefFunction } from '@/server/rpc/function_service';
 
 export const load: PageServerLoad = async (event) => {
 	const briefFunctionsStream = functionService.getFunctions(
@@ -58,6 +57,6 @@ export const actions: Actions = {
 			}
 			return createTriggerResponse;
 		}
-		return redirect(303, '/dashboard/triggers');
+		return redirect(303, '/triggers');
 	}
 };

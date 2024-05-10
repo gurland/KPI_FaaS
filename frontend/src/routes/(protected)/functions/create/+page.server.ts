@@ -57,6 +57,6 @@ export const actions: Actions = {
 			}
 			return createFunctionResponse;
 		}
-		return redirect(303, '/dashboard/functions');
+		return redirect(303, '/functions');
 	}
 };

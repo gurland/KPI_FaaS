@@ -28,9 +28,9 @@
 				variant="ghost"
 				size="icon"
 				class="rounded-lg"
-				aria-label="Triggers"
+				aria-label="Create new trigger"
 				builders={[builder]}
-				href="/dashboard/triggers/create"
+				href="/triggers/create"
 			>
 				<PlusIcon class="size-5" />
 			</Button>
@@ -51,7 +51,7 @@
 			{#each briefFunctions as briefFunction, i (i)}
 				<TableRow
 					on:click={() => {
-						goto(`/dashboard/functions/${briefFunction.functionId}`);
+						goto(`/functions/${briefFunction.functionId}`);
 					}}
 				>
 					<TableCell>{briefFunction.functionId}</TableCell>

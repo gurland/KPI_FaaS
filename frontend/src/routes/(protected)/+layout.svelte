@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Triangle from 'lucide-svelte/icons/triangle';
-	import LifeBuoy from 'lucide-svelte/icons/life-buoy';
 	import SquareUser from 'lucide-svelte/icons/square-user';
 
 	import { Button } from '$lib/components/ui/button';
@@ -8,10 +7,10 @@
 	import { ContainerIcon, FunctionSquareIcon, ZapIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 
-	$: isDashboardPath = $page.url.pathname === '/dashboard';
-	$: isFunctionsPath = $page.url.pathname.startsWith('/dashboard/functions');
-	$: isTriggerPath = $page.url.pathname.startsWith('/dashboard/triggers');
-	$: isRuntimesPath = $page.url.pathname.startsWith('/dashboard/runtimes');
+	$: isHomePath = $page.url.pathname === '/';
+	$: isFunctionsPath = $page.url.pathname.startsWith('/functions');
+	$: isTriggerPath = $page.url.pathname.startsWith('/triggers');
+	$: isRuntimesPath = $page.url.pathname.startsWith('/runtimes');
 </script>
 
 <div class="grid h-screen w-full pl-[53px]">
@@ -21,8 +20,8 @@
 				variant="outline"
 				size="icon"
 				aria-label="Home"
-				class={`${isDashboardPath ? 'bg-muted' : ''}`}
-				href="/dashboard"
+				class={`${isHomePath ? 'bg-muted' : ''}`}
+				href="/"
 			>
 				<Triangle class="size-5 fill-foreground" />
 			</Button>
@@ -36,7 +35,7 @@
 						class={`rounded-lg ${isFunctionsPath ? 'bg-muted' : ''}`}
 						aria-label="Functions"
 						builders={[builder]}
-						href="/dashboard/functions"
+						href="/functions"
 					>
 						<FunctionSquareIcon class="size-5" />
 					</Button>
@@ -54,7 +53,7 @@
 						class={`rounded-lg ${isTriggerPath ? 'bg-muted' : ''}`}
 						aria-label="Triggers"
 						builders={[builder]}
-						href="/dashboard/triggers"
+						href="/triggers"
 					>
 						<ZapIcon class="size-5" />
 					</Button>
@@ -72,7 +71,7 @@
 						class={`rounded-lg ${isRuntimesPath ? 'bg-muted' : ''}`}
 						aria-label="Runtimes"
 						builders={[builder]}
-						href="/dashboard/runtimes"
+						href="/runtimes"
 					>
 						<ContainerIcon class="size-5" />
 					</Button>
@@ -82,20 +81,6 @@
 		</nav>
 
 		<nav class="mt-auto grid gap-1 p-2">
-			<Tooltip.Root>
-				<Tooltip.Trigger asChild let:builder>
-					<Button
-						variant="ghost"
-						size="icon"
-						class="mt-auto rounded-lg"
-						aria-label="Help"
-						builders={[builder]}
-					>
-						<LifeBuoy class="size-5" />
-					</Button>
-				</Tooltip.Trigger>
-				<Tooltip.Content side="right" sideOffset={5}>Help</Tooltip.Content>
-			</Tooltip.Root>
 			<Tooltip.Root>
 				<Tooltip.Trigger asChild let:builder>
 					<Button

@@ -84,6 +84,6 @@ export const actions: Actions = {
 			}
 			return updateFunctionResponse;
 		}
-		return redirect(303, '/dashboard/functions');
+		return redirect(303, '/functions');
 	}
 };

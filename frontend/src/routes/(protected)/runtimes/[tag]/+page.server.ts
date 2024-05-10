@@ -52,6 +52,6 @@ export const actions: Actions = {
 			}
 			return updateRuntimeResponse;
 		}
-		return redirect(303, '/dashboard/runtimes');
+		return redirect(303, '/runtimes');
 	}
 };
