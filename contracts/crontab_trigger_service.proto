@@ -29,5 +29,6 @@ message GetCrontabTriggersRequest {
 service CrontabTriggerService {
   rpc CreateCrontabTrigger(CrontabTriggerConfiguration) returns (CrontabTrigger);
   rpc DeleteCrontabTrigger(DeleteCrontabTriggerRequest) returns (Empty);
+  rpc GetAllCrontabTriggers(Empty) returns (stream CrontabTrigger);
   rpc GetCrontabTriggers(GetCrontabTriggersRequest) returns (stream CrontabTrigger);
 }

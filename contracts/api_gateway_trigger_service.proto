@@ -26,5 +26,6 @@ message GetAPIGatewayTriggersRequest {
 service APIGatewayService {
   rpc CreateAPIGatewayTrigger(ApiGatewayTriggerConfiguration) returns (DetailedAPIGatewayTrigger);
   rpc DeleteAPIGatewayTrigger(DeleteAPIGatewayTriggerRequest) returns (Empty);
+  rpc GetAllAPIGatewayTriggers(Empty) returns (stream DetailedAPIGatewayTrigger);
   rpc GetAPIGatewayTriggers(GetAPIGatewayTriggersRequest) returns (stream DetailedAPIGatewayTrigger);
 }
