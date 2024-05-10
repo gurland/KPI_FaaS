@@ -20,7 +20,12 @@ message DeleteAPIGatewayTriggerRequest {
   uint32 trigger_id = 1;
 }
 
+message GetAPIGatewayTriggersRequest {
+  uint32 function_id = 1;
+}
+
 service APIGatewayService {
   rpc CreateAPIGatewayTrigger(ApiGatewayTriggerConfiguration) returns (DetailedAPIGatewayTrigger);
-  rpc DeleteApiGatewayTrigger(DeleteAPIGatewayTriggerRequest) returns (Empty);
+  rpc DeleteAPIGatewayTrigger(DeleteAPIGatewayTriggerRequest) returns (Empty);
+  rpc GetAPIGatewayTriggers(GetAPIGatewayTriggersRequest) returns (stream DetailedAPIGatewayTrigger);
 }
