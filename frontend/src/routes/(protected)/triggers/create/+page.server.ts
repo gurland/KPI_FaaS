@@ -1,6 +1,6 @@
 import { fail, redirect, type ActionFailure, type Redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
-import { functionService, getRpcMetaData, triggerService } from '@/server';
+import { functionService, getRpcMetaData, crontabTriggerService } from '@/server';
 
 export const load: PageServerLoad = async (event) => {
 	const briefFunctionsStream = functionService.getFunctions(
@@ -42,7 +42,7 @@ export const actions: Actions = {
 		};
 
 		try {
-			await triggerService.createCrontabTrigger(
+			await crontabTriggerService.createCrontabTrigger(
 				{
 					functionId: parseInt(functionId.toString(), 10),
 					cronExpression: cronExpression.toString(),

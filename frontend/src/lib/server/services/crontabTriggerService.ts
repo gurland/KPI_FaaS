@@ -8,9 +8,9 @@ import { ServiceName, getServiceAddress } from './utils';
 
 const clientFactory = createClientFactory().use(authMiddleware);
 
-const channel = createChannel(getServiceAddress(ServiceName.Trigger));
+const channel = createChannel(getServiceAddress(ServiceName.CrontabTrigger));
 
-export const triggerService: CrontabTriggerServiceClient = clientFactory.create(
+export const crontabTriggerService: CrontabTriggerServiceClient = clientFactory.create(
 	CrontabTriggerServiceDefinition,
 	channel
 );
