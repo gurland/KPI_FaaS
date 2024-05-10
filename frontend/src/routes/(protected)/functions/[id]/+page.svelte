@@ -3,11 +3,15 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
-	import { ChevronLeft, CircleAlert, LoaderCircleIcon } from 'lucide-svelte';
+	import { ChevronLeft, CircleAlert, LoaderCircleIcon, TrashIcon } from 'lucide-svelte';
 	import type { ActionData, PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+	import Table from '@/components/ui/table/table.svelte';
+	import TableBody from '@/components/ui/table/table-body.svelte';
+	import TableRow from '@/components/ui/table/table-row.svelte';
+	import TableCell from '@/components/ui/table/table-cell.svelte';
 
 	let isUpdating = false;
 	let isDeleting = false;
@@ -36,7 +40,12 @@
 	export let form: ActionData;
 	export let data: PageData;
 
-	const { briefRuntimes = [], functionDetailed } = data;
+	const {
+		briefRuntimes = [],
+		functionDetailed,
+		apiGatewayTriggers = [],
+		crontabTriggers = []
+	} = data;
 
 	$: isFormLoading = isUpdating || isDeleting;
 </script>
@@ -115,6 +124,56 @@
 				{/if}
 				Delete runtime
 			</Button>
+		</fieldset>
+
+		<fieldset class="grid gap-6 rounded-lg border p-4">
+			<legend>
+				Triggers
+				<Button
+					variant="link"
+					size="sm"
+					href={`/triggers/create?functionId=${functionDetailed?.functionId}`}>Add new</Button
+				>
+			</legend>
+
+			<Table>
+				<TableBody>
+					{#each apiGatewayTriggers as apiGatewayTrigger, i (i)}
+						<TableRow>
+							<TableCell>HTTP</TableCell>
+							<TableCell>{apiGatewayTrigger.name}</TableCell>
+							<TableCell>{apiGatewayTrigger.url}</TableCell>
+							<TableCell>
+								<Button
+									formaction={`?/deleteHTTPTrigger&triggerId=${apiGatewayTrigger.triggerId}`}
+									type="submit"
+									variant="destructive"
+									size="icon"
+								>
+									<TrashIcon />
+								</Button>
+							</TableCell>
+						</TableRow>
+					{/each}
+					{#each crontabTriggers as crontabTrigger, i (i)}
+						<TableRow>
+							<TableCell>Cron</TableCell>
+							<TableCell>{crontabTrigger.description}</TableCell>
+							<TableCell>{crontabTrigger.cronExpression}</TableCell>
+							<TableCell>
+								<Button
+									formaction={`?/deleteCronTrigger&triggerId=${crontabTrigger.triggerId}`}
+									type="submit"
+									variant="destructive"
+									size="icon"
+								>
+									<TrashIcon />
+								</Button>
+							</TableCell>
+						</TableRow>
+					{/each}
+				</TableBody>
+			</Table>
 		</fieldset>
 	</form>
 </main>

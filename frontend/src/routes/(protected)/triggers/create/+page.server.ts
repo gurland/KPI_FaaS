@@ -1,10 +1,10 @@
 import { fail, redirect, type ActionFailure, type Redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import {
-	getRpcMetaData,
-	crontabTriggerService,
 	apiGatewayTriggerService,
-	functionService
+	crontabTriggerService,
+	functionService,
+	getRpcMetaData
 } from '@/server';
 
 export const load: PageServerLoad = async (event) => {
@@ -36,7 +36,11 @@ export const actions: Actions = {
 	createTrigger: async (
 		event: RequestEvent
 	): Promise<ActionFailure<CreateTriggerFormData> | Redirect> => {
-		const { request } = event;
+		const { request, url } = event;
+
+		const targetFunctionIdStr = url.searchParams.get('functionId');
+		const targetFunctionId = targetFunctionIdStr ? parseInt(targetFunctionIdStr, 10) : NaN;
+
 		const formData = await request.formData();
 		const triggerType = formData.get('triggerType') ?? '';
 		const cronExpression = formData.get('cronExpression') ?? '';
@@ -78,6 +82,10 @@ export const actions: Actions = {
 			if (e instanceof Error) {
 				return fail(400, { ...createTriggerResponse, errorMessage: e.message });
 			}
+		}
+
+		if (!Number.isNaN(targetFunctionId)) {
+			return redirect(303, `/functions/${targetFunctionId}`);
 		}
 		return redirect(303, '/triggers');
 	}

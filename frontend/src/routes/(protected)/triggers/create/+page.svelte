@@ -9,12 +9,15 @@
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+	import { page } from '$app/stores';
+	import { get } from 'svelte/store';
 
 	let isFormLoading = false;
 
 	const handleSubmit: SubmitFunction = ({ formData }) => {
 		isFormLoading = true;
 		formData.set('triggerType', triggerType);
+		formData.set('functionId', targetFunctionId.toString());
 		return async ({ update }) => {
 			isFormLoading = false;
 			update();
@@ -38,10 +41,23 @@
 	];
 
 	let triggerType = 'http';
+
+	const targetFunctionIdStr = get(page).url.searchParams.get('functionId');
+	const targetFunctionId = targetFunctionIdStr ? parseInt(targetFunctionIdStr, 10) : NaN;
+	const isBoundToTargetFunction =
+		!Number.isNaN(targetFunctionId) &&
+		briefFunctions.some((it) => it.functionId === targetFunctionId);
+
+	let functionId = targetFunctionId;
 </script>
 
 <header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
-	<Button variant="outline" size="icon" class="mr-4 h-7 w-7" href="./">
+	<Button
+		variant="outline"
+		size="icon"
+		class="mr-4 h-7 w-7"
+		href={isBoundToTargetFunction ? `/functions/${targetFunctionId}` : './'}
+	>
 		<ChevronLeft class="h-4 w-4" />
 		<span class="sr-only">Back</span>
 	</Button>
@@ -59,7 +75,9 @@
 	<form
 		class="m-auto grid min-w-full items-center gap-6"
 		method="post"
-		action="?/createTrigger"
+		action={isBoundToTargetFunction
+			? `?/createTrigger&functionId=${targetFunctionId}`
+			: '?/createTrigger'}
 		use:enhance={handleSubmit}
 	>
 		<fieldset class="grid gap-6 rounded-lg border p-4">
@@ -92,7 +110,22 @@
 
 			<div class="grid gap-3">
 				<Label for="code">Function</Label>
-				<Select.Root portal={null} name="functionId">
+				<Select.Root
+					portal={null}
+					name="functionId"
+					disabled={isBoundToTargetFunction}
+					selected={{
+						value: functionId,
+						label: briefFunctions.find(
+							(briefFunction) => briefFunction.functionId === targetFunctionId
+						)?.functionName
+					}}
+					onSelectedChange={(e) => {
+						if (typeof e?.value === 'string') {
+							functionId = e.value;
+						}
+					}}
+				>
 					<Select.Trigger id="functionId">
 						<Select.Value placeholder="Select a function" />
 					</Select.Trigger>
@@ -104,7 +137,7 @@
 							></Select.Item>
 						{/each}
 					</Select.Content>
-					<Select.Input value={form?.functionId?.toString()} />
+					<Select.Input />
 				</Select.Root>
 			</div>
 
