@@ -49,7 +49,6 @@
 		use:enhance={handleSubmit}
 	>
 		<fieldset class="grid gap-6 rounded-lg border p-4">
-			<legend class="-ml-1 px-1 text-sm font-medium"> Settings </legend>
 			<div class="grid gap-3">
 				<Label for="cronExpression">Cron expression</Label>
 				<Input
