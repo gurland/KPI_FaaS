@@ -43,7 +43,7 @@
 					<Input
 						id="username"
 						name="username"
-						placeholder="JuniorDev"
+						placeholder="Username"
 						autocomplete="username"
 						value={form?.username}
 						required
@@ -55,6 +55,7 @@
 						id="password"
 						type="password"
 						name="password"
+						placeholder="Password"
 						autocomplete="new-password"
 						value={form?.password}
 						required
