@@ -22,12 +22,12 @@ message DeleteCrontabTriggerRequest {
   uint32 trigger_id = 1;
 }
 
-message GetAPIGatewayTriggersRequest {
+message GetCrontabTriggersRequest {
   uint32 function_id = 1;
 }
 
 service CrontabTriggerService {
   rpc CreateCrontabTrigger(CrontabTriggerConfiguration) returns (CrontabTrigger);
   rpc DeleteCrontabTrigger(DeleteCrontabTriggerRequest) returns (Empty);
-  rpc GetCrontabTriggers(GetAPIGatewayTriggersRequest) returns (stream CrontabTrigger);
+  rpc GetCrontabTriggers(GetCrontabTriggersRequest) returns (stream CrontabTrigger);
 }

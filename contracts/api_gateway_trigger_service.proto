@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 import "common.proto";
-import "function_service.proto";
 
 package faas;
 
