@@ -67,6 +67,7 @@
 						id="passwordConfirm"
 						type="password"
 						name="passwordConfirm"
+						placeholder="Re-enter password"
 						autocomplete="new-password"
 						value={form?.passwordConfirm}
 						required
