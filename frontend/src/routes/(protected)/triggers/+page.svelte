@@ -1,21 +1,17 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { PlusIcon } from 'lucide-svelte';
-	import type { PageData } from './$types';
-	import {
-		Table,
-		TableHeader,
-		TableHead,
-		TableBody,
-		TableRow,
-		TableCell
-	} from '@/components/ui/table';
-	import { goto } from '$app/navigation';
+	import { CircleAlert, PlusIcon, TrashIcon } from 'lucide-svelte';
+	import type { ActionData, PageData } from './$types';
+	import { Table, TableBody, TableRow, TableCell } from '@/components/ui/table';
+	import { Alert } from '@/components/ui/alert';
+	import AlertTitle from '@/components/ui/alert/alert-title.svelte';
+	import AlertDescription from '@/components/ui/alert/alert-description.svelte';
 
 	export let data: PageData;
+	export let form: ActionData;
 
-	const { briefFunctions } = data;
+	const { apiGatewayTriggers, crontabTriggers } = data;
 </script>
 
 <header
@@ -39,26 +35,47 @@
 	</Tooltip.Root>
 </header>
 <main class="mx-auto grid w-full max-w-xl grid-cols-1 gap-4 overflow-auto p-4">
-	<Table>
-		<TableHeader>
-			<TableRow>
-				<TableHead>Id</TableHead>
-				<TableHead>Name</TableHead>
-				<TableHead>Runtime</TableHead>
-			</TableRow>
-		</TableHeader>
-		<TableBody>
-			{#each briefFunctions as briefFunction, i (i)}
-				<TableRow
-					on:click={() => {
-						goto(`/functions/${briefFunction.functionId}`);
-					}}
-				>
-					<TableCell>{briefFunction.functionId}</TableCell>
-					<TableCell>{briefFunction.functionName}</TableCell>
-					<TableCell>{briefFunction.runtimeTag}</TableCell>
-				</TableRow>
-			{/each}
-		</TableBody>
-	</Table>
+	{#if form?.errorMessage}
+		<Alert variant="destructive" class="mx-auto mb-4 min-w-full">
+			<CircleAlert class="h-4 w-4" />
+			<AlertTitle>Error</AlertTitle>
+			<AlertDescription>{form?.errorMessage}</AlertDescription>
+		</Alert>
+	{/if}
+	<form method="post">
+		<Table>
+			<TableBody>
+				{#each apiGatewayTriggers as apiGatewayTrigger, i (i)}
+					<TableRow>
+						<TableCell>Cron</TableCell>
+						<TableCell>{apiGatewayTrigger.name}</TableCell>
+						<TableCell>{apiGatewayTrigger.url}</TableCell>
+						<TableCell>
+							<Button
+								formaction={`?/deleteHTTPTrigger&triggerId=${apiGatewayTrigger.triggerId}`}
+								type="submit"
+								variant="destructive"
+								size="icon"><TrashIcon /></Button
+							>
+						</TableCell>
+					</TableRow>
+				{/each}
+				{#each crontabTriggers as crontabTrigger, i (i)}
+					<TableRow>
+						<TableCell>HTTP</TableCell>
+						<TableCell>{crontabTrigger.description}</TableCell>
+						<TableCell>{crontabTrigger.cronExpression}</TableCell>
+						<TableCell>
+							<Button
+								formaction={`?/deleteCronTrigger&triggerId=${crontabTrigger.triggerId}`}
+								type="submit"
+								variant="destructive"
+								size="icon"><TrashIcon /></Button
+							>
+						</TableCell>
+					</TableRow>
+				{/each}
+			</TableBody>
+		</Table>
+	</form>
 </main>
