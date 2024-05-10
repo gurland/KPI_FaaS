@@ -18,6 +18,12 @@ message CrontabTrigger {
   string description = 4;
 }
 
+message DeleteCrontabTriggerRequest {
+  uint32 trigger_id = 1;
+}
+
+
 service CrontabTriggerService {
-  rpc CreateCrontabTrigger(CrontabTriggerConfiguration) returns (Empty);
+  rpc CreateCrontabTrigger(CrontabTriggerConfiguration) returns (CrontabTrigger);
+  rpc DeleteCrontabTrigger(DeleteCrontabTriggerRequest) returns (Empty);
 }
