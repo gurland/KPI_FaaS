@@ -39,10 +39,12 @@ type UpdateFunctionFormData = {
 	codeChanged?: boolean;
 };
 
+type DeleteFunctionFormData = UpdateFunctionFormData;
+
 export const actions: Actions = {
 	updateFunction: async (
 		event: RequestEvent
-	): Promise<UpdateFunctionFormData | ActionFailure<UpdateFunctionFormData> | Redirect> => {
+	): Promise<ActionFailure<UpdateFunctionFormData> | Redirect> => {
 		const { request, params } = event;
 
 		const functionId = parseInt(params.id);
@@ -79,10 +81,37 @@ export const actions: Actions = {
 			}
 		} catch (e) {
 			if (e instanceof Error) {
-				console.error(e);
 				return fail(400, { ...updateFunctionResponse, errorMessage: e.message });
 			}
-			return updateFunctionResponse;
+		}
+		return redirect(303, '/functions');
+	},
+	deleteFunction: async (
+		event: RequestEvent
+	): Promise<ActionFailure<DeleteFunctionFormData> | Redirect> => {
+		const { request, params } = event;
+
+		const functionId = parseInt(params.id);
+		const formData = await request.formData();
+		const runtimeTag = formData.get('runtimeTag') ?? '';
+		const code = formData.get('code') ?? '';
+
+		const deleteFunctionResponse: UpdateFunctionFormData = {
+			runtimeTag,
+			code
+		};
+
+		try {
+			await functionService.deleteFunction(
+				{
+					functionId
+				},
+				{ metadata: getRpcMetaData(event) }
+			);
+		} catch (e) {
+			if (e instanceof Error) {
+				return fail(400, { ...deleteFunctionResponse, errorMessage: e.message });
+			}
 		}
 		return redirect(303, '/functions');
 	}

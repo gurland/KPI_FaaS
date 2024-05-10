@@ -28,7 +28,7 @@ type CreateTriggerFormData = {
 export const actions: Actions = {
 	createTrigger: async (
 		event: RequestEvent
-	): Promise<CreateTriggerFormData | ActionFailure<CreateTriggerFormData> | Redirect> => {
+	): Promise<ActionFailure<CreateTriggerFormData> | Redirect> => {
 		const { request } = event;
 		const formData = await request.formData();
 		const cronExpression = formData.get('cronExpression') ?? '';
@@ -52,10 +52,8 @@ export const actions: Actions = {
 			);
 		} catch (e) {
 			if (e instanceof Error) {
-				console.error(e);
 				return fail(400, { ...createTriggerResponse, errorMessage: e.message });
 			}
-			return createTriggerResponse;
 		}
 		return redirect(303, '/triggers');
 	}

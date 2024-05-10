@@ -16,7 +16,7 @@ type RegisterFormData = {
 export const actions: Actions = {
 	default: async (
 		event: RequestEvent
-	): Promise<undefined | ActionFailure<RegisterFormData> | Redirect> => {
+	): Promise<RegisterFormData | ActionFailure<RegisterFormData> | Redirect> => {
 		const { request } = event;
 		const formData = await request.formData();
 		const username = formData.get('username') ?? '';
@@ -44,5 +44,7 @@ export const actions: Actions = {
 		if (event.locals.user) {
 			return redirectSignedInUser(event);
 		}
+
+		return registerResponse;
 	}
 };

@@ -17,7 +17,7 @@ type CreateRuntimeFormData = {
 export const actions: Actions = {
 	createRuntime: async (
 		event: RequestEvent
-	): Promise<CreateRuntimeFormData | ActionFailure<CreateRuntimeFormData> | Redirect> => {
+	): Promise<ActionFailure<CreateRuntimeFormData> | Redirect> => {
 		const { request } = event;
 		const formData = await request.formData();
 		const tag = formData.get('tag') ?? '';
@@ -38,10 +38,8 @@ export const actions: Actions = {
 			);
 		} catch (e) {
 			if (e instanceof Error) {
-				console.error(e);
 				return fail(400, { ...createRuntimeResponse, errorMessage: e.message });
 			}
-			return createRuntimeResponse;
 		}
 		return redirect(303, '/runtimes');
 	}

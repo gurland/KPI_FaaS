@@ -9,20 +9,26 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-	let isFormLoading = false;
+	let isUpdating = false;
+	let isDeleting = false;
 
-	const handleSubmit: SubmitFunction = ({ formData }) => {
-		isFormLoading = true;
+	const handleSubmit: SubmitFunction = ({ formData, action }) => {
+		if (action.search.startsWith('?/updateFunction')) {
+			isUpdating = true;
+			if (formData.get('code')?.toString().trim() !== functionDetailed?.code.trim()) {
+				formData.set('codeChanged', 'true');
+			}
 
-		if (formData.get('code')?.toString().trim() !== functionDetailed?.code.trim()) {
-			formData.set('codeChanged', 'true');
+			if (formData.get('runtimeTag') !== functionDetailed?.runtimeTag) {
+				formData.set('runtimeTagChanged', 'true');
+			}
+		} else if (action.search.startsWith('?/deleteFunction')) {
+			isDeleting = true;
 		}
 
-		if (formData.get('runtimeTag') !== functionDetailed?.runtimeTag) {
-			formData.set('runtimeTagChanged', 'true');
-		}
-		return async ({ update }) => {
-			isFormLoading = false;
+		return async ({ update, action }) => {
+			isUpdating = false;
+			isDeleting = false;
 			update();
 		};
 	};
@@ -31,6 +37,8 @@
 	export let data: PageData;
 
 	const { briefRuntimes = [], functionDetailed } = data;
+
+	$: isFormLoading = isUpdating || isDeleting;
 </script>
 
 <header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
@@ -38,7 +46,7 @@
 		<ChevronLeft class="h-4 w-4" />
 		<span class="sr-only">Back</span>
 	</Button>
-	<h1 class="text-xl font-semibold">Create new function</h1>
+	<h1 class="text-xl font-semibold">Edit function</h1>
 </header>
 
 <main class="mx-auto grid w-full max-w-xl grid-cols-1 gap-4 overflow-auto p-4">
@@ -49,12 +57,7 @@
 			<AlertDescription>{form?.errorMessage}</AlertDescription>
 		</Alert>
 	{/if}
-	<form
-		class="m-auto grid min-w-full items-center gap-6"
-		method="post"
-		action="?/updateFunction"
-		use:enhance={handleSubmit}
-	>
+	<form class="m-auto grid min-w-full items-center gap-6" method="post" use:enhance={handleSubmit}>
 		<fieldset class="grid gap-6 rounded-lg border p-4">
 			<div class="grid gap-3">
 				<Label for="code">Runtime</Label>
@@ -94,11 +97,23 @@
 					value={(form?.code ?? functionDetailed?.code ?? '').toString()}
 				/>
 			</div>
-			<Button type="submit" class="w-full" disabled={isFormLoading}>
-				{#if isFormLoading}
+			<Button type="submit" formaction="?/updateFunction" class="w-full" disabled={isFormLoading}>
+				{#if isUpdating}
 					<LoaderCircleIcon class="mr-2 h-4 w-4 animate-spin" />
 				{/if}
 				Update runtime
+			</Button>
+			<Button
+				type="submit"
+				variant="destructive"
+				formaction="?/deleteFunction"
+				class="w-full"
+				disabled={isFormLoading}
+			>
+				{#if isDeleting}
+					<LoaderCircleIcon class="mr-2 h-4 w-4 animate-spin" />
+				{/if}
+				Delete runtime
 			</Button>
 		</fieldset>
 	</form>

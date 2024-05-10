@@ -28,7 +28,7 @@ type CreateFunctionFormData = {
 export const actions: Actions = {
 	createFunction: async (
 		event: RequestEvent
-	): Promise<CreateFunctionFormData | ActionFailure<CreateFunctionFormData> | Redirect> => {
+	): Promise<ActionFailure<CreateFunctionFormData> | Redirect> => {
 		const { request } = event;
 		const formData = await request.formData();
 		const runtimeTag = formData.get('runtimeTag') ?? '';
@@ -52,10 +52,8 @@ export const actions: Actions = {
 			);
 		} catch (e) {
 			if (e instanceof Error) {
-				console.error(e);
 				return fail(400, { ...createFunctionResponse, errorMessage: e.message });
 			}
-			return createFunctionResponse;
 		}
 		return redirect(303, '/functions');
 	}

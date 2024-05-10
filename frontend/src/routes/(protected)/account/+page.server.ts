@@ -15,7 +15,7 @@ type CreateTriggerFormData = {
 export const actions: Actions = {
 	changePassword: async (
 		event: RequestEvent
-	): Promise<undefined | ActionFailure<CreateTriggerFormData>> => {
+	): Promise<CreateTriggerFormData | ActionFailure<CreateTriggerFormData>> => {
 		const { request, locals } = event;
 		const formData = await request.formData();
 		const currentPassword = formData.get('currentPassword') ?? '';
@@ -36,9 +36,10 @@ export const actions: Actions = {
 			);
 		} catch (e) {
 			if (e instanceof Error) {
-				console.error(e);
 				return fail(400, { errorMessage: e.message });
 			}
 		}
+
+		return { errorMessage: undefined };
 	}
 };

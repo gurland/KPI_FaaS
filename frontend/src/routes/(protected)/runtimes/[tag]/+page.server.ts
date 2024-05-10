@@ -27,7 +27,7 @@ type UpdateRuntimeFormData = {
 export const actions: Actions = {
 	updateRuntime: async (
 		event: RequestEvent
-	): Promise<UpdateRuntimeFormData | ActionFailure<UpdateRuntimeFormData> | Redirect> => {
+	): Promise<ActionFailure<UpdateRuntimeFormData> | Redirect> => {
 		const { request, params } = event;
 
 		const formData = await request.formData();
@@ -47,10 +47,8 @@ export const actions: Actions = {
 			);
 		} catch (e) {
 			if (e instanceof Error) {
-				console.error(e);
 				return fail(400, { ...updateRuntimeResponse, errorMessage: e.message });
 			}
-			return updateRuntimeResponse;
 		}
 		return redirect(303, '/runtimes');
 	}
