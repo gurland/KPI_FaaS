@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken';
 import type { RequestEvent } from '@sveltejs/kit';
 import { authService, type User, type UserCredentialsRequest } from '@/server';
-
-const JWT_SECRET = 'SECRET_INGREDIENT';
+import { JWT_SECRET } from '$env/static/private';
 
 class AuthTokenManager {
 	#authTokenCookieName = 'auth_token';
