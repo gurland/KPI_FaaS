@@ -11,6 +11,7 @@
 	$: isFunctionsPath = $page.url.pathname.startsWith('/functions');
 	$: isTriggerPath = $page.url.pathname.startsWith('/triggers');
 	$: isRuntimesPath = $page.url.pathname.startsWith('/runtimes');
+	$: isAccountPath = $page.url.pathname.startsWith('/account');
 </script>
 
 <div class="grid h-screen w-full pl-[53px]">
@@ -86,15 +87,16 @@
 					<Button
 						variant="ghost"
 						size="icon"
-						class="mt-auto rounded-lg"
+						class={`mt-auto rounded-lg ${isAccountPath ? 'bg-muted' : ''}`}
 						aria-label="Account"
 						builders={[builder]}
+						href="/account"
 					>
 						<SquareUser class="size-5" />
 					</Button>
 				</Tooltip.Trigger>
-				<Tooltip.Content side="right" sideOffset={5}
-					>Account ({$page.data.user?.username})</Tooltip.Content
+				<Tooltip.Content side="right" sideOffset={5}>
+					Account ({$page.data.user?.username})</Tooltip.Content
 				>
 			</Tooltip.Root>
 		</nav>
