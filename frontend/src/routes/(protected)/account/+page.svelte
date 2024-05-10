@@ -68,7 +68,7 @@
 						id="newPassword"
 						type="password"
 						name="newPassword"
-						placeholder="Password"
+						placeholder="New password"
 						autocomplete="new-password"
 						required
 					/>
