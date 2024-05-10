@@ -15,6 +15,10 @@ export interface BriefRuntime {
   registryUrl: string;
 }
 
+export interface GetRuntimeDetailsRequest {
+  tag: string;
+}
+
 export interface DetailedRuntime {
   tag: string;
   registryUrl: string;
@@ -170,6 +174,63 @@ export const BriefRuntime = {
     const message = createBaseBriefRuntime();
     message.tag = object.tag ?? "";
     message.registryUrl = object.registryUrl ?? "";
+    return message;
+  },
+};
+
+function createBaseGetRuntimeDetailsRequest(): GetRuntimeDetailsRequest {
+  return { tag: "" };
+}
+
+export const GetRuntimeDetailsRequest = {
+  encode(message: GetRuntimeDetailsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.tag !== "") {
+      writer.uint32(10).string(message.tag);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetRuntimeDetailsRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetRuntimeDetailsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.tag = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetRuntimeDetailsRequest {
+    return { tag: isSet(object.tag) ? globalThis.String(object.tag) : "" };
+  },
+
+  toJSON(message: GetRuntimeDetailsRequest): unknown {
+    const obj: any = {};
+    if (message.tag !== "") {
+      obj.tag = message.tag;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<GetRuntimeDetailsRequest>): GetRuntimeDetailsRequest {
+    return GetRuntimeDetailsRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<GetRuntimeDetailsRequest>): GetRuntimeDetailsRequest {
+    const message = createBaseGetRuntimeDetailsRequest();
+    message.tag = object.tag ?? "";
     return message;
   },
 };
@@ -363,7 +424,7 @@ export const RuntimeServiceDefinition = {
     /** rpc DeleteRuntime(BriefRuntime) returns (Empty);  TODO: Find a correct way to remove images from registry */
     getRuntimeDetails: {
       name: "GetRuntimeDetails",
-      requestType: BriefRuntime,
+      requestType: GetRuntimeDetailsRequest,
       requestStream: false,
       responseType: DetailedRuntime,
       responseStream: false,
@@ -391,7 +452,7 @@ export interface RuntimeServiceImplementation<CallContextExt = {}> {
   ): Promise<DeepPartial<UpdatedRuntimeResponse>>;
   /** rpc DeleteRuntime(BriefRuntime) returns (Empty);  TODO: Find a correct way to remove images from registry */
   getRuntimeDetails(
-    request: BriefRuntime,
+    request: GetRuntimeDetailsRequest,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<DetailedRuntime>>;
   getRuntimeTags(
@@ -411,7 +472,7 @@ export interface RuntimeServiceClient<CallOptionsExt = {}> {
   ): Promise<UpdatedRuntimeResponse>;
   /** rpc DeleteRuntime(BriefRuntime) returns (Empty);  TODO: Find a correct way to remove images from registry */
   getRuntimeDetails(
-    request: DeepPartial<BriefRuntime>,
+    request: DeepPartial<GetRuntimeDetailsRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<DetailedRuntime>;
   getRuntimeTags(request: DeepPartial<Empty>, options?: CallOptions & CallOptionsExt): AsyncIterable<BriefRuntime>;

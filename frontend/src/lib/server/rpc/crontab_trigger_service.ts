@@ -18,6 +18,10 @@ export interface CrontabTrigger {
   description: string;
 }
 
+export interface DeleteCrontabTriggerRequest {
+  triggerId: number;
+}
+
 function createBaseCrontabTriggerConfiguration(): CrontabTriggerConfiguration {
   return { cronExpression: "", functionId: 0, description: "" };
 }
@@ -211,6 +215,63 @@ export const CrontabTrigger = {
   },
 };
 
+function createBaseDeleteCrontabTriggerRequest(): DeleteCrontabTriggerRequest {
+  return { triggerId: 0 };
+}
+
+export const DeleteCrontabTriggerRequest = {
+  encode(message: DeleteCrontabTriggerRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.triggerId !== 0) {
+      writer.uint32(8).uint32(message.triggerId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DeleteCrontabTriggerRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDeleteCrontabTriggerRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.triggerId = reader.uint32();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DeleteCrontabTriggerRequest {
+    return { triggerId: isSet(object.triggerId) ? globalThis.Number(object.triggerId) : 0 };
+  },
+
+  toJSON(message: DeleteCrontabTriggerRequest): unknown {
+    const obj: any = {};
+    if (message.triggerId !== 0) {
+      obj.triggerId = Math.round(message.triggerId);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<DeleteCrontabTriggerRequest>): DeleteCrontabTriggerRequest {
+    return DeleteCrontabTriggerRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<DeleteCrontabTriggerRequest>): DeleteCrontabTriggerRequest {
+    const message = createBaseDeleteCrontabTriggerRequest();
+    message.triggerId = object.triggerId ?? 0;
+    return message;
+  },
+};
+
 export type CrontabTriggerServiceDefinition = typeof CrontabTriggerServiceDefinition;
 export const CrontabTriggerServiceDefinition = {
   name: "CrontabTriggerService",
@@ -219,6 +280,14 @@ export const CrontabTriggerServiceDefinition = {
     createCrontabTrigger: {
       name: "CreateCrontabTrigger",
       requestType: CrontabTriggerConfiguration,
+      requestStream: false,
+      responseType: CrontabTrigger,
+      responseStream: false,
+      options: {},
+    },
+    deleteCrontabTrigger: {
+      name: "DeleteCrontabTrigger",
+      requestType: DeleteCrontabTriggerRequest,
       requestStream: false,
       responseType: Empty,
       responseStream: false,
@@ -231,12 +300,20 @@ export interface CrontabTriggerServiceImplementation<CallContextExt = {}> {
   createCrontabTrigger(
     request: CrontabTriggerConfiguration,
     context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<CrontabTrigger>>;
+  deleteCrontabTrigger(
+    request: DeleteCrontabTriggerRequest,
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<Empty>>;
 }
 
 export interface CrontabTriggerServiceClient<CallOptionsExt = {}> {
   createCrontabTrigger(
     request: DeepPartial<CrontabTriggerConfiguration>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<CrontabTrigger>;
+  deleteCrontabTrigger(
+    request: DeepPartial<DeleteCrontabTriggerRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<Empty>;
 }
