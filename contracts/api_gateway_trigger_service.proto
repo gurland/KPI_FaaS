@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "common.proto";
+import "function_service.proto";
+
+package faas;
+
+message ApiGatewayTriggerConfiguration {
+  BriefFunction function = 1;
+  string name = 2;
+}
+
+message DetailedAPIGatewayTrigger {
+  uint32 trigger_id = 1;
+  string name = 2;
+  string url = 3;
+}
+
+message DeleteAPIGatewayTriggerRequest {
+  uint32 trigger_id = 1;
+}
+
+service APIGatewayService {
+  rpc CreateAPIGatewayTrigger(ApiGatewayTriggerConfiguration) returns (DetailedAPIGatewayTrigger);
+  rpc DeleteApiGatewayTrigger(DeleteAPIGatewayTriggerRequest) returns (Empty);
+}
