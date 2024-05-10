@@ -12,8 +12,9 @@
 
 	let isFormLoading = false;
 
-	const handleSubmit: SubmitFunction = () => {
+	const handleSubmit: SubmitFunction = ({ formData }) => {
 		isFormLoading = true;
+		formData.set('triggerType', triggerType);
 		return async ({ update }) => {
 			isFormLoading = false;
 			update();
@@ -24,6 +25,19 @@
 	export let data: PageData;
 
 	const { briefFunctions } = data;
+
+	const triggers = [
+		{
+			value: 'http',
+			label: 'HTTP'
+		},
+		{
+			value: 'cron',
+			label: 'Cron'
+		}
+	];
+
+	let triggerType = 'http';
 </script>
 
 <header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
@@ -50,15 +64,30 @@
 	>
 		<fieldset class="grid gap-6 rounded-lg border p-4">
 			<div class="grid gap-3">
-				<Label for="cronExpression">Cron expression</Label>
-				<Input
-					id="cronExpression"
-					name="cronExpression"
-					type="text"
-					placeholder="Cron expression"
-					value={form?.cronExpression?.toString()}
-					required
-				/>
+				<Label for="code">Trigger type</Label>
+				<Select.Root
+					portal={null}
+					name="triggerType"
+					selected={{
+						value: triggerType,
+						label: triggers.find((trigger) => trigger.value === triggerType)?.label
+					}}
+					onSelectedChange={(e) => {
+						if (typeof e?.value === 'string') {
+							triggerType = e.value;
+						}
+					}}
+				>
+					<Select.Trigger id="triggerType">
+						<Select.Value placeholder="Select a trigger type" />
+					</Select.Trigger>
+					<Select.Content>
+						{#each triggers as trigger}
+							<Select.Item value={trigger.value} label={trigger.label}></Select.Item>
+						{/each}
+					</Select.Content>
+					<Select.Input />
+				</Select.Root>
 			</div>
 
 			<div class="grid gap-3">
@@ -78,16 +107,46 @@
 					<Select.Input value={form?.functionId?.toString()} />
 				</Select.Root>
 			</div>
-			<div class="grid gap-3">
-				<Label for="description">Description</Label>
-				<Textarea
-					id="description"
-					name="description"
-					placeholder="Trigger description goes here"
-					class="min-h-[9.5rem]"
-					value={form?.description?.toString()}
-				/>
-			</div>
+
+			{#if triggerType === 'cron'}
+				<div class="grid gap-3">
+					<Label for="cronExpression">Cron expression</Label>
+					<Input
+						id="cronExpression"
+						name="cronExpression"
+						type="text"
+						placeholder="Cron expression"
+						value={form?.cronExpression?.toString()}
+						required
+					/>
+				</div>
+
+				<div class="grid gap-3">
+					<Label for="description">Description</Label>
+					<Textarea
+						id="description"
+						name="description"
+						placeholder="Description"
+						class="min-h-[9.5rem]"
+						value={form?.description?.toString()}
+					/>
+				</div>
+			{/if}
+
+			{#if triggerType === 'http'}
+				<div class="grid gap-3">
+					<Label for="name">Name</Label>
+					<Input
+						id="name"
+						name="name"
+						type="text"
+						placeholder="Name"
+						value={form?.name?.toString()}
+						required
+					/>
+				</div>
+			{/if}
+
 			<Button type="submit" class="w-full" disabled={isFormLoading}>
 				{#if isFormLoading}
 					<LoaderCircleIcon class="mr-2 h-4 w-4 animate-spin" />
