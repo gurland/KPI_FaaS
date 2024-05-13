@@ -1,11 +1,6 @@
 import {
-	SERVICE_IP,
-	AUTH_SERVICE_PORT,
-	FUNCTION_SERVICE_PORT,
-	RUNTIME_SERVICE_PORT,
-	CRONTAB_TRIGGER_SERVICE_PORT,
-	API_GATEWAY_TRIGGER_SERVICE_PORT
-} from '$env/static/private';
+	env
+} from '$env/dynamic/private';
 
 export enum ServiceName {
 	Auth = 'auth',
@@ -15,14 +10,14 @@ export enum ServiceName {
 	ApiGatewayTrigger = 'apiGatewayTrigger'
 }
 
-const portBindings = {
-	[ServiceName.Auth]: AUTH_SERVICE_PORT,
-	[ServiceName.Function]: FUNCTION_SERVICE_PORT,
-	[ServiceName.Runtime]: RUNTIME_SERVICE_PORT,
-	[ServiceName.CrontabTrigger]: CRONTAB_TRIGGER_SERVICE_PORT,
-	[ServiceName.ApiGatewayTrigger]: API_GATEWAY_TRIGGER_SERVICE_PORT
+const serviceURLBindings = {
+	[ServiceName.Auth]: env.AUTH_SERVICE_URL,
+	[ServiceName.Function]: env.FUNCTION_SERVICE_URL,
+	[ServiceName.Runtime]: env.RUNTIME_SERVICE_URL,
+	[ServiceName.CrontabTrigger]: env.CRONTAB_TRIGGER_SERVICE_URL,
+	[ServiceName.ApiGatewayTrigger]: env.API_GATEWAY_TRIGGER_SERVICE_URL
 };
 
 export function getServiceAddress(serviceName: ServiceName): string {
-	return `${SERVICE_IP}:${portBindings[serviceName]}`;
+	return serviceURLBindings[serviceName];
 }

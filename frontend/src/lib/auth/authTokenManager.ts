@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import type { RequestEvent } from '@sveltejs/kit';
 import { authService, type User, type UserCredentialsRequest } from '@/server';
-import { JWT_SECRET } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 class AuthTokenManager {
 	#authTokenCookieName = 'auth_token';
@@ -27,7 +27,7 @@ class AuthTokenManager {
 		}
 
 		try {
-			const user = jwt.verify(authToken, JWT_SECRET) as User;
+			const user = jwt.verify(authToken, env.JWT_SECRET) as User;
 			const userVerified = await authService.verifyUser({ userId: user.userId });
 
 			if (user.updatedAtTimestamp !== userVerified.updatedAtTimestamp) {
@@ -50,7 +50,7 @@ class AuthTokenManager {
 		}
 
 		try {
-			const user = jwt.verify(authToken, JWT_SECRET) as User;
+			const user = jwt.verify(authToken, env.JWT_SECRET) as User;
 			return user;
 		} catch (error) {
 			return undefined;
@@ -58,7 +58,7 @@ class AuthTokenManager {
 	}
 
 	#setToken(event: RequestEvent, payload: User) {
-		const authToken = jwt.sign(payload, JWT_SECRET, {
+		const authToken = jwt.sign(payload, env.JWT_SECRET, {
 			expiresIn: this.#authTokenExpiration
 		});
 
