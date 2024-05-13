@@ -1,5 +1,47 @@
 version: '3'
 services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:4173"
+    env_file:
+      - ./frontend/.env.example
+
+  auth-service:
+    build: ./services/auth_service
+    ports:
+      - "50051:50051"
+    env_file:
+      - ./services/auth_service/.env
+
+  runtime-service:
+    build: ./services/runtime_service
+    ports:
+      - "50061:50061"
+    env_file:
+      - ./services/runtime_service/.env
+
+  function-service:
+    build: ./services/function_service
+    ports:
+      - "50071:50071"
+    env_file:
+      - ./services/function_service/.env
+
+  load-balancer-service:
+    build: ./services/load_balancer_service
+    ports:
+      - "50011:50011"
+    env_file:
+      - ./services/load_balancer_service/.env
+
+  crontab-trigger-service:
+    build: ./services/crontab_trigger_service
+    ports:
+      - "50081:50081"
+    env_file:
+      - ./services/crontab_trigger_service/.env
+
   image-repo:
     image: registry:2
     ports:
@@ -13,7 +55,7 @@ services:
     image: joxit/docker-registry-ui:main
     restart: always
     ports:
-      - 80:80
+      - "8080:80"
     environment:
       - SINGLE_REGISTRY=true
       - REGISTRY_TITLE=Docker Registry UI
