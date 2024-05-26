@@ -33,7 +33,6 @@ message UpdatedRuntimeResponse {
 service RuntimeService {
   rpc CreateRuntime(RuntimeConfiguration) returns (UpdatedRuntimeResponse);
   rpc EditRuntime(RuntimeConfiguration) returns (UpdatedRuntimeResponse);
-//  rpc DeleteRuntime(BriefRuntime) returns (Empty);  TODO: Find a correct way to remove images from registry
   rpc GetRuntimeDetails(GetRuntimeDetailsRequest) returns (DetailedRuntime);
   rpc GetRuntimeTags(Empty) returns (stream BriefRuntime);
 }
