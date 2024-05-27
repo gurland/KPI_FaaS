@@ -1,11 +1,10 @@
-import {
-	env
-} from '$env/dynamic/private';
+import { env } from '$env/dynamic/private';
 
 export enum ServiceName {
 	Auth = 'auth',
 	Function = 'function',
 	Runtime = 'runtime',
+	LoadBalancer = 'loadBalancer',
 	CrontabTrigger = 'crontabTrigger',
 	ApiGatewayTrigger = 'apiGatewayTrigger'
 }
@@ -14,6 +13,7 @@ const serviceURLBindings = {
 	[ServiceName.Auth]: env.AUTH_SERVICE_URL,
 	[ServiceName.Function]: env.FUNCTION_SERVICE_URL,
 	[ServiceName.Runtime]: env.RUNTIME_SERVICE_URL,
+	[ServiceName.LoadBalancer]: env.LOAD_BALANCER_SERVICE_URL,
 	[ServiceName.CrontabTrigger]: env.CRONTAB_TRIGGER_SERVICE_URL,
 	[ServiceName.ApiGatewayTrigger]: env.API_GATEWAY_TRIGGER_SERVICE_URL
 };
