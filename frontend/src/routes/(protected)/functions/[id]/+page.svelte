@@ -12,6 +12,7 @@
 	import TableBody from '@/components/ui/table/table-body.svelte';
 	import TableRow from '@/components/ui/table/table-row.svelte';
 	import TableCell from '@/components/ui/table/table-cell.svelte';
+	import { InvokeFunctionDialog } from './components';
 
 	let isUpdating = false;
 	let isDeleting = false;
@@ -41,13 +42,20 @@
 	export let data: PageData;
 
 	const {
+		user,
+		clientIp,
+		userAgent,
 		briefRuntimes = [],
 		functionDetailed,
 		apiGatewayTriggers = [],
 		crontabTriggers = []
 	} = data;
 
+	$: briefRuntime = briefRuntimes.find((it) => it.tag === functionDetailed?.runtimeTag);
+
 	$: isFormLoading = isUpdating || isDeleting;
+
+	$: logLines = JSON.parse(form?.logJSON ?? '[]') as string[];
 </script>
 
 <header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
@@ -59,7 +67,7 @@
 </header>
 
 <main class="mx-auto grid w-full max-w-xl grid-cols-1 gap-4 overflow-auto p-4">
-	{#if form?.errorMessage}
+	{#if form?.errorMessage && !form?.isInvokeFunctionError}
 		<Alert variant="destructive" class="mx-auto mb-4 min-w-full">
 			<CircleAlert class="h-4 w-4" />
 			<AlertTitle>Error</AlertTitle>
@@ -112,6 +120,20 @@
 				{/if}
 				Update function
 			</Button>
+
+			{#if functionDetailed && briefRuntime && user}
+				<InvokeFunctionDialog
+					{functionDetailed}
+					{briefRuntime}
+					{clientIp}
+					{userAgent}
+					{logLines}
+					jsonTriggerContext={(form?.jsonTriggerContext ?? '').toString()}
+					userId={user.userId}
+					errorMessage={form?.errorMessage}
+				/>
+			{/if}
+
 			<Button
 				type="submit"
 				variant="destructive"

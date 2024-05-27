@@ -5,8 +5,11 @@ import {
 	crontabTriggerService,
 	functionService,
 	getRpcMetaData,
+	loadBalancerService,
 	runtimeService
 } from '@/server';
+import type { DetailedFunction } from '@/server/rpc/function_service';
+import type { DetailedRuntime } from '@/server/rpc/runtime_service';
 
 export const load: PageServerLoad = async (event) => {
 	const functionId = parseInt(event.params.id, 10);
@@ -44,6 +47,8 @@ export const load: PageServerLoad = async (event) => {
 		}
 
 		return {
+			clientIp: event.getClientAddress(),
+			userAgent: event.request.headers.get('user-agent'),
 			user: event.locals.user,
 			functionDetailed,
 			briefRuntimes,
@@ -57,21 +62,26 @@ export const load: PageServerLoad = async (event) => {
 	}
 };
 
-type UpdateFunctionFormData = {
+type BaseFormData = {
+	isInvokeFunctionError?: boolean;
+	errorMessage?: string;
+};
+
+type UpdateFunctionFormData = BaseFormData & {
 	runtimeTag: FormDataEntryValue;
 	code: FormDataEntryValue;
-	errorMessage?: string;
 	runtimeTagChanged?: boolean;
 	codeChanged?: boolean;
 };
 
-type DeleteFunctionFormData = {
-	errorMessage?: string;
+type InvokeFunctionFormData = BaseFormData & {
+	jsonTriggerContext: FormDataEntryValue;
+	logJSON: string | undefined;
 };
 
-type DeleteTriggerFormData = {
-	errorMessage?: string;
-};
+type DeleteFunctionFormData = BaseFormData;
+
+type DeleteTriggerFormData = BaseFormData;
 
 export const actions: Actions = {
 	updateFunction: async (
@@ -117,6 +127,48 @@ export const actions: Actions = {
 			}
 		}
 		return redirect(303, '/functions');
+	},
+	invokeFunction: async (
+		event: RequestEvent
+	): Promise<ActionFailure<InvokeFunctionFormData> | InvokeFunctionFormData> => {
+		const { request } = event;
+
+		const formData = await request.formData();
+		const jsonTriggerContext = formData.get('jsonTriggerContext') ?? '';
+		const functionDetailedJson = formData.get('functionDetailed')?.toString();
+		const runtimeDetailedJson = formData.get('runtimeDetailed')?.toString();
+
+		const invokeFunctionResponse: InvokeFunctionFormData = {
+			jsonTriggerContext,
+			logJSON: undefined
+		};
+
+		try {
+			const functionDetailed = JSON.parse(functionDetailedJson ?? '') as DetailedFunction;
+			const runtimeDetailed = JSON.parse(runtimeDetailedJson ?? '') as DetailedRuntime;
+			const request = {
+				function: functionDetailed,
+				runtime: runtimeDetailed,
+				jsonTriggerContext: jsonTriggerContext.toString()
+			};
+			const result = await loadBalancerService.invokeFunction(request, {
+				metadata: getRpcMetaData(event)
+			});
+			return {
+				...invokeFunctionResponse,
+				logJSON: JSON.stringify(result.logLines?.logLines ?? [])
+			};
+		} catch (e) {
+			if (e instanceof Error) {
+				return fail(400, {
+					...invokeFunctionResponse,
+					errorMessage: e.message,
+					isInvokeFunctionError: true
+				});
+			}
+		}
+
+		return invokeFunctionResponse;
 	},
 	deleteFunction: async (
 		event: RequestEvent
