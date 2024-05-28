@@ -76,6 +76,7 @@ type UpdateFunctionFormData = BaseFormData & {
 
 type InvokeFunctionFormData = BaseFormData & {
 	jsonTriggerContext: FormDataEntryValue;
+	resultJSON: string | undefined;
 	logJSON: string | undefined;
 };
 
@@ -140,6 +141,7 @@ export const actions: Actions = {
 
 		const invokeFunctionResponse: InvokeFunctionFormData = {
 			jsonTriggerContext,
+			resultJSON: undefined,
 			logJSON: undefined
 		};
 
@@ -151,11 +153,14 @@ export const actions: Actions = {
 				runtime: runtimeDetailed,
 				jsonTriggerContext: jsonTriggerContext.toString()
 			};
+
 			const result = await loadBalancerService.invokeFunction(request, {
 				metadata: getRpcMetaData(event)
 			});
+
 			return {
 				...invokeFunctionResponse,
+				resultJSON: result.json,
 				logJSON: JSON.stringify(result.logLines?.logLines ?? [])
 			};
 		} catch (e) {

@@ -137,6 +137,7 @@
 					jsonTriggerContext={(form?.jsonTriggerContext ?? '').toString()}
 					userId={user.userId}
 					errorMessage={form?.errorMessage}
+					resultJSON={form?.resultJSON}
 				/>
 			{/if}
 

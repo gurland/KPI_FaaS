@@ -1,6 +1,6 @@
+
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
 	import { CircleAlert, LoaderCircleIcon } from 'lucide-svelte';
 	import { enhance } from '$app/forms';
@@ -10,6 +10,10 @@
 	import type { BriefRuntime } from '@/server/rpc/runtime_service';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 	import { RichTextEditor } from '@/components/external/rich-text-editor';
+	import Highlight from "svelte-highlight";
+  	import json from "svelte-highlight/languages/json";
+	import "svelte-highlight/styles/atom-one-dark.css";
+
 
 	export let userId: number;
 	export let clientIp: string;
@@ -18,6 +22,7 @@
 	export let briefRuntime: BriefRuntime;
 	export let jsonTriggerContext: string;
 	export let errorMessage: string | undefined;
+	export let resultJSON: string | undefined;
 	export let logLines: string[];
 
 	const functionConfiguration = {
@@ -72,7 +77,11 @@
 			update();
 		};
 	};
+	
+
 </script>
+
+
 
 <Dialog.Root>
 	<Dialog.Trigger>
@@ -96,20 +105,6 @@
 		>
 			<fieldset class="grid gap-6 rounded-lg border p-4">
 				<div class="grid gap-3">
-					<Label for="jsonTriggerContext">Context data</Label>
-					<Textarea
-						id="jsonTriggerContext"
-						name="jsonTriggerContext"
-						placeholder="Function code goes here"
-						class="min-h-[9.5rem] resize-none"
-						value={jsonTriggerContext || contextData}
-						spellcheck="false"
-						rows={30}
-						cols={30}
-					/>
-				</div>
-
-				<div class="grid gap-3">
 					<Label>Context data</Label>
 					<RichTextEditor
 						defaultLanguage="json"
@@ -132,6 +127,12 @@
 					{#each logLines as logLine}
 						<p class="mb-2">{JSON.stringify(logLine)}</p>
 					{/each}
+				</div>
+			{/if}
+			{#if resultJSON}
+				<h2 class="mb-2 text-lg font-semibold">Result</h2>
+				<div class="max-h-52 overflow-y-auto text-sm text-gray-500">
+					<Highlight language={json}  code={resultJSON} />
 				</div>
 			{/if}
 		</div>
