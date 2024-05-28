@@ -94,7 +94,7 @@
 				{#if isFormLoading}
 					<LoaderCircleIcon class="mr-2 h-4 w-4 animate-spin" />
 				{/if}
-				Create runtime
+				Create function
 			</Button>
 		</fieldset>
 	</form>
