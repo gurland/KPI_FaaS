@@ -1,11 +1,66 @@
+<script lang="ts" context="module">
+	type Language =
+		| 'javascript'
+		| 'typescript'
+		| 'python'
+		| 'c'
+		| 'cpp'
+		| 'go'
+		| 'dockerfile'
+		| 'json';
+	type LanguageOption = { value: Language; label: string; selectable: boolean };
+	const languageOptions: LanguageOption[] = [
+		{
+			value: 'javascript',
+			label: 'JavaScript',
+			selectable: true
+		},
+		{
+			value: 'typescript',
+			label: 'TypeScript',
+			selectable: true
+		},
+		{
+			value: 'python',
+			label: 'Python',
+			selectable: true
+		},
+		{
+			value: 'c',
+			label: 'C',
+			selectable: true
+		},
+		{
+			value: 'cpp',
+			label: 'C++',
+			selectable: true
+		},
+		{
+			value: 'go',
+			label: 'Go',
+			selectable: true
+		},
+		{
+			value: 'dockerfile',
+			label: 'Docker',
+			selectable: false
+		},
+		{
+			value: 'json',
+			label: 'JSON',
+			selectable: false
+		}
+	];
+
+	const selectableLanguages = languageOptions.filter((option) => option.selectable);
+</script>
+
 <script lang="ts">
 	import loader from '@monaco-editor/loader';
 	import { onDestroy, onMount } from 'svelte';
 	import type * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
 	import * as Select from '$lib/components/ui/select';
 	import type { Selected } from 'bits-ui';
-	type Language = 'javascript' | 'typescript' | 'python' | 'c' | 'cpp' | 'go' | 'dockerfile';
-	type LanguageOption = { value: Language; label: string };
 
 	export let showLanguageSelector = false;
 	export let defaultValue: string = '';
@@ -15,36 +70,6 @@
 	let editor: Monaco.editor.IStandaloneCodeEditor;
 	let monaco: typeof Monaco;
 	let editorContainer: HTMLElement;
-	let languageOptions: LanguageOption[] = [
-		{
-			value: 'javascript',
-			label: 'JavaScript'
-		},
-		{
-			value: 'typescript',
-			label: 'TypeScript'
-		},
-		{
-			value: 'python',
-			label: 'Python'
-		},
-		{
-			value: 'c',
-			label: 'C'
-		},
-		{
-			value: 'cpp',
-			label: 'C++'
-		},
-		{
-			value: 'go',
-			label: 'Go'
-		},
-		{
-			value: 'dockerfile',
-			label: 'Docker'
-		}
-	];
 	let activeLanguage: Selected<string> | undefined =
 		languageOptions.find((option) => option.value === defaultLanguage) ?? languageOptions[0];
 
@@ -78,7 +103,7 @@
 		<Select.Root
 			name="language"
 			selected={activeLanguage}
-			items={languageOptions}
+			items={selectableLanguages}
 			onSelectedChange={(selected) => {
 				activeLanguage = selected;
 				const prevValue = editor.getModel()?.getValue() ?? '';
@@ -92,8 +117,8 @@
 				<Select.Value placeholder="Select language" />
 			</Select.Trigger>
 			<Select.Content>
-				{#each languageOptions as languageOption}
-					<Select.Item value={languageOption.value} label={languageOption.label}></Select.Item>
+				{#each selectableLanguages as selectableLanguage}
+					<Select.Item value={selectableLanguage.value} label={selectableLanguage.label} />
 				{/each}
 			</Select.Content>
 		</Select.Root>

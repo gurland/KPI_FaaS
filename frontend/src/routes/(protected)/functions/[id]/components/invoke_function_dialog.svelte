@@ -9,19 +9,7 @@
 	import type { DetailedFunction } from '@/server/rpc/function_service';
 	import type { BriefRuntime } from '@/server/rpc/runtime_service';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-
-	let isFormLoading: boolean;
-
-	const handleSubmit: SubmitFunction = ({ formData, action }) => {
-		isFormLoading = true;
-		formData.set('functionDetailed', JSON.stringify(functionDetailed));
-		formData.set('runtimeDetailed', JSON.stringify(briefRuntime));
-
-		return async ({ update }) => {
-			isFormLoading = false;
-			update();
-		};
-	};
+	import { RichTextEditor } from '@/components/external/rich-text-editor';
 
 	export let userId: number;
 	export let clientIp: string;
@@ -32,14 +20,14 @@
 	export let errorMessage: string | undefined;
 	export let logLines: string[];
 
-	$: functionConfiguration = {
+	const functionConfiguration = {
 		userId: userId,
 		functionName: functionDetailed.functionName,
 		runtimeTag: functionDetailed.runtimeTag,
 		requestId: crypto.randomUUID()
 	};
 
-	$: contextData = JSON.stringify(
+	const contextData = JSON.stringify(
 		{
 			method: 'POST',
 			path: '/api/v1/resource',
@@ -64,6 +52,26 @@
 		null,
 		2
 	);
+
+	let contextDataCode = jsonTriggerContext || contextData;
+
+	const handleContextDataCodeChange = (code: string) => {
+		contextDataCode = code;
+	};
+
+	let isFormLoading: boolean;
+
+	const handleSubmit: SubmitFunction = ({ formData, action }) => {
+		isFormLoading = true;
+		formData.set('jsonTriggerContext', contextDataCode);
+		formData.set('functionDetailed', JSON.stringify(functionDetailed));
+		formData.set('runtimeDetailed', JSON.stringify(briefRuntime));
+
+		return async ({ update }) => {
+			isFormLoading = false;
+			update();
+		};
+	};
 </script>
 
 <Dialog.Root>
@@ -98,6 +106,15 @@
 						spellcheck="false"
 						rows={30}
 						cols={30}
+					/>
+				</div>
+
+				<div class="grid gap-3">
+					<Label>Context data</Label>
+					<RichTextEditor
+						defaultLanguage="json"
+						defaultValue={contextDataCode}
+						onChange={handleContextDataCodeChange}
 					/>
 				</div>
 				<Button type="submit" formaction="?/invokeFunction" disabled={isFormLoading}>
