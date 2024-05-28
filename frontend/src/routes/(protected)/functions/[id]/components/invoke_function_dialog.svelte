@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Label } from '$lib/components/ui/label';
@@ -10,10 +9,9 @@
 	import type { BriefRuntime } from '@/server/rpc/runtime_service';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 	import { RichTextEditor } from '@/components/external/rich-text-editor';
-	import Highlight from "svelte-highlight";
-  	import json from "svelte-highlight/languages/json";
-	import "svelte-highlight/styles/atom-one-dark.css";
-
+	import Highlight from 'svelte-highlight';
+	import json from 'svelte-highlight/languages/json';
+	import 'svelte-highlight/styles/atom-one-dark.css';
 
 	export let userId: number;
 	export let clientIp: string;
@@ -77,11 +75,7 @@
 			update();
 		};
 	};
-	
-
 </script>
-
-
 
 <Dialog.Root>
 	<Dialog.Trigger>
@@ -132,7 +126,7 @@
 			{#if resultJSON}
 				<h2 class="mb-2 text-lg font-semibold">Result</h2>
 				<div class="max-h-52 overflow-y-auto text-sm text-gray-500">
-					<Highlight language={json}  code={resultJSON} />
+					<Highlight language={json} code={resultJSON} />
 				</div>
 			{/if}
 		</div>
