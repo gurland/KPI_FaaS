@@ -1,28 +1,35 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
 	import { ChevronLeft, CircleAlert, LoaderCircleIcon } from 'lucide-svelte';
 	import type { ActionData } from './$types';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+	import { RichTextEditor } from '@/components/external/rich-text-editor/';
 	import type { PageData } from './$types';
 
-	let isFormLoading = false;
-
-	const handleSubmit: SubmitFunction = () => {
-		isFormLoading = true;
-		return async ({ update }) => {
-			isFormLoading = false;
-			update();
-		};
-	};
 	export let data: PageData;
 
 	export let form: ActionData;
 
 	const { detailedRuntime } = data;
+
+	let isFormLoading = false;
+	let dockerFileCode = detailedRuntime?.dockerfile ?? '';
+
+	const handleDockerfileCodeChange = (code: string) => {
+		dockerFileCode = code;
+	};
+
+	const handleSubmit: SubmitFunction = (e) => {
+		isFormLoading = true;
+		e.formData.set('dockerfile', dockerFileCode);
+		return async ({ update }) => {
+			isFormLoading = false;
+			update();
+		};
+	};
 </script>
 
 <header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
@@ -33,7 +40,7 @@
 	<h1 class="text-xl font-semibold">Edit runtime</h1>
 </header>
 
-<main class="mx-auto grid w-full max-w-xl grid-cols-1 gap-4 overflow-auto p-4">
+<main class="mx-auto grid w-full max-w-4xl grid-cols-1 gap-4 overflow-auto p-4">
 	{#if form?.errorMessage}
 		<Alert variant="destructive" class="mx-auto mb-4 min-w-full">
 			<CircleAlert class="h-4 w-4" />
@@ -49,15 +56,10 @@
 	>
 		<fieldset class="grid gap-6 rounded-lg border p-4">
 			<div class="grid gap-3">
-				<Label for="dockerfile">Dockerfile</Label>
-				<Textarea
-					id="dockerfile"
-					name="dockerfile"
-					placeholder="Dockerfile content here"
-					class="min-h-[9.5rem]"
-					value={(form?.dockerfile ?? detailedRuntime?.dockerfile ?? '').toString()}
-				/>
+				<Label>Dockerfile</Label>
+				<RichTextEditor defaultLanguage="dockerfile" onChange={handleDockerfileCodeChange} />
 			</div>
+
 			<Button type="submit" class="w-full" disabled={isFormLoading}>
 				{#if isFormLoading}
 					<LoaderCircleIcon class="mr-2 h-4 w-4 animate-spin" />

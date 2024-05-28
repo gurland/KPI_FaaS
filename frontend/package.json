@@ -43,6 +43,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@monaco-editor/loader": "^1.4.0",
 		"bits-ui": "^0.21.10",
 		"clsx": "^2.1.1",
 		"jsonwebtoken": "^9.0.2",

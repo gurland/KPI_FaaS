@@ -41,7 +41,7 @@
 		<Tooltip.Content side="right" sideOffset={5}>Create new trigger</Tooltip.Content>
 	</Tooltip.Root>
 </header>
-<main class="mx-auto grid w-full max-w-xl grid-cols-1 gap-4 overflow-auto p-4">
+<main class="mx-auto grid w-full max-w-4xl grid-cols-1 gap-4 overflow-auto p-4">
 	{#if form?.errorMessage}
 		<Alert variant="destructive" class="mx-auto mb-4 min-w-full">
 			<CircleAlert class="h-4 w-4" />

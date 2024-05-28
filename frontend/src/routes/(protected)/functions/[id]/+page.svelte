@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
 	import { ChevronLeft, CircleAlert, LoaderCircleIcon, TrashIcon } from 'lucide-svelte';
@@ -13,14 +12,34 @@
 	import TableRow from '@/components/ui/table/table-row.svelte';
 	import TableCell from '@/components/ui/table/table-cell.svelte';
 	import { InvokeFunctionDialog } from './components';
+	import { RichTextEditor } from '@/components/external/rich-text-editor';
+
+	export let form: ActionData;
+	export let data: PageData;
+
+	const {
+		user,
+		clientIp,
+		userAgent,
+		briefRuntimes = [],
+		functionDetailed,
+		apiGatewayTriggers = [],
+		crontabTriggers = []
+	} = data;
 
 	let isUpdating = false;
 	let isDeleting = false;
+	let functionCode = functionDetailed?.code ?? '';
+
+	const handleFunctionCodeChange = (code: string) => {
+		functionCode = code;
+	};
 
 	const handleSubmit: SubmitFunction = ({ formData, action }) => {
 		if (action.search.startsWith('?/updateFunction')) {
 			isUpdating = true;
-			if (formData.get('code')?.toString().trim() !== functionDetailed?.code.trim()) {
+			if (functionCode.trim() !== functionDetailed?.code.trim()) {
+				formData.set('code', functionCode);
 				formData.set('codeChanged', 'true');
 			}
 
@@ -38,19 +57,6 @@
 		};
 	};
 
-	export let form: ActionData;
-	export let data: PageData;
-
-	const {
-		user,
-		clientIp,
-		userAgent,
-		briefRuntimes = [],
-		functionDetailed,
-		apiGatewayTriggers = [],
-		crontabTriggers = []
-	} = data;
-
 	$: briefRuntime = briefRuntimes.find((it) => it.tag === functionDetailed?.runtimeTag);
 
 	$: isFormLoading = isUpdating || isDeleting;
@@ -66,7 +72,7 @@
 	<h1 class="text-xl font-semibold">Edit function</h1>
 </header>
 
-<main class="mx-auto grid w-full max-w-xl grid-cols-1 gap-4 overflow-auto p-4">
+<main class="mx-auto grid w-full max-w-4xl grid-cols-1 gap-4 overflow-auto p-4">
 	{#if form?.errorMessage && !form?.isInvokeFunctionError}
 		<Alert variant="destructive" class="mx-auto mb-4 min-w-full">
 			<CircleAlert class="h-4 w-4" />
@@ -104,16 +110,16 @@
 					/>
 				</Select.Root>
 			</div>
+
 			<div class="grid gap-3">
-				<Label for="code">Code</Label>
-				<Textarea
-					id="code"
-					name="code"
-					placeholder="Function code goes here"
-					class="min-h-[9.5rem]"
-					value={(form?.code ?? functionDetailed?.code ?? '').toString()}
+				<Label>Code</Label>
+				<RichTextEditor
+					showLanguageSelector
+					defaultValue={functionCode}
+					onChange={handleFunctionCodeChange}
 				/>
 			</div>
+
 			<Button type="submit" formaction="?/updateFunction" class="w-full" disabled={isFormLoading}>
 				{#if isUpdating}
 					<LoaderCircleIcon class="mr-2 h-4 w-4 animate-spin" />

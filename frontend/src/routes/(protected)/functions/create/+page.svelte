@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
 	import { ChevronLeft, CircleAlert, LoaderCircleIcon } from 'lucide-svelte';
@@ -9,11 +8,18 @@
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+	import { RichTextEditor } from '@/components/external/rich-text-editor';
 
 	let isFormLoading = false;
+	let functionCode = '';
 
-	const handleSubmit: SubmitFunction = () => {
+	const handleFunctionCodeChange = (code: string) => {
+		functionCode = code;
+	};
+
+	const handleSubmit: SubmitFunction = (e) => {
 		isFormLoading = true;
+		e.formData.append('code', functionCode);
 		return async ({ update }) => {
 			isFormLoading = false;
 			update();
@@ -34,7 +40,7 @@
 	<h1 class="text-xl font-semibold">Create new function</h1>
 </header>
 
-<main class="mx-auto grid w-full max-w-xl grid-cols-1 gap-4 overflow-auto p-4">
+<main class="mx-auto grid w-full max-w-4xl grid-cols-1 gap-4 overflow-auto p-4">
 	{#if form?.errorMessage}
 		<Alert variant="destructive" class="mx-auto mb-4 min-w-full">
 			<CircleAlert class="h-4 w-4" />
@@ -78,16 +84,12 @@
 					<Select.Input value={form?.runtimeTag?.toString()} />
 				</Select.Root>
 			</div>
+
 			<div class="grid gap-3">
-				<Label for="code">Code</Label>
-				<Textarea
-					id="code"
-					name="code"
-					placeholder="Function code goes here"
-					class="min-h-[9.5rem]"
-					value={form?.code?.toString()}
-				/>
+				<Label>Code</Label>
+				<RichTextEditor showLanguageSelector onChange={handleFunctionCodeChange} />
 			</div>
+
 			<Button type="submit" class="w-full" disabled={isFormLoading}>
 				{#if isFormLoading}
 					<LoaderCircleIcon class="mr-2 h-4 w-4 animate-spin" />

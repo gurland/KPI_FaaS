@@ -1,18 +1,24 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
 	import { ChevronLeft, CircleAlert, LoaderCircleIcon } from 'lucide-svelte';
 	import type { ActionData } from './$types';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+	import { RichTextEditor } from '@/components/external/rich-text-editor';
 
 	let isFormLoading = false;
+	let dockerFileCode = '';
 
-	const handleSubmit: SubmitFunction = () => {
+	const handleDockerfileCodeChange = (code: string) => {
+		dockerFileCode = code;
+	};
+
+	const handleSubmit: SubmitFunction = (e) => {
 		isFormLoading = true;
+		e.formData.set('dockerfile', dockerFileCode);
 		return async ({ update }) => {
 			isFormLoading = false;
 			update();
@@ -30,7 +36,7 @@
 	<h1 class="text-xl font-semibold">Create new runtime</h1>
 </header>
 
-<main class="mx-auto grid w-full max-w-xl grid-cols-1 gap-4 overflow-auto p-4">
+<main class="mx-auto grid w-full max-w-4xl grid-cols-1 gap-4 overflow-auto p-4">
 	{#if form?.errorMessage}
 		<Alert variant="destructive" class="mx-auto mb-4 min-w-full">
 			<CircleAlert class="h-4 w-4" />
@@ -51,15 +57,10 @@
 			</div>
 
 			<div class="grid gap-3">
-				<Label for="dockerfile">Dockerfile</Label>
-				<Textarea
-					id="dockerfile"
-					name="dockerfile"
-					placeholder="Dockerfile content here"
-					class="min-h-[9.5rem]"
-					value={form?.dockerfile?.toString()}
-				/>
+				<Label>Dockerfile</Label>
+				<RichTextEditor defaultLanguage="dockerfile" onChange={handleDockerfileCodeChange} />
 			</div>
+
 			<Button type="submit" class="w-full" disabled={isFormLoading}>
 				{#if isFormLoading}
 					<LoaderCircleIcon class="mr-2 h-4 w-4 animate-spin" />
