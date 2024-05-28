@@ -57,7 +57,7 @@
 		<fieldset class="grid gap-6 rounded-lg border p-4">
 			<div class="grid gap-3">
 				<Label>Dockerfile</Label>
-				<RichTextEditor defaultLanguage="dockerfile" onChange={handleDockerfileCodeChange} />
+				<RichTextEditor defaultLanguage="dockerfile" defaultValue={dockerFileCode} onChange={handleDockerfileCodeChange} />
 			</div>
 
 			<Button type="submit" class="w-full" disabled={isFormLoading}>
