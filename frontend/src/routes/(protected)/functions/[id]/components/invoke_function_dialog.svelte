@@ -11,7 +11,7 @@
 	import { RichTextEditor } from '@/components/external/rich-text-editor';
 	import Highlight from 'svelte-highlight';
 	import json from 'svelte-highlight/languages/json';
-	import 'svelte-highlight/styles/atom-one-dark.css';
+	import 'svelte-highlight/styles/atom-one-light.css';
 
 	export let userId: number;
 	export let clientIp: string;

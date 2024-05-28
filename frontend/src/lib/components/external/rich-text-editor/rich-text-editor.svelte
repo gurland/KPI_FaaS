@@ -79,9 +79,7 @@
 
 		monaco = await loader.init();
 
-		editor = monaco.editor.create(editorContainer, {
-			theme: 'vs-dark'
-		});
+		editor = monaco.editor.create(editorContainer);
 
 		const model = monaco.editor.createModel(defaultValue, activeLanguage?.value);
 		editor.setModel(model);
