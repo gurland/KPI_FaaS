@@ -1,11 +1,19 @@
-FROM python:3.11-alpine
-
-RUN wget -O get-poetry.py https://install.python-poetry.org && \
-    POETRY_HOME=/root/.poetry python3 get-poetry.py && \
-    rm get-poetry.py
+FROM python:3.11-slim
 
 
-ENV PATH="/root/.poetry/bin:${PATH}"
+ENV PATH="/root/.local/bin:${PATH}"
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc gnupg2 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
+RUN python3 -m pip install --user pipx && python3 -m pipx ensurepath && python3 -m pipx install poetry
+
+
+
+# ENV PATH="/root/.poetry/bin:${PATH}"
 
 WORKDIR /app
 
