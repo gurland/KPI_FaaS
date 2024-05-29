@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "common.proto";
+import "runtime_service.proto";
+import "function_service.proto";
+import "load_balancer_service.proto";
+
+
+package faas;
+
+
+message LaunchRuntimeRequest {
+  BriefRuntime runtime = 1;
+  DetailedFunction function = 2;
+}
+
+service AgentService {
+  rpc LaunchRuntime(LaunchRuntimeRequest) returns (Empty);
+  rpc StopRuntime(BriefRuntime) returns (Empty);
+  rpc InvokeFunction(InvokeFunctionRequest) returns (InvocationResult);
+}
