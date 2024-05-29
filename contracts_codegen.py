@@ -9,6 +9,7 @@ SERVICES = [
     Path("services") / "crontab_trigger_service" / "crontab_trigger_service" / "contracts",
     Path("services") / "function_service" / "function_service" / "contracts",
     Path("services") / "load_balancer_service" / "load_balancer_service" / "contracts",
+    Path("services") / "api_gateway_trigger_service" / "api_gateway_trigger_service" / "contracts",
 ]
 
 TS_SERVICES = [
