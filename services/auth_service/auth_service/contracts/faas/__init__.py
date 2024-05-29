@@ -46,6 +46,8 @@ class Logs(betterproto.Message):
 class RuntimeConfiguration(betterproto.Message):
     tag: str = betterproto.string_field(1)
     dockerfile: str = betterproto.string_field(2)
+    invoker_script: str = betterproto.string_field(3)
+    syntax: str = betterproto.string_field(4)
 
 
 @dataclass(eq=False, repr=False)
