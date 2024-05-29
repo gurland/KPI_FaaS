@@ -7,6 +7,8 @@ package faas;
 message RuntimeConfiguration {
   string tag = 1;
   string dockerfile = 2;
+  string invoker_script = 3;
+  string syntax = 4;
 }
 
 message BriefRuntime {
