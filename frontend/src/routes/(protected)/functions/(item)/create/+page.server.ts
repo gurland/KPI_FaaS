@@ -1,21 +1,10 @@
 import { fail, redirect, type ActionFailure, type Redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
-import { functionService, getRpcMetaData, runtimeService } from '@/server';
+import { functionService, getRpcMetaData } from '@/server';
 
 export const load: PageServerLoad = async (event) => {
-	const briefRuntimesStream = runtimeService.getRuntimeTags(
-		{},
-		{ metadata: getRpcMetaData(event) }
-	);
-	const briefRuntimes = [];
-	for await (const briefRuntime of briefRuntimesStream) {
-		briefRuntimes.push(briefRuntime);
-	}
-
-	return {
-		user: event.locals.user,
-		briefRuntimes
-	};
+	const parentData = await event.parent();
+	return parentData;
 };
 
 type CreateFunctionFormData = {

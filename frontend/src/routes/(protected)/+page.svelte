@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { Button } from '@/components/ui/button';
 	import * as Card from '@/components/ui/card';
+	import type { PageData } from './$types';
+	export let data: PageData;
+
+	const { isAdmin } = data;
 </script>
 
 <header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
@@ -29,16 +33,17 @@
 			<Button href="/triggers/create">Create new trigger</Button>
 		</Card.Footer>
 	</Card.Root>
-
-	<Card.Root>
-		<Card.Header class="pb-3">
-			<Card.Title>Runtimes</Card.Title>
-			<Card.Description class="max-w-xl text-balance leading-relaxed">
-				Runtimes are environments where functions are executed.
-			</Card.Description>
-		</Card.Header>
-		<Card.Footer>
-			<Button href="/runtimes/create">Create new runtime</Button>
-		</Card.Footer>
-	</Card.Root>
+	{#if isAdmin}
+		<Card.Root>
+			<Card.Header class="pb-3">
+				<Card.Title>Runtimes</Card.Title>
+				<Card.Description class="max-w-xl text-balance leading-relaxed">
+					Runtimes are environments where functions are executed.
+				</Card.Description>
+			</Card.Header>
+			<Card.Footer>
+				<Button href="/runtimes/create">Create new runtime</Button>
+			</Card.Footer>
+		</Card.Root>
+	{/if}
 </main>

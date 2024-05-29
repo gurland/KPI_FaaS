@@ -5,28 +5,20 @@ import {
 	crontabTriggerService,
 	functionService,
 	getRpcMetaData,
-	loadBalancerService,
-	runtimeService
+	loadBalancerService
 } from '@/server';
 import type { DetailedFunction } from '@/server/rpc/function_service';
 import type { DetailedRuntime } from '@/server/rpc/runtime_service';
 
 export const load: PageServerLoad = async (event) => {
+	const parentData = await event.parent();
+
 	const functionId = parseInt(event.params.id, 10);
 	try {
 		const functionDetailed = await functionService.getFunction(
 			{ functionId },
 			{ metadata: getRpcMetaData(event) }
 		);
-
-		const briefRuntimesStream = runtimeService.getRuntimeTags(
-			{},
-			{ metadata: getRpcMetaData(event) }
-		);
-		const briefRuntimes = [];
-		for await (const briefRuntime of briefRuntimesStream) {
-			briefRuntimes.push(briefRuntime);
-		}
 
 		const crontabTriggersStream = crontabTriggerService.getCrontabTriggers(
 			{ functionId },
@@ -47,11 +39,10 @@ export const load: PageServerLoad = async (event) => {
 		}
 
 		return {
+			...parentData,
 			clientIp: event.getClientAddress(),
 			userAgent: event.request.headers.get('user-agent'),
-			user: event.locals.user,
 			functionDetailed,
-			briefRuntimes,
 			crontabTriggers,
 			apiGatewayTriggers
 		};
@@ -70,8 +61,6 @@ type BaseFormData = {
 type UpdateFunctionFormData = BaseFormData & {
 	runtimeTag: FormDataEntryValue;
 	code: FormDataEntryValue;
-	runtimeTagChanged?: boolean;
-	codeChanged?: boolean;
 };
 
 type InvokeFunctionFormData = BaseFormData & {
@@ -94,8 +83,6 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const runtimeTag = formData.get('runtimeTag') ?? '';
 		const code = formData.get('code') ?? '';
-		const codeChanged = formData.has('code');
-		const runtimeTagChanged = formData.has('runtimeTag');
 
 		const updateFunctionResponse: UpdateFunctionFormData = {
 			runtimeTag,
@@ -103,25 +90,21 @@ export const actions: Actions = {
 		};
 
 		try {
-			if (codeChanged) {
-				await functionService.changeFunctionCode(
-					{
-						functionId,
-						code: code.toString()
-					},
-					{ metadata: getRpcMetaData(event) }
-				);
-			}
+			await functionService.changeFunctionCode(
+				{
+					functionId,
+					code: code.toString()
+				},
+				{ metadata: getRpcMetaData(event) }
+			);
 
-			if (runtimeTagChanged) {
-				await functionService.changeFunctionRuntime(
-					{
-						functionId,
-						runtimeTag: runtimeTag.toString()
-					},
-					{ metadata: getRpcMetaData(event) }
-				);
-			}
+			await functionService.changeFunctionRuntime(
+				{
+					functionId,
+					runtimeTag: runtimeTag.toString()
+				},
+				{ metadata: getRpcMetaData(event) }
+			);
 		} catch (e) {
 			if (e instanceof Error) {
 				return fail(400, { ...updateFunctionResponse, errorMessage: e.message });

@@ -1,8 +1,10 @@
 import { error, fail, redirect, type ActionFailure, type Redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
-import { getRpcMetaData, runtimeService } from '@/server';
+import { UserRole, getRpcMetaData, runtimeService } from '@/server';
 
 export const load: PageServerLoad = async (event) => {
+	const user = event.locals.user;
+	const isReadOnly = user?.role !== UserRole.ADMIN;
 	try {
 		const detailedRuntime = await runtimeService.getRuntimeDetails(
 			{ tag: event.params.tag },
@@ -10,7 +12,8 @@ export const load: PageServerLoad = async (event) => {
 		);
 		return {
 			detailedRuntime,
-			user: event.locals.user
+			user: event.locals.user,
+			isReadOnly
 		};
 	} catch (e) {
 		if (e instanceof Error) {
@@ -21,6 +24,9 @@ export const load: PageServerLoad = async (event) => {
 
 type UpdateRuntimeFormData = {
 	dockerfile: FormDataEntryValue;
+	syntax: FormDataEntryValue;
+	invokerScript: FormDataEntryValue;
+	functionExample: FormDataEntryValue;
 	errorMessage?: string;
 };
 
@@ -32,16 +38,25 @@ export const actions: Actions = {
 
 		const formData = await request.formData();
 		const dockerfile = formData.get('dockerfile') ?? '';
+		const syntax = formData.get('syntax') ?? '';
+		const invokerScript = formData.get('invokerScript') ?? '';
+		const functionExample = formData.get('functionExample') ?? '';
 
 		const updateRuntimeResponse: UpdateRuntimeFormData = {
-			dockerfile
+			dockerfile,
+			syntax,
+			invokerScript,
+			functionExample
 		};
 
 		try {
 			await runtimeService.editRuntime(
 				{
 					tag: params.tag,
-					dockerfile: dockerfile.toString()
+					dockerfile: dockerfile.toString(),
+					syntax: syntax.toString(),
+					invokerScript: invokerScript.toString(),
+					functionExample: functionExample.toString()
 				},
 				{ metadata: getRpcMetaData(event) }
 			);

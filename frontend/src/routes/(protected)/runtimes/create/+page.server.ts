@@ -11,6 +11,9 @@ export const load: PageServerLoad = ({ locals }) => {
 type CreateRuntimeFormData = {
 	tag: FormDataEntryValue;
 	dockerfile: FormDataEntryValue;
+	syntax: FormDataEntryValue;
+	invokerScript: FormDataEntryValue;
+	functionExample: FormDataEntryValue;
 	errorMessage?: string;
 };
 
@@ -22,17 +25,26 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const tag = formData.get('tag') ?? '';
 		const dockerfile = formData.get('dockerfile') ?? '';
+		const syntax = formData.get('syntax') ?? '';
+		const invokerScript = formData.get('invokerScript') ?? '';
+		const functionExample = formData.get('functionExample') ?? '';
 
 		const createRuntimeResponse: CreateRuntimeFormData = {
 			tag,
-			dockerfile
+			dockerfile,
+			syntax,
+			invokerScript,
+			functionExample
 		};
 
 		try {
 			await runtimeService.createRuntime(
 				{
 					tag: tag.toString(),
-					dockerfile: dockerfile.toString()
+					dockerfile: dockerfile.toString(),
+					syntax: syntax.toString(),
+					invokerScript: invokerScript.toString(),
+					functionExample: functionExample.toString()
 				},
 				{ metadata: getRpcMetaData(event) }
 			);

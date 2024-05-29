@@ -57,7 +57,6 @@
 						name="password"
 						placeholder="Password"
 						autocomplete="new-password"
-						value={form?.password}
 						required
 					/>
 				</div>
@@ -69,7 +68,6 @@
 						name="passwordConfirm"
 						placeholder="Re-enter password"
 						autocomplete="new-password"
-						value={form?.passwordConfirm}
 						required
 					/>
 				</div>

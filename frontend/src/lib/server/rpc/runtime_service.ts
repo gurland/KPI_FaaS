@@ -8,6 +8,9 @@ export const protobufPackage = "faas";
 export interface RuntimeConfiguration {
   tag: string;
   dockerfile: string;
+  invokerScript: string;
+  syntax: string;
+  functionExample: string;
 }
 
 export interface BriefRuntime {
@@ -23,6 +26,9 @@ export interface DetailedRuntime {
   tag: string;
   registryUrl: string;
   dockerfile: string;
+  invokerScript: string;
+  syntax: string;
+  functionExample: string;
 }
 
 export interface UpdatedRuntimeResponse {
@@ -31,7 +37,7 @@ export interface UpdatedRuntimeResponse {
 }
 
 function createBaseRuntimeConfiguration(): RuntimeConfiguration {
-  return { tag: "", dockerfile: "" };
+  return { tag: "", dockerfile: "", invokerScript: "", syntax: "", functionExample: "" };
 }
 
 export const RuntimeConfiguration = {
@@ -41,6 +47,15 @@ export const RuntimeConfiguration = {
     }
     if (message.dockerfile !== "") {
       writer.uint32(18).string(message.dockerfile);
+    }
+    if (message.invokerScript !== "") {
+      writer.uint32(26).string(message.invokerScript);
+    }
+    if (message.syntax !== "") {
+      writer.uint32(34).string(message.syntax);
+    }
+    if (message.functionExample !== "") {
+      writer.uint32(42).string(message.functionExample);
     }
     return writer;
   },
@@ -66,6 +81,27 @@ export const RuntimeConfiguration = {
 
           message.dockerfile = reader.string();
           continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.invokerScript = reader.string();
+          continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.syntax = reader.string();
+          continue;
+        case 5:
+          if (tag !== 42) {
+            break;
+          }
+
+          message.functionExample = reader.string();
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -79,6 +115,9 @@ export const RuntimeConfiguration = {
     return {
       tag: isSet(object.tag) ? globalThis.String(object.tag) : "",
       dockerfile: isSet(object.dockerfile) ? globalThis.String(object.dockerfile) : "",
+      invokerScript: isSet(object.invokerScript) ? globalThis.String(object.invokerScript) : "",
+      syntax: isSet(object.syntax) ? globalThis.String(object.syntax) : "",
+      functionExample: isSet(object.functionExample) ? globalThis.String(object.functionExample) : "",
     };
   },
 
@@ -90,6 +129,15 @@ export const RuntimeConfiguration = {
     if (message.dockerfile !== "") {
       obj.dockerfile = message.dockerfile;
     }
+    if (message.invokerScript !== "") {
+      obj.invokerScript = message.invokerScript;
+    }
+    if (message.syntax !== "") {
+      obj.syntax = message.syntax;
+    }
+    if (message.functionExample !== "") {
+      obj.functionExample = message.functionExample;
+    }
     return obj;
   },
 
@@ -100,6 +148,9 @@ export const RuntimeConfiguration = {
     const message = createBaseRuntimeConfiguration();
     message.tag = object.tag ?? "";
     message.dockerfile = object.dockerfile ?? "";
+    message.invokerScript = object.invokerScript ?? "";
+    message.syntax = object.syntax ?? "";
+    message.functionExample = object.functionExample ?? "";
     return message;
   },
 };
@@ -236,7 +287,7 @@ export const GetRuntimeDetailsRequest = {
 };
 
 function createBaseDetailedRuntime(): DetailedRuntime {
-  return { tag: "", registryUrl: "", dockerfile: "" };
+  return { tag: "", registryUrl: "", dockerfile: "", invokerScript: "", syntax: "", functionExample: "" };
 }
 
 export const DetailedRuntime = {
@@ -249,6 +300,15 @@ export const DetailedRuntime = {
     }
     if (message.dockerfile !== "") {
       writer.uint32(26).string(message.dockerfile);
+    }
+    if (message.invokerScript !== "") {
+      writer.uint32(34).string(message.invokerScript);
+    }
+    if (message.syntax !== "") {
+      writer.uint32(42).string(message.syntax);
+    }
+    if (message.functionExample !== "") {
+      writer.uint32(50).string(message.functionExample);
     }
     return writer;
   },
@@ -281,6 +341,27 @@ export const DetailedRuntime = {
 
           message.dockerfile = reader.string();
           continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.invokerScript = reader.string();
+          continue;
+        case 5:
+          if (tag !== 42) {
+            break;
+          }
+
+          message.syntax = reader.string();
+          continue;
+        case 6:
+          if (tag !== 50) {
+            break;
+          }
+
+          message.functionExample = reader.string();
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -295,6 +376,9 @@ export const DetailedRuntime = {
       tag: isSet(object.tag) ? globalThis.String(object.tag) : "",
       registryUrl: isSet(object.registryUrl) ? globalThis.String(object.registryUrl) : "",
       dockerfile: isSet(object.dockerfile) ? globalThis.String(object.dockerfile) : "",
+      invokerScript: isSet(object.invokerScript) ? globalThis.String(object.invokerScript) : "",
+      syntax: isSet(object.syntax) ? globalThis.String(object.syntax) : "",
+      functionExample: isSet(object.functionExample) ? globalThis.String(object.functionExample) : "",
     };
   },
 
@@ -309,6 +393,15 @@ export const DetailedRuntime = {
     if (message.dockerfile !== "") {
       obj.dockerfile = message.dockerfile;
     }
+    if (message.invokerScript !== "") {
+      obj.invokerScript = message.invokerScript;
+    }
+    if (message.syntax !== "") {
+      obj.syntax = message.syntax;
+    }
+    if (message.functionExample !== "") {
+      obj.functionExample = message.functionExample;
+    }
     return obj;
   },
 
@@ -320,6 +413,9 @@ export const DetailedRuntime = {
     message.tag = object.tag ?? "";
     message.registryUrl = object.registryUrl ?? "";
     message.dockerfile = object.dockerfile ?? "";
+    message.invokerScript = object.invokerScript ?? "";
+    message.syntax = object.syntax ?? "";
+    message.functionExample = object.functionExample ?? "";
     return message;
   },
 };
@@ -421,7 +517,6 @@ export const RuntimeServiceDefinition = {
       responseStream: false,
       options: {},
     },
-    /** rpc DeleteRuntime(BriefRuntime) returns (Empty);  TODO: Find a correct way to remove images from registry */
     getRuntimeDetails: {
       name: "GetRuntimeDetails",
       requestType: GetRuntimeDetailsRequest,
@@ -434,7 +529,7 @@ export const RuntimeServiceDefinition = {
       name: "GetRuntimeTags",
       requestType: Empty,
       requestStream: false,
-      responseType: BriefRuntime,
+      responseType: DetailedRuntime,
       responseStream: true,
       options: {},
     },
@@ -450,7 +545,6 @@ export interface RuntimeServiceImplementation<CallContextExt = {}> {
     request: RuntimeConfiguration,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<UpdatedRuntimeResponse>>;
-  /** rpc DeleteRuntime(BriefRuntime) returns (Empty);  TODO: Find a correct way to remove images from registry */
   getRuntimeDetails(
     request: GetRuntimeDetailsRequest,
     context: CallContext & CallContextExt,
@@ -458,7 +552,7 @@ export interface RuntimeServiceImplementation<CallContextExt = {}> {
   getRuntimeTags(
     request: Empty,
     context: CallContext & CallContextExt,
-  ): ServerStreamingMethodResult<DeepPartial<BriefRuntime>>;
+  ): ServerStreamingMethodResult<DeepPartial<DetailedRuntime>>;
 }
 
 export interface RuntimeServiceClient<CallOptionsExt = {}> {
@@ -470,12 +564,11 @@ export interface RuntimeServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<RuntimeConfiguration>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<UpdatedRuntimeResponse>;
-  /** rpc DeleteRuntime(BriefRuntime) returns (Empty);  TODO: Find a correct way to remove images from registry */
   getRuntimeDetails(
     request: DeepPartial<GetRuntimeDetailsRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<DetailedRuntime>;
-  getRuntimeTags(request: DeepPartial<Empty>, options?: CallOptions & CallOptionsExt): AsyncIterable<BriefRuntime>;
+  getRuntimeTags(request: DeepPartial<Empty>, options?: CallOptions & CallOptionsExt): AsyncIterable<DetailedRuntime>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;

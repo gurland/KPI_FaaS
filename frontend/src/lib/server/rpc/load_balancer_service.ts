@@ -19,7 +19,7 @@ export interface InvocationResult {
 }
 
 export interface RegisterNodeRequest {
-  ip: string;
+  port: string;
 }
 
 export interface NodeConfiguration {
@@ -195,13 +195,13 @@ export const InvocationResult = {
 };
 
 function createBaseRegisterNodeRequest(): RegisterNodeRequest {
-  return { ip: "" };
+  return { port: "" };
 }
 
 export const RegisterNodeRequest = {
   encode(message: RegisterNodeRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.ip !== "") {
-      writer.uint32(10).string(message.ip);
+    if (message.port !== "") {
+      writer.uint32(10).string(message.port);
     }
     return writer;
   },
@@ -218,7 +218,7 @@ export const RegisterNodeRequest = {
             break;
           }
 
-          message.ip = reader.string();
+          message.port = reader.string();
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -230,13 +230,13 @@ export const RegisterNodeRequest = {
   },
 
   fromJSON(object: any): RegisterNodeRequest {
-    return { ip: isSet(object.ip) ? globalThis.String(object.ip) : "" };
+    return { port: isSet(object.port) ? globalThis.String(object.port) : "" };
   },
 
   toJSON(message: RegisterNodeRequest): unknown {
     const obj: any = {};
-    if (message.ip !== "") {
-      obj.ip = message.ip;
+    if (message.port !== "") {
+      obj.port = message.port;
     }
     return obj;
   },
@@ -246,7 +246,7 @@ export const RegisterNodeRequest = {
   },
   fromPartial(object: DeepPartial<RegisterNodeRequest>): RegisterNodeRequest {
     const message = createBaseRegisterNodeRequest();
-    message.ip = object.ip ?? "";
+    message.port = object.port ?? "";
     return message;
   },
 };
