@@ -25,6 +25,9 @@ message DetailedRuntime {
   string tag = 1;
   string registry_url = 2;
   string dockerfile = 3;
+  string invoker_script = 4;
+  string syntax = 5;
+  string function_example = 6;
 }
 
 message UpdatedRuntimeResponse {
