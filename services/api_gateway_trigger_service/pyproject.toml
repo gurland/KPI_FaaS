@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "api-gateway-trigger-service"
+version = "0.1.0"
+description = ""
+authors = ["Stanislav Bobokalo <stanislav.b@embedd.it>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+betterproto = {version = "2.0.0b6", extras = ["compiler"]}
+sqlalchemy = "^2.0.29"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
