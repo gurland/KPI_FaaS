@@ -37,5 +37,5 @@ service RuntimeService {
   rpc CreateRuntime(RuntimeConfiguration) returns (UpdatedRuntimeResponse);
   rpc EditRuntime(RuntimeConfiguration) returns (UpdatedRuntimeResponse);
   rpc GetRuntimeDetails(GetRuntimeDetailsRequest) returns (DetailedRuntime);
-  rpc GetRuntimeTags(Empty) returns (stream BriefRuntime);
+  rpc GetRuntimeTags(Empty) returns (stream DetailedRuntime);
 }
