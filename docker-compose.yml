@@ -44,6 +44,13 @@ services:
     env_file:
       - ./services/crontab_trigger_service/.env
 
+  api-gateway-trigger-service:
+    build: ./services/api_gateway_trigger_service
+    ports:
+      - "50091:50091"
+    env_file:
+      - ./services/api_gateway_trigger_service/.env
+
   image-repo:
     image: registry:2
     ports:
