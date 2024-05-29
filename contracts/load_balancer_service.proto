@@ -30,7 +30,7 @@ message InvocationResult {
 }
 
 message RegisterNodeRequest {
-  string ip = 1;
+  string port = 1;
 }
 
 message NodeConfiguration {
