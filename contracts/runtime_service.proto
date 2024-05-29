@@ -9,6 +9,7 @@ message RuntimeConfiguration {
   string dockerfile = 2;
   string invoker_script = 3;
   string syntax = 4;
+  string function_example = 5;
 }
 
 message BriefRuntime {
