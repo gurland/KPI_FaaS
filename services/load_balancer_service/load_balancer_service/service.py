@@ -3,9 +3,10 @@ from typing import Callable, AsyncIterable, AsyncIterator
 import grpclib
 from betterproto.grpc.grpclib_client import MetadataLike
 from grpclib import GRPCError, Status
+from packaging.metadata import Metadata
 
-
-from .contracts.faas import LoadBalancerServiceBase, InvokeFunctionRequest, InvocationResult, Logs
+from .contracts.faas import LoadBalancerServiceBase, InvokeFunctionRequest, InvocationResult, Logs, NodeConfiguration, \
+    RegisterNodeRequest
 
 
 class LoadBalancerService(LoadBalancerServiceBase):
@@ -68,3 +69,10 @@ class LoadBalancerService(LoadBalancerServiceBase):
                 log_lines=["log1", "log2", "log3", "log4"]
             )
         )
+
+    async def register_node(
+            self,
+            register_node_request: RegisterNodeRequest,
+            metadata: MetadataLike = None
+    ) -> NodeConfiguration:
+        return NodeConfiguration()
