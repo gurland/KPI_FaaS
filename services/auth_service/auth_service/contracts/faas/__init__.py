@@ -43,38 +43,6 @@ class Logs(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
-class RuntimeConfiguration(betterproto.Message):
-    tag: str = betterproto.string_field(1)
-    dockerfile: str = betterproto.string_field(2)
-    invoker_script: str = betterproto.string_field(3)
-    syntax: str = betterproto.string_field(4)
-
-
-@dataclass(eq=False, repr=False)
-class BriefRuntime(betterproto.Message):
-    tag: str = betterproto.string_field(1)
-    registry_url: str = betterproto.string_field(2)
-
-
-@dataclass(eq=False, repr=False)
-class GetRuntimeDetailsRequest(betterproto.Message):
-    tag: str = betterproto.string_field(1)
-
-
-@dataclass(eq=False, repr=False)
-class DetailedRuntime(betterproto.Message):
-    tag: str = betterproto.string_field(1)
-    registry_url: str = betterproto.string_field(2)
-    dockerfile: str = betterproto.string_field(3)
-
-
-@dataclass(eq=False, repr=False)
-class UpdatedRuntimeResponse(betterproto.Message):
-    runtime: "DetailedRuntime" = betterproto.message_field(1)
-    logs: "Logs" = betterproto.message_field(2)
-
-
-@dataclass(eq=False, repr=False)
 class FunctionConfiguration(betterproto.Message):
     function_name: str = betterproto.string_field(1)
     runtime_tag: str = betterproto.string_field(2)
@@ -114,6 +82,42 @@ class ChangeFunctionRuntimeRequest(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class RuntimeConfiguration(betterproto.Message):
+    tag: str = betterproto.string_field(1)
+    dockerfile: str = betterproto.string_field(2)
+    invoker_script: str = betterproto.string_field(3)
+    syntax: str = betterproto.string_field(4)
+    function_example: str = betterproto.string_field(5)
+
+
+@dataclass(eq=False, repr=False)
+class BriefRuntime(betterproto.Message):
+    tag: str = betterproto.string_field(1)
+    registry_url: str = betterproto.string_field(2)
+
+
+@dataclass(eq=False, repr=False)
+class GetRuntimeDetailsRequest(betterproto.Message):
+    tag: str = betterproto.string_field(1)
+
+
+@dataclass(eq=False, repr=False)
+class DetailedRuntime(betterproto.Message):
+    tag: str = betterproto.string_field(1)
+    registry_url: str = betterproto.string_field(2)
+    dockerfile: str = betterproto.string_field(3)
+    invoker_script: str = betterproto.string_field(4)
+    syntax: str = betterproto.string_field(5)
+    function_example: str = betterproto.string_field(6)
+
+
+@dataclass(eq=False, repr=False)
+class UpdatedRuntimeResponse(betterproto.Message):
+    runtime: "DetailedRuntime" = betterproto.message_field(1)
+    logs: "Logs" = betterproto.message_field(2)
+
+
+@dataclass(eq=False, repr=False)
 class InvokeFunctionRequest(betterproto.Message):
     function: "DetailedFunction" = betterproto.message_field(1)
     runtime: "BriefRuntime" = betterproto.message_field(2)
@@ -140,6 +144,29 @@ class NodeConfiguration(betterproto.Message):
 class LaunchRuntimeRequest(betterproto.Message):
     runtime: "BriefRuntime" = betterproto.message_field(1)
     function: "DetailedFunction" = betterproto.message_field(2)
+
+
+@dataclass(eq=False, repr=False)
+class ApiGatewayTriggerConfiguration(betterproto.Message):
+    function_id: int = betterproto.uint32_field(1)
+    name: str = betterproto.string_field(2)
+
+
+@dataclass(eq=False, repr=False)
+class DetailedApiGatewayTrigger(betterproto.Message):
+    trigger_id: int = betterproto.uint32_field(1)
+    name: str = betterproto.string_field(2)
+    url: str = betterproto.string_field(3)
+
+
+@dataclass(eq=False, repr=False)
+class DeleteApiGatewayTriggerRequest(betterproto.Message):
+    trigger_id: int = betterproto.uint32_field(1)
+
+
+@dataclass(eq=False, repr=False)
+class GetApiGatewayTriggersRequest(betterproto.Message):
+    function_id: int = betterproto.uint32_field(1)
 
 
 @dataclass(eq=False, repr=False)
@@ -191,100 +218,6 @@ class ChangeUserPasswordRequest(betterproto.Message):
     user_id: int = betterproto.uint32_field(1)
     old_password: str = betterproto.string_field(2)
     new_password: str = betterproto.string_field(3)
-
-
-@dataclass(eq=False, repr=False)
-class ApiGatewayTriggerConfiguration(betterproto.Message):
-    function_id: int = betterproto.uint32_field(1)
-    name: str = betterproto.string_field(2)
-
-
-@dataclass(eq=False, repr=False)
-class DetailedApiGatewayTrigger(betterproto.Message):
-    trigger_id: int = betterproto.uint32_field(1)
-    name: str = betterproto.string_field(2)
-    url: str = betterproto.string_field(3)
-
-
-@dataclass(eq=False, repr=False)
-class DeleteApiGatewayTriggerRequest(betterproto.Message):
-    trigger_id: int = betterproto.uint32_field(1)
-
-
-@dataclass(eq=False, repr=False)
-class GetApiGatewayTriggersRequest(betterproto.Message):
-    function_id: int = betterproto.uint32_field(1)
-
-
-class RuntimeServiceStub(betterproto.ServiceStub):
-    async def create_runtime(
-        self,
-        runtime_configuration: "RuntimeConfiguration",
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
-    ) -> "UpdatedRuntimeResponse":
-        return await self._unary_unary(
-            "/faas.RuntimeService/CreateRuntime",
-            runtime_configuration,
-            UpdatedRuntimeResponse,
-            timeout=timeout,
-            deadline=deadline,
-            metadata=metadata,
-        )
-
-    async def edit_runtime(
-        self,
-        runtime_configuration: "RuntimeConfiguration",
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
-    ) -> "UpdatedRuntimeResponse":
-        return await self._unary_unary(
-            "/faas.RuntimeService/EditRuntime",
-            runtime_configuration,
-            UpdatedRuntimeResponse,
-            timeout=timeout,
-            deadline=deadline,
-            metadata=metadata,
-        )
-
-    async def get_runtime_details(
-        self,
-        get_runtime_details_request: "GetRuntimeDetailsRequest",
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
-    ) -> "DetailedRuntime":
-        return await self._unary_unary(
-            "/faas.RuntimeService/GetRuntimeDetails",
-            get_runtime_details_request,
-            DetailedRuntime,
-            timeout=timeout,
-            deadline=deadline,
-            metadata=metadata,
-        )
-
-    async def get_runtime_tags(
-        self,
-        empty: "Empty",
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
-    ) -> AsyncIterator["BriefRuntime"]:
-        async for response in self._unary_stream(
-            "/faas.RuntimeService/GetRuntimeTags",
-            empty,
-            BriefRuntime,
-            timeout=timeout,
-            deadline=deadline,
-            metadata=metadata,
-        ):
-            yield response
 
 
 class FunctionServiceStub(betterproto.ServiceStub):
@@ -392,6 +325,77 @@ class FunctionServiceStub(betterproto.ServiceStub):
             yield response
 
 
+class RuntimeServiceStub(betterproto.ServiceStub):
+    async def create_runtime(
+        self,
+        runtime_configuration: "RuntimeConfiguration",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "UpdatedRuntimeResponse":
+        return await self._unary_unary(
+            "/faas.RuntimeService/CreateRuntime",
+            runtime_configuration,
+            UpdatedRuntimeResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+    async def edit_runtime(
+        self,
+        runtime_configuration: "RuntimeConfiguration",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "UpdatedRuntimeResponse":
+        return await self._unary_unary(
+            "/faas.RuntimeService/EditRuntime",
+            runtime_configuration,
+            UpdatedRuntimeResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+    async def get_runtime_details(
+        self,
+        get_runtime_details_request: "GetRuntimeDetailsRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "DetailedRuntime":
+        return await self._unary_unary(
+            "/faas.RuntimeService/GetRuntimeDetails",
+            get_runtime_details_request,
+            DetailedRuntime,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+    async def get_runtime_tags(
+        self,
+        empty: "Empty",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> AsyncIterator["DetailedRuntime"]:
+        async for response in self._unary_stream(
+            "/faas.RuntimeService/GetRuntimeTags",
+            empty,
+            DetailedRuntime,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        ):
+            yield response
+
+
 class LoadBalancerServiceStub(betterproto.ServiceStub):
     async def invoke_function(
         self,
@@ -479,6 +483,78 @@ class AgentServiceStub(betterproto.ServiceStub):
             deadline=deadline,
             metadata=metadata,
         )
+
+
+class ApiGatewayServiceStub(betterproto.ServiceStub):
+    async def create_api_gateway_trigger(
+        self,
+        api_gateway_trigger_configuration: "ApiGatewayTriggerConfiguration",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "DetailedApiGatewayTrigger":
+        return await self._unary_unary(
+            "/faas.APIGatewayService/CreateAPIGatewayTrigger",
+            api_gateway_trigger_configuration,
+            DetailedApiGatewayTrigger,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+    async def delete_api_gateway_trigger(
+        self,
+        delete_api_gateway_trigger_request: "DeleteApiGatewayTriggerRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "Empty":
+        return await self._unary_unary(
+            "/faas.APIGatewayService/DeleteAPIGatewayTrigger",
+            delete_api_gateway_trigger_request,
+            Empty,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+    async def get_all_api_gateway_triggers(
+        self,
+        empty: "Empty",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> AsyncIterator["DetailedApiGatewayTrigger"]:
+        async for response in self._unary_stream(
+            "/faas.APIGatewayService/GetAllAPIGatewayTriggers",
+            empty,
+            DetailedApiGatewayTrigger,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        ):
+            yield response
+
+    async def get_api_gateway_triggers(
+        self,
+        get_api_gateway_triggers_request: "GetApiGatewayTriggersRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> AsyncIterator["DetailedApiGatewayTrigger"]:
+        async for response in self._unary_stream(
+            "/faas.APIGatewayService/GetAPIGatewayTriggers",
+            get_api_gateway_triggers_request,
+            DetailedApiGatewayTrigger,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        ):
+            yield response
 
 
 class CrontabTriggerServiceStub(betterproto.ServiceStub):
@@ -623,161 +699,6 @@ class AuthServiceStub(betterproto.ServiceStub):
         )
 
 
-class ApiGatewayServiceStub(betterproto.ServiceStub):
-    async def create_api_gateway_trigger(
-        self,
-        api_gateway_trigger_configuration: "ApiGatewayTriggerConfiguration",
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
-    ) -> "DetailedApiGatewayTrigger":
-        return await self._unary_unary(
-            "/faas.APIGatewayService/CreateAPIGatewayTrigger",
-            api_gateway_trigger_configuration,
-            DetailedApiGatewayTrigger,
-            timeout=timeout,
-            deadline=deadline,
-            metadata=metadata,
-        )
-
-    async def delete_api_gateway_trigger(
-        self,
-        delete_api_gateway_trigger_request: "DeleteApiGatewayTriggerRequest",
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
-    ) -> "Empty":
-        return await self._unary_unary(
-            "/faas.APIGatewayService/DeleteAPIGatewayTrigger",
-            delete_api_gateway_trigger_request,
-            Empty,
-            timeout=timeout,
-            deadline=deadline,
-            metadata=metadata,
-        )
-
-    async def get_all_api_gateway_triggers(
-        self,
-        empty: "Empty",
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
-    ) -> AsyncIterator["DetailedApiGatewayTrigger"]:
-        async for response in self._unary_stream(
-            "/faas.APIGatewayService/GetAllAPIGatewayTriggers",
-            empty,
-            DetailedApiGatewayTrigger,
-            timeout=timeout,
-            deadline=deadline,
-            metadata=metadata,
-        ):
-            yield response
-
-    async def get_api_gateway_triggers(
-        self,
-        get_api_gateway_triggers_request: "GetApiGatewayTriggersRequest",
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
-    ) -> AsyncIterator["DetailedApiGatewayTrigger"]:
-        async for response in self._unary_stream(
-            "/faas.APIGatewayService/GetAPIGatewayTriggers",
-            get_api_gateway_triggers_request,
-            DetailedApiGatewayTrigger,
-            timeout=timeout,
-            deadline=deadline,
-            metadata=metadata,
-        ):
-            yield response
-
-
-class RuntimeServiceBase(ServiceBase):
-
-    async def create_runtime(
-        self, runtime_configuration: "RuntimeConfiguration"
-    ) -> "UpdatedRuntimeResponse":
-        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
-
-    async def edit_runtime(
-        self, runtime_configuration: "RuntimeConfiguration"
-    ) -> "UpdatedRuntimeResponse":
-        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
-
-    async def get_runtime_details(
-        self, get_runtime_details_request: "GetRuntimeDetailsRequest"
-    ) -> "DetailedRuntime":
-        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
-
-    async def get_runtime_tags(self, empty: "Empty") -> AsyncIterator["BriefRuntime"]:
-        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
-        yield BriefRuntime()
-
-    async def __rpc_create_runtime(
-        self,
-        stream: "grpclib.server.Stream[RuntimeConfiguration, UpdatedRuntimeResponse]",
-    ) -> None:
-        request = await stream.recv_message()
-        response = await self.create_runtime(request)
-        await stream.send_message(response)
-
-    async def __rpc_edit_runtime(
-        self,
-        stream: "grpclib.server.Stream[RuntimeConfiguration, UpdatedRuntimeResponse]",
-    ) -> None:
-        request = await stream.recv_message()
-        response = await self.edit_runtime(request)
-        await stream.send_message(response)
-
-    async def __rpc_get_runtime_details(
-        self, stream: "grpclib.server.Stream[GetRuntimeDetailsRequest, DetailedRuntime]"
-    ) -> None:
-        request = await stream.recv_message()
-        response = await self.get_runtime_details(request)
-        await stream.send_message(response)
-
-    async def __rpc_get_runtime_tags(
-        self, stream: "grpclib.server.Stream[Empty, BriefRuntime]"
-    ) -> None:
-        request = await stream.recv_message()
-        await self._call_rpc_handler_server_stream(
-            self.get_runtime_tags,
-            stream,
-            request,
-        )
-
-    def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
-        return {
-            "/faas.RuntimeService/CreateRuntime": grpclib.const.Handler(
-                self.__rpc_create_runtime,
-                grpclib.const.Cardinality.UNARY_UNARY,
-                RuntimeConfiguration,
-                UpdatedRuntimeResponse,
-            ),
-            "/faas.RuntimeService/EditRuntime": grpclib.const.Handler(
-                self.__rpc_edit_runtime,
-                grpclib.const.Cardinality.UNARY_UNARY,
-                RuntimeConfiguration,
-                UpdatedRuntimeResponse,
-            ),
-            "/faas.RuntimeService/GetRuntimeDetails": grpclib.const.Handler(
-                self.__rpc_get_runtime_details,
-                grpclib.const.Cardinality.UNARY_UNARY,
-                GetRuntimeDetailsRequest,
-                DetailedRuntime,
-            ),
-            "/faas.RuntimeService/GetRuntimeTags": grpclib.const.Handler(
-                self.__rpc_get_runtime_tags,
-                grpclib.const.Cardinality.UNARY_STREAM,
-                Empty,
-                BriefRuntime,
-            ),
-        }
-
-
 class FunctionServiceBase(ServiceBase):
 
     async def create_function(
@@ -896,6 +817,91 @@ class FunctionServiceBase(ServiceBase):
         }
 
 
+class RuntimeServiceBase(ServiceBase):
+
+    async def create_runtime(
+        self, runtime_configuration: "RuntimeConfiguration"
+    ) -> "UpdatedRuntimeResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def edit_runtime(
+        self, runtime_configuration: "RuntimeConfiguration"
+    ) -> "UpdatedRuntimeResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def get_runtime_details(
+        self, get_runtime_details_request: "GetRuntimeDetailsRequest"
+    ) -> "DetailedRuntime":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def get_runtime_tags(
+        self, empty: "Empty"
+    ) -> AsyncIterator["DetailedRuntime"]:
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+        yield DetailedRuntime()
+
+    async def __rpc_create_runtime(
+        self,
+        stream: "grpclib.server.Stream[RuntimeConfiguration, UpdatedRuntimeResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.create_runtime(request)
+        await stream.send_message(response)
+
+    async def __rpc_edit_runtime(
+        self,
+        stream: "grpclib.server.Stream[RuntimeConfiguration, UpdatedRuntimeResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.edit_runtime(request)
+        await stream.send_message(response)
+
+    async def __rpc_get_runtime_details(
+        self, stream: "grpclib.server.Stream[GetRuntimeDetailsRequest, DetailedRuntime]"
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.get_runtime_details(request)
+        await stream.send_message(response)
+
+    async def __rpc_get_runtime_tags(
+        self, stream: "grpclib.server.Stream[Empty, DetailedRuntime]"
+    ) -> None:
+        request = await stream.recv_message()
+        await self._call_rpc_handler_server_stream(
+            self.get_runtime_tags,
+            stream,
+            request,
+        )
+
+    def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
+        return {
+            "/faas.RuntimeService/CreateRuntime": grpclib.const.Handler(
+                self.__rpc_create_runtime,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                RuntimeConfiguration,
+                UpdatedRuntimeResponse,
+            ),
+            "/faas.RuntimeService/EditRuntime": grpclib.const.Handler(
+                self.__rpc_edit_runtime,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                RuntimeConfiguration,
+                UpdatedRuntimeResponse,
+            ),
+            "/faas.RuntimeService/GetRuntimeDetails": grpclib.const.Handler(
+                self.__rpc_get_runtime_details,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                GetRuntimeDetailsRequest,
+                DetailedRuntime,
+            ),
+            "/faas.RuntimeService/GetRuntimeTags": grpclib.const.Handler(
+                self.__rpc_get_runtime_tags,
+                grpclib.const.Cardinality.UNARY_STREAM,
+                Empty,
+                DetailedRuntime,
+            ),
+        }
+
+
 class LoadBalancerServiceBase(ServiceBase):
 
     async def invoke_function(
@@ -994,6 +1000,95 @@ class AgentServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 InvokeFunctionRequest,
                 InvocationResult,
+            ),
+        }
+
+
+class ApiGatewayServiceBase(ServiceBase):
+
+    async def create_api_gateway_trigger(
+        self, api_gateway_trigger_configuration: "ApiGatewayTriggerConfiguration"
+    ) -> "DetailedApiGatewayTrigger":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def delete_api_gateway_trigger(
+        self, delete_api_gateway_trigger_request: "DeleteApiGatewayTriggerRequest"
+    ) -> "Empty":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def get_all_api_gateway_triggers(
+        self, empty: "Empty"
+    ) -> AsyncIterator["DetailedApiGatewayTrigger"]:
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+        yield DetailedApiGatewayTrigger()
+
+    async def get_api_gateway_triggers(
+        self, get_api_gateway_triggers_request: "GetApiGatewayTriggersRequest"
+    ) -> AsyncIterator["DetailedApiGatewayTrigger"]:
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+        yield DetailedApiGatewayTrigger()
+
+    async def __rpc_create_api_gateway_trigger(
+        self,
+        stream: "grpclib.server.Stream[ApiGatewayTriggerConfiguration, DetailedApiGatewayTrigger]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.create_api_gateway_trigger(request)
+        await stream.send_message(response)
+
+    async def __rpc_delete_api_gateway_trigger(
+        self, stream: "grpclib.server.Stream[DeleteApiGatewayTriggerRequest, Empty]"
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.delete_api_gateway_trigger(request)
+        await stream.send_message(response)
+
+    async def __rpc_get_all_api_gateway_triggers(
+        self, stream: "grpclib.server.Stream[Empty, DetailedApiGatewayTrigger]"
+    ) -> None:
+        request = await stream.recv_message()
+        await self._call_rpc_handler_server_stream(
+            self.get_all_api_gateway_triggers,
+            stream,
+            request,
+        )
+
+    async def __rpc_get_api_gateway_triggers(
+        self,
+        stream: "grpclib.server.Stream[GetApiGatewayTriggersRequest, DetailedApiGatewayTrigger]",
+    ) -> None:
+        request = await stream.recv_message()
+        await self._call_rpc_handler_server_stream(
+            self.get_api_gateway_triggers,
+            stream,
+            request,
+        )
+
+    def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
+        return {
+            "/faas.APIGatewayService/CreateAPIGatewayTrigger": grpclib.const.Handler(
+                self.__rpc_create_api_gateway_trigger,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                ApiGatewayTriggerConfiguration,
+                DetailedApiGatewayTrigger,
+            ),
+            "/faas.APIGatewayService/DeleteAPIGatewayTrigger": grpclib.const.Handler(
+                self.__rpc_delete_api_gateway_trigger,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                DeleteApiGatewayTriggerRequest,
+                Empty,
+            ),
+            "/faas.APIGatewayService/GetAllAPIGatewayTriggers": grpclib.const.Handler(
+                self.__rpc_get_all_api_gateway_triggers,
+                grpclib.const.Cardinality.UNARY_STREAM,
+                Empty,
+                DetailedApiGatewayTrigger,
+            ),
+            "/faas.APIGatewayService/GetAPIGatewayTriggers": grpclib.const.Handler(
+                self.__rpc_get_api_gateway_triggers,
+                grpclib.const.Cardinality.UNARY_STREAM,
+                GetApiGatewayTriggersRequest,
+                DetailedApiGatewayTrigger,
             ),
         }
 
@@ -1159,94 +1254,5 @@ class AuthServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 ChangeUserPasswordRequest,
                 User,
-            ),
-        }
-
-
-class ApiGatewayServiceBase(ServiceBase):
-
-    async def create_api_gateway_trigger(
-        self, api_gateway_trigger_configuration: "ApiGatewayTriggerConfiguration"
-    ) -> "DetailedApiGatewayTrigger":
-        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
-
-    async def delete_api_gateway_trigger(
-        self, delete_api_gateway_trigger_request: "DeleteApiGatewayTriggerRequest"
-    ) -> "Empty":
-        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
-
-    async def get_all_api_gateway_triggers(
-        self, empty: "Empty"
-    ) -> AsyncIterator["DetailedApiGatewayTrigger"]:
-        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
-        yield DetailedApiGatewayTrigger()
-
-    async def get_api_gateway_triggers(
-        self, get_api_gateway_triggers_request: "GetApiGatewayTriggersRequest"
-    ) -> AsyncIterator["DetailedApiGatewayTrigger"]:
-        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
-        yield DetailedApiGatewayTrigger()
-
-    async def __rpc_create_api_gateway_trigger(
-        self,
-        stream: "grpclib.server.Stream[ApiGatewayTriggerConfiguration, DetailedApiGatewayTrigger]",
-    ) -> None:
-        request = await stream.recv_message()
-        response = await self.create_api_gateway_trigger(request)
-        await stream.send_message(response)
-
-    async def __rpc_delete_api_gateway_trigger(
-        self, stream: "grpclib.server.Stream[DeleteApiGatewayTriggerRequest, Empty]"
-    ) -> None:
-        request = await stream.recv_message()
-        response = await self.delete_api_gateway_trigger(request)
-        await stream.send_message(response)
-
-    async def __rpc_get_all_api_gateway_triggers(
-        self, stream: "grpclib.server.Stream[Empty, DetailedApiGatewayTrigger]"
-    ) -> None:
-        request = await stream.recv_message()
-        await self._call_rpc_handler_server_stream(
-            self.get_all_api_gateway_triggers,
-            stream,
-            request,
-        )
-
-    async def __rpc_get_api_gateway_triggers(
-        self,
-        stream: "grpclib.server.Stream[GetApiGatewayTriggersRequest, DetailedApiGatewayTrigger]",
-    ) -> None:
-        request = await stream.recv_message()
-        await self._call_rpc_handler_server_stream(
-            self.get_api_gateway_triggers,
-            stream,
-            request,
-        )
-
-    def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
-        return {
-            "/faas.APIGatewayService/CreateAPIGatewayTrigger": grpclib.const.Handler(
-                self.__rpc_create_api_gateway_trigger,
-                grpclib.const.Cardinality.UNARY_UNARY,
-                ApiGatewayTriggerConfiguration,
-                DetailedApiGatewayTrigger,
-            ),
-            "/faas.APIGatewayService/DeleteAPIGatewayTrigger": grpclib.const.Handler(
-                self.__rpc_delete_api_gateway_trigger,
-                grpclib.const.Cardinality.UNARY_UNARY,
-                DeleteApiGatewayTriggerRequest,
-                Empty,
-            ),
-            "/faas.APIGatewayService/GetAllAPIGatewayTriggers": grpclib.const.Handler(
-                self.__rpc_get_all_api_gateway_triggers,
-                grpclib.const.Cardinality.UNARY_STREAM,
-                Empty,
-                DetailedApiGatewayTrigger,
-            ),
-            "/faas.APIGatewayService/GetAPIGatewayTriggers": grpclib.const.Handler(
-                self.__rpc_get_api_gateway_triggers,
-                grpclib.const.Cardinality.UNARY_STREAM,
-                GetApiGatewayTriggersRequest,
-                DetailedApiGatewayTrigger,
             ),
         }
