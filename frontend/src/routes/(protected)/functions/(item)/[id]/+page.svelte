@@ -13,6 +13,8 @@
 	import TableCell from '@/components/ui/table/table-cell.svelte';
 	import { InvokeFunctionDialog } from './components';
 	import { RichTextEditor } from '@/components/external/rich-text-editor';
+	import type { Language } from '@/syntax';
+	import type { Selected } from 'bits-ui';
 
 	export let form: ActionData;
 	export let data: PageData;
@@ -21,7 +23,7 @@
 		user,
 		clientIp,
 		userAgent,
-		briefRuntimes = [],
+		runtimes = [],
 		functionDetailed,
 		apiGatewayTriggers = [],
 		crontabTriggers = []
@@ -29,38 +31,38 @@
 
 	let isUpdating = false;
 	let isDeleting = false;
+	let runtimeTag = form?.runtimeTag ?? functionDetailed?.runtimeTag ?? '';
 	let functionCode = functionDetailed?.code ?? '';
 
 	const handleFunctionCodeChange = (code: string) => {
 		functionCode = code;
 	};
 
+	const handleRuntimeTagChange = (selected?: Selected<string>) => {
+		if (typeof selected?.value === 'string') {
+			runtimeTag = selected.value;
+		}
+	};
+
 	const handleSubmit: SubmitFunction = ({ formData, action }) => {
 		if (action.search.startsWith('?/updateFunction')) {
 			isUpdating = true;
-			if (functionCode.trim() !== functionDetailed?.code.trim()) {
-				formData.set('code', functionCode);
-				formData.set('codeChanged', 'true');
-			}
-
-			if (formData.get('runtimeTag') !== functionDetailed?.runtimeTag) {
-				formData.set('runtimeTagChanged', 'true');
-			}
+			formData.set('code', functionCode);
+			formData.set('runtimeTag', runtimeTag);
 		} else if (action.search.startsWith('?/deleteFunction')) {
 			isDeleting = true;
 		}
 
-		return async ({ update, action }) => {
+		return async ({ update }) => {
 			isUpdating = false;
 			isDeleting = false;
 			update();
 		};
 	};
 
-	$: briefRuntime = briefRuntimes.find((it) => it.tag === functionDetailed?.runtimeTag);
-
 	$: isFormLoading = isUpdating || isDeleting;
-
+	$: selectedRuntime = runtimes.find((it) => it.tag === runtimeTag);
+	$: syntax = selectedRuntime?.syntax as Language;
 	$: logLines = JSON.parse(form?.logJSON ?? '[]') as string[];
 </script>
 
@@ -89,32 +91,30 @@
 					name="runtimeTag"
 					selected={{
 						value: (form?.runtimeTag ?? functionDetailed?.runtimeTag ?? '').toString(),
-						label: briefRuntimes.find(
+						label: runtimes.find(
 							(runtime) => runtime.tag === (form?.runtimeTag ?? functionDetailed?.runtimeTag ?? '')
 						)?.tag
 					}}
+					onSelectedChange={handleRuntimeTagChange}
 				>
 					<Select.Trigger id="runtimeTag">
 						<Select.Value placeholder="Select a runtime" />
 					</Select.Trigger>
 					<Select.Content>
-						{#each briefRuntimes as briefRuntime}
+						{#each runtimes as runtime}
 							<Select.Item
-								value={briefRuntime.tag}
-								label={`${briefRuntime.tag} (${briefRuntime.registryUrl})`}
-							></Select.Item>
+								value={runtime.tag}
+								label={`${runtime.tag} (url: ${runtime.registryUrl}; target: ${runtime.syntax})`}
+							/>
 						{/each}
 					</Select.Content>
-					<Select.Input
-						value={(form?.runtimeTag ?? functionDetailed?.runtimeTag ?? '').toString()}
-					/>
 				</Select.Root>
 			</div>
 
 			<div class="grid gap-3">
 				<Label>Code</Label>
 				<RichTextEditor
-					showLanguageSelector
+					defaultLanguage={syntax}
 					defaultValue={functionCode}
 					onChange={handleFunctionCodeChange}
 				/>
@@ -127,16 +127,16 @@
 				Update function
 			</Button>
 
-			{#if functionDetailed && briefRuntime && user}
+			{#if functionDetailed && selectedRuntime && user}
 				<InvokeFunctionDialog
 					{functionDetailed}
-					{briefRuntime}
+					runtime={selectedRuntime}
 					{clientIp}
 					{userAgent}
 					{logLines}
 					jsonTriggerContext={(form?.jsonTriggerContext ?? '').toString()}
 					userId={user.userId}
-					errorMessage={form?.errorMessage}
+					errorMessage={form?.isInvokeFunctionError ? form?.errorMessage : undefined}
 					resultJSON={form?.resultJSON}
 				/>
 			{/if}

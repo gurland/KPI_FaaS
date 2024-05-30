@@ -7,29 +7,48 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 	import { RichTextEditor } from '@/components/external/rich-text-editor/';
+	import * as Select from '$lib/components/ui/select';
+	import { languageOptions, languages, type Language } from '@/syntax';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-
 	export let form: ActionData;
+	const { detailedRuntime, isReadOnly } = data;
 
-	const { detailedRuntime } = data;
+	const richTextEditorHeight = 250;
 
 	let isFormLoading = false;
 	let dockerFileCode = detailedRuntime?.dockerfile ?? '';
+
+	let invokerScriptCode = detailedRuntime?.invokerScript ?? '';
+	let functionExampleCode = detailedRuntime?.functionExample ?? '';
+	let syntax = (detailedRuntime?.syntax ?? 'plaintext') as Language;
 
 	const handleDockerfileCodeChange = (code: string) => {
 		dockerFileCode = code;
 	};
 
+	const handleInvokerScriptCodeChange = (code: string) => {
+		invokerScriptCode = code;
+	};
+
+	const handleFunctionExampleCodeChange = (code: string) => {
+		functionExampleCode = code;
+	};
+
 	const handleSubmit: SubmitFunction = (e) => {
 		isFormLoading = true;
 		e.formData.set('dockerfile', dockerFileCode);
+		e.formData.set('invokerScript', invokerScriptCode);
+		e.formData.set('functionExample', functionExampleCode);
+		e.formData.set('syntax', syntax);
 		return async ({ update }) => {
 			isFormLoading = false;
 			update();
 		};
 	};
+
+	$: isSubmitButtonDisabled = isReadOnly || isFormLoading;
 </script>
 
 <header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
@@ -57,10 +76,62 @@
 		<fieldset class="grid gap-6 rounded-lg border p-4">
 			<div class="grid gap-3">
 				<Label>Dockerfile</Label>
-				<RichTextEditor defaultLanguage="dockerfile" defaultValue={dockerFileCode} onChange={handleDockerfileCodeChange} />
+				<RichTextEditor
+					readOnly={isReadOnly}
+					height={richTextEditorHeight}
+					defaultLanguage="dockerfile"
+					defaultValue={dockerFileCode}
+					onChange={handleDockerfileCodeChange}
+				/>
 			</div>
 
-			<Button type="submit" class="w-full" disabled={isFormLoading}>
+			<div>
+				<Select.Root
+					portal={null}
+					name="syntax"
+					selected={{
+						value: syntax,
+						label: languages[syntax]
+					}}
+					onSelectedChange={(e) => {
+						if (typeof e?.value === 'string') {
+							syntax = e.value;
+						}
+					}}
+				>
+					<Select.Trigger id="syntax">
+						<Select.Value placeholder="Syntax" />
+					</Select.Trigger>
+					<Select.Content>
+						{#each languageOptions as selectableLanguage}
+							<Select.Item value={selectableLanguage.value} label={selectableLanguage.label} />
+						{/each}
+					</Select.Content>
+				</Select.Root>
+			</div>
+
+			<div class="grid gap-3">
+				<Label>Invoker script</Label>
+				<RichTextEditor
+					readOnly={isReadOnly}
+					height={richTextEditorHeight}
+					defaultLanguage={syntax}
+					defaultValue={invokerScriptCode}
+					onChange={handleInvokerScriptCodeChange}
+				/>
+			</div>
+			<div class="grid gap-3">
+				<Label>Function example</Label>
+				<RichTextEditor
+					readOnly={isReadOnly}
+					height={richTextEditorHeight}
+					defaultLanguage={syntax}
+					defaultValue={functionExampleCode}
+					onChange={handleFunctionExampleCodeChange}
+				/>
+			</div>
+
+			<Button type="submit" class="w-full" disabled={isSubmitButtonDisabled}>
 				{#if isFormLoading}
 					<LoaderCircleIcon class="mr-2 h-4 w-4 animate-spin" />
 				{/if}

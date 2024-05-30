@@ -8,17 +8,35 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 	import { RichTextEditor } from '@/components/external/rich-text-editor';
+	import * as Select from '$lib/components/ui/select';
+	import { languageOptions, languages, type Language } from '@/syntax';
+
+	const richTextEditorHeight = 250;
 
 	let isFormLoading = false;
 	let dockerFileCode = '';
+	let invokerScriptCode = '';
+	let functionExampleCode = '';
+	let syntax: Language = 'plaintext';
 
 	const handleDockerfileCodeChange = (code: string) => {
 		dockerFileCode = code;
 	};
 
+	const handleInvokerScriptCodeChange = (code: string) => {
+		invokerScriptCode = code;
+	};
+
+	const handleFunctionExampleCodeChange = (code: string) => {
+		functionExampleCode = code;
+	};
+
 	const handleSubmit: SubmitFunction = (e) => {
 		isFormLoading = true;
 		e.formData.set('dockerfile', dockerFileCode);
+		e.formData.set('invokerScript', invokerScriptCode);
+		e.formData.set('functionExample', functionExampleCode);
+		e.formData.set('syntax', syntax);
 		return async ({ update }) => {
 			isFormLoading = false;
 			update();
@@ -58,7 +76,53 @@
 
 			<div class="grid gap-3">
 				<Label>Dockerfile</Label>
-				<RichTextEditor defaultLanguage="dockerfile" onChange={handleDockerfileCodeChange} />
+				<RichTextEditor
+					height={richTextEditorHeight}
+					defaultLanguage="dockerfile"
+					onChange={handleDockerfileCodeChange}
+				/>
+			</div>
+
+			<div>
+				<Select.Root
+					portal={null}
+					name="syntax"
+					selected={{
+						value: syntax,
+						label: languages[syntax]
+					}}
+					onSelectedChange={(e) => {
+						if (typeof e?.value === 'string') {
+							syntax = e.value;
+						}
+					}}
+				>
+					<Select.Trigger id="syntax">
+						<Select.Value placeholder="Syntax" />
+					</Select.Trigger>
+					<Select.Content>
+						{#each languageOptions as languageOption}
+							<Select.Item value={languageOption.value} label={languageOption.label} />
+						{/each}
+					</Select.Content>
+				</Select.Root>
+			</div>
+
+			<div class="grid gap-3">
+				<Label>Invoker script</Label>
+				<RichTextEditor
+					height={richTextEditorHeight}
+					defaultLanguage={syntax}
+					onChange={handleInvokerScriptCodeChange}
+				/>
+			</div>
+			<div class="grid gap-3">
+				<Label>Function example</Label>
+				<RichTextEditor
+					height={richTextEditorHeight}
+					defaultLanguage={syntax}
+					onChange={handleFunctionExampleCodeChange}
+				/>
 			</div>
 
 			<Button type="submit" class="w-full" disabled={isFormLoading}>

@@ -6,7 +6,7 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import type { DetailedFunction } from '@/server/rpc/function_service';
-	import type { BriefRuntime } from '@/server/rpc/runtime_service';
+	import type { DetailedRuntime } from '@/server/rpc/runtime_service';
 	import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 	import { RichTextEditor } from '@/components/external/rich-text-editor';
 	import Highlight from 'svelte-highlight';
@@ -17,7 +17,7 @@
 	export let clientIp: string;
 	export let userAgent: string | null;
 	export let functionDetailed: DetailedFunction;
-	export let briefRuntime: BriefRuntime;
+	export let runtime: DetailedRuntime;
 	export let jsonTriggerContext: string;
 	export let errorMessage: string | undefined;
 	export let resultJSON: string | undefined;
@@ -68,7 +68,7 @@
 		isFormLoading = true;
 		formData.set('jsonTriggerContext', contextDataCode);
 		formData.set('functionDetailed', JSON.stringify(functionDetailed));
-		formData.set('runtimeDetailed', JSON.stringify(briefRuntime));
+		formData.set('runtimeDetailed', JSON.stringify(runtime));
 
 		return async ({ update }) => {
 			isFormLoading = false;

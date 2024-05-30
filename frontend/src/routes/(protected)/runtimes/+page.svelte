@@ -15,28 +15,30 @@
 
 	export let data: PageData;
 
-	$: runtimes = data.runtimes;
+	const { runtimes, isAdmin } = data;
 </script>
 
 <header
 	class="sticky top-0 z-10 flex h-[57px] items-center justify-between gap-1 border-b bg-background px-4"
 >
 	<h1 class="text-xl font-semibold">Runtimes</h1>
-	<Tooltip.Root>
-		<Tooltip.Trigger asChild let:builder>
-			<Button
-				variant="ghost"
-				size="icon"
-				class="rounded-lg"
-				aria-label="Create new runtime"
-				builders={[builder]}
-				href="/runtimes/create"
-			>
-				<PlusIcon class="size-5" />
-			</Button>
-		</Tooltip.Trigger>
-		<Tooltip.Content side="right" sideOffset={5}>Create new runtime</Tooltip.Content>
-	</Tooltip.Root>
+	{#if isAdmin}
+		<Tooltip.Root>
+			<Tooltip.Trigger asChild let:builder>
+				<Button
+					variant="ghost"
+					size="icon"
+					class="rounded-lg"
+					aria-label="Create new runtime"
+					builders={[builder]}
+					href="/runtimes/create"
+				>
+					<PlusIcon class="size-5" />
+				</Button>
+			</Tooltip.Trigger>
+			<Tooltip.Content side="right" sideOffset={5}>Create new runtime</Tooltip.Content>
+		</Tooltip.Root>
+	{/if}
 </header>
 <main class="mx-auto grid w-full max-w-4xl grid-cols-1 gap-4 overflow-auto p-4">
 	<Table>
