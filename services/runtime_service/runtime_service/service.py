@@ -132,6 +132,8 @@ class RuntimeService(RuntimeServiceBase):
                     f"Runtime with tag '{request.tag}' does not exist",
                 )
 
+            # TODO: Add additional fields change on delete
+
             image = DockerImage(
                 tag=request.tag,
                 dockerfile=request.dockerfile,
