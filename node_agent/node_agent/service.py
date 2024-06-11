@@ -33,7 +33,7 @@ class AgentService(AgentServiceBase):
         client = docker.from_env()
         client.login(
             username=None, password=None, email=None,
-            registry="localhost:5000"
+            registry="localhost:5555"
         )
         container = client.containers.run(request.runtime.tag, detach=True, ports={'9999/tcp': 9999})
         # try:
