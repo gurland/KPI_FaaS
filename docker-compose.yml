@@ -7,6 +7,13 @@ services:
     env_file:
       - ./frontend/.env.example
 
+  node-agent:
+    build: ./node_agent
+    ports:
+      - "50000:50000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
   auth-service:
     build: ./services/auth_service
     ports:
@@ -60,7 +67,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - REGISTRY_STORAGE_DELETE_ENABLED=true
-
 
   registry-ui:
     image: joxit/docker-registry-ui:main
