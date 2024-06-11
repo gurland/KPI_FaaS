@@ -1,12 +1,14 @@
+import logging
 from typing import Callable, AsyncIterable, AsyncIterator
 
 import grpclib
 from betterproto.grpc.grpclib_client import MetadataLike
 from grpclib import GRPCError, Status
+from grpclib.client import Channel
 from packaging.metadata import Metadata
 
 from .contracts.faas import LoadBalancerServiceBase, InvokeFunctionRequest, InvocationResult, Logs, NodeConfiguration, \
-    RegisterNodeRequest
+    RegisterNodeRequest, AgentServiceStub
 
 
 class LoadBalancerService(LoadBalancerServiceBase):
@@ -62,6 +64,23 @@ class LoadBalancerService(LoadBalancerServiceBase):
     async def invoke_function(
         self, request: InvokeFunctionRequest, metadata: MetadataLike = None
     ) -> InvocationResult:
+        channel = Channel(host="node-agent", port=50000)
+        service = AgentServiceStub(channel)
+
+        try:
+            response = await service.invoke_function(
+                request
+            )
+
+            print(response)
+            channel.close()
+
+            return response
+
+        except Exception as e:
+            logging.error(e)
+
+        channel.close()
 
         return InvocationResult(
             json=request.json_trigger_context,
