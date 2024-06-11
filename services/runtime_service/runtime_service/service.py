@@ -85,6 +85,7 @@ class RuntimeService(RuntimeServiceBase):
         image = DockerImage(
             tag=request.tag,
             dockerfile=request.dockerfile,
+            invoker=request.invoker_script,
             base_registry_url=DOCKER_REGISTRY_URL
         )
 
@@ -102,13 +103,16 @@ class RuntimeService(RuntimeServiceBase):
             tag=request.tag,
             registry_url=image_url,
             dockerfile=request.dockerfile,
+            invoker_script=request.invoker_script,
+            syntax=request.syntax,
+            function_example=request.function_example
         )
 
         session.add(new_runtime)
         session.commit()
 
         return UpdatedRuntimeResponse(
-            runtime=new_runtime.to_deatiled_runtime(),
+            runtime=new_runtime.to_detailed_runtime(),
             logs=Logs(
                 log_lines=image.logs
             )
@@ -131,6 +135,7 @@ class RuntimeService(RuntimeServiceBase):
             image = DockerImage(
                 tag=request.tag,
                 dockerfile=request.dockerfile,
+                invoker=request.invoker_script,
                 base_registry_url=DOCKER_REGISTRY_URL
             )
 
@@ -148,7 +153,7 @@ class RuntimeService(RuntimeServiceBase):
             session.commit()
 
             return UpdatedRuntimeResponse(
-                runtime=existing_runtime.to_deatiled_runtime(),
+                runtime=existing_runtime.to_detailed_runtime(),
                 logs=Logs(
                     log_lines=image.logs
                 )
@@ -164,7 +169,7 @@ class RuntimeService(RuntimeServiceBase):
             logger.info("count: %s", count)
             for runtime_model in session.scalars(runtime_models_query):
                 logger.info(f"Found runtime model: {runtime_model}")
-                yield runtime_model.to_brief_runtime()
+                yield runtime_model.to_detailed_runtime()
 
     async def get_runtime_details(
         self, request: BriefRuntime, metadata: MetadataLike = None
@@ -180,4 +185,4 @@ class RuntimeService(RuntimeServiceBase):
                     f"Runtime with tag '{request.tag}' does not exist",
                 )
 
-            return existing_runtime.to_deatiled_runtime()
+            return existing_runtime.to_detailed_runtime()
