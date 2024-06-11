@@ -18,9 +18,10 @@ class DockerImage:
     base_registry_url: str | None = None
     logs: list
 
-    def __init__(self, tag: str, dockerfile: str, base_registry_url: str) -> None:
+    def __init__(self, tag: str, dockerfile: str, invoker: str, base_registry_url: str) -> None:
         self.tag = tag
         self.dockerfile = dockerfile
+        self.invoker = invoker
         self.docker_client = docker.from_env()
         self.base_registry_url = base_registry_url
         self.logs = []
@@ -31,7 +32,7 @@ class DockerImage:
         )
 
     def build(self):
-        build_context = self.create_docker_build_context_tarball(self.dockerfile)
+        build_context = self.create_docker_build_context_tarball(self.dockerfile, self.invoker)
 
         image, logs_generator = self.docker_client.images.build(
             tag=f"{self.tag}",
@@ -59,15 +60,20 @@ class DockerImage:
 
 
     @staticmethod
-    def create_docker_build_context_tarball(dockerfile_content: str) -> io.BytesIO:
+    def create_docker_build_context_tarball(dockerfile_content: str, invoker: str) -> io.BytesIO:
         file_handler = io.BytesIO()
         dockerfile_content_binary = dockerfile_content.encode()
+        invoker_binary = invoker.encode()
         context_tarball = tarfile.open(fileobj=file_handler, mode='w')
 
         dockerfile_info = tarfile.TarInfo("Dockerfile")
-        dockerfile_info.size = len(dockerfile_content.encode())
+        dockerfile_info.size = len(dockerfile_content_binary)
+
+        inv_info = tarfile.TarInfo("invoker")
+        inv_info.size = len(invoker_binary)
 
         context_tarball.addfile(dockerfile_info, io.BytesIO(dockerfile_content_binary))
+        context_tarball.addfile(inv_info, io.BytesIO(invoker_binary))
 
         file_handler.seek(0)
         return file_handler
