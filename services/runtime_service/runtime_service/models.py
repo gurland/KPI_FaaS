@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.sqltypes import String, Text
@@ -24,6 +26,10 @@ class RuntimeModel(Base):
     registry_url: Mapped[str] = mapped_column(String(255))
     dockerfile: Mapped[str] = mapped_column(Text())
 
+    invoker_script: Mapped[str] = mapped_column(Text())
+    function_example: Mapped[str] = mapped_column(Text())
+    syntax: Mapped[str] = mapped_column(String(255))
+
     def __repr__(self):
         return f"<RuntimeModel(id={self.tag}, tag={self.tag})>"
 
@@ -33,26 +39,34 @@ class RuntimeModel(Base):
             registry_url=self.registry_url
         )
 
-    def to_deatiled_runtime(self) -> DetailedRuntime:
+    def to_detailed_runtime(self) -> DetailedRuntime:
         return DetailedRuntime(
             tag=self.tag,
             registry_url=self.registry_url,
-            dockerfile=self.dockerfile
+            dockerfile=self.dockerfile,
+            invoker_script=self.invoker_script,
+            syntax=self.syntax,
+            function_example=self.function_example
         )
 
 
 def seed_runtimes():
+    base_dir = Path(__file__).parent
     runtimes_to_seed = [
-        ("base", 'FROM hello-world\nCMD ["/hello"]'),
-        ("runtimes/python:3.11", 'FROM hello-world\nCMD ["/hello"]'),
-        ("runtimes/python:3.12", 'FROM hello-world\nCMD ["/hello"]'),
-
+        ("base", 'FROM hello-world\nCMD ["/hello"]', "print(1)", "print(2)"),
+        (
+            "runtimes/python:3.11", 
+            (base_dir / "demo/Dockerfile").read_text(), 
+            (base_dir / "demo/demo_invoker.py").read_text(),
+            (base_dir / "demo/demo_function.py").read_text()
+        ),
     ]
 
-    for tag, dockerfile in runtimes_to_seed:
+    for tag, dockerfile, invoker, function in runtimes_to_seed:
         image = DockerImage(
             tag=tag,
             base_registry_url=DOCKER_REGISTRY_URL,
+            invoker=invoker,
             dockerfile=dockerfile
         )
         image.build()
