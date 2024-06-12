@@ -1,8 +1,6 @@
-#!/bin/python
-import io
+#!/bin/env python
 import json
 import subprocess
-import sys
 from multiprocessing.connection import Listener
 
 
