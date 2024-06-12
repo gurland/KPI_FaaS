@@ -77,7 +77,7 @@ class CrontabService(CrontabTriggerServiceBase):
             session.add(new_trigger)
             session.commit()
 
-        return new_trigger.to_crontab_message()
+            return new_trigger.to_crontab_message()
 
     async def get_all_crontab_triggers(
             self,
