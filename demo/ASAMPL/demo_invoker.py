@@ -1,4 +1,5 @@
-#!/bin/env python
+#!/usr/bin/env python
+
 import json
 import subprocess
 from multiprocessing.connection import Listener

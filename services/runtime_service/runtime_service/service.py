@@ -151,6 +151,8 @@ class RuntimeService(RuntimeServiceBase):
                 )
 
             existing_runtime.dockerfile = request.dockerfile
+            existing_runtime.invoker_script = request.invoker_script
+            existing_runtime.syntax = request.syntax
             existing_runtime.registry_url = image_url
             session.commit()
 
