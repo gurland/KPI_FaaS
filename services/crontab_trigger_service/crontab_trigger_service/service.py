@@ -6,7 +6,7 @@ from betterproto.grpc.grpclib_client import MetadataLike
 from sqlalchemy.orm import Session
 
 from .contracts.faas import CrontabTriggerServiceBase, CrontabTriggerConfiguration, Empty, CrontabTrigger, \
-    GetCrontabTriggersRequest
+    GetCrontabTriggersRequest, DeleteCrontabTriggerRequest
 from .models import engine, CrontabTriggerModel
 
 
@@ -108,3 +108,18 @@ class CrontabService(CrontabTriggerServiceBase):
 
             for crontab_trigger in crontab_triggers:
                 yield crontab_trigger.to_crontab_message()
+
+    async def delete_crontab_trigger(
+            self,
+            request: DeleteCrontabTriggerRequest,
+            metadata: MetadataLike = None
+    ) -> "Empty":
+        user_id = metadata.get("user-id")
+        with Session(engine) as session:
+            crontab_trigger: CrontabTriggerModel = session.query(CrontabTriggerModel).filter(
+                CrontabTriggerModel.id == request.trigger_id
+            )
+            session.delete(crontab_trigger)
+            session.commit()
+
+        return Empty()
