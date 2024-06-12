@@ -1,3 +1,4 @@
+import logging
 from typing import Callable, AsyncIterator, Sequence, AsyncIterable
 
 import grpclib
@@ -88,6 +89,7 @@ class CrontabService(CrontabTriggerServiceBase):
             )
 
             for crontab_trigger in crontab_triggers:
+                logging.info(crontab_trigger.to_crontab_message())
                 yield crontab_trigger.to_crontab_message()
 
     async def get_crontab_triggers(
