@@ -79,7 +79,10 @@ def seed_runtimes():
                         tag=tag,
                         registry_url=image_url,
                         dockerfile=dockerfile,
-                        user_id=-1
+                        user_id=-1,
+                        invoker_script=invoker,
+                        function_example=function,
+                        syntax="python"
                     )
                 )
                 session.commit()
