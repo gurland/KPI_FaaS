@@ -104,7 +104,8 @@ class AgentService(AgentServiceBase):
 
                 result = client.recv()
                 break
-            except:
+            except Exception as e:
+                logger.error(e)
                 await sleep(1)
 
         client.close()
