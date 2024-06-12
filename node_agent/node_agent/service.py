@@ -91,7 +91,7 @@ class AgentService(AgentServiceBase):
         except APIError:
             logger.info(f"Agent is already connected to network {agent_container}")
 
-        result = {}
+        result = "{}"
         for _ in range(10):
             try:
                 client = Client((runtime_container.name, 9999))
@@ -115,6 +115,6 @@ class AgentService(AgentServiceBase):
         return InvocationResult(
             json=json.dumps(result.get("result", {})),
             log_lines=Logs(
-                log_lines=result.get("logs", ["Some error happened"])
+                log_lines=result.get("logs", ["Hello World"])
             )
         )
