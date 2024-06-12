@@ -1,0 +1,8 @@
+fn main() {
+    let my_map = {
+        "key1": "b",
+        "key2": "Hello, world!"
+    };
+    dbg(my_map["key2"]);
+}
+
