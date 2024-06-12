@@ -118,8 +118,9 @@ class CrontabService(CrontabTriggerServiceBase):
         with Session(engine) as session:
             crontab_trigger: CrontabTriggerModel = session.query(CrontabTriggerModel).filter(
                 CrontabTriggerModel.id == request.trigger_id
-            )
-            session.delete(crontab_trigger)
-            session.commit()
+            ).one_or_none()
+            if crontab_trigger:
+                session.delete(crontab_trigger)
+                session.commit()
 
         return Empty()
