@@ -61,6 +61,7 @@ class DockerImage:
 
     @staticmethod
     def create_docker_build_context_tarball(dockerfile_content: str, invoker: str) -> io.BytesIO:
+        logger.info(f"Creating docker build context tarball. Invoker: {invoker} | Dockerfile: {dockerfile_content}")
         file_handler = io.BytesIO()
         dockerfile_content_binary = dockerfile_content.encode()
         invoker_binary = invoker.encode()
