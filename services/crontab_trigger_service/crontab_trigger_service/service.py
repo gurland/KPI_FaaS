@@ -61,12 +61,19 @@ class CrontabService(CrontabTriggerServiceBase):
 
     async def create_crontab_trigger(
             self,
-            crontab_trigger_configuration: CrontabTriggerConfiguration,
+            request: CrontabTriggerConfiguration,
             metadata: MetadataLike = None
-    ) -> Empty:
+    ) -> CrontabTrigger:
         user_id = metadata.get("user-id")
 
-        pass
+        new_trigger = CrontabTriggerModel(
+            user_id=user_id,
+            cron_expression=request.cron_expression,
+            function_id=request.function_id,
+            description=request.description
+        )
+
+        return new_trigger.to_crontab_message()
 
     async def get_all_crontab_triggers(
             self,
