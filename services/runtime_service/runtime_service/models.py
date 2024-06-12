@@ -53,7 +53,6 @@ class RuntimeModel(Base):
 def seed_runtimes():
     base_dir = Path(__file__).parent
     runtimes_to_seed = [
-        ("base", 'FROM hello-world\nCMD ["/hello"]', "print(1)", "print(2)"),
         (
             "python:3.11",
             (base_dir / "demo/Dockerfile").read_text(), 
