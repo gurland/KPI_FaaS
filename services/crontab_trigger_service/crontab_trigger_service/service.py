@@ -67,12 +67,15 @@ class CrontabService(CrontabTriggerServiceBase):
     ) -> CrontabTrigger:
         user_id = metadata.get("user-id")
 
-        new_trigger = CrontabTriggerModel(
-            user_id=user_id,
-            cron_expression=request.cron_expression,
-            function_id=request.function_id,
-            description=request.description
-        )
+        with Session(engine) as session:
+            new_trigger = CrontabTriggerModel(
+                user_id=user_id,
+                cron_expression=request.cron_expression,
+                function_id=request.function_id,
+                description=request.description
+            )
+            session.add(new_trigger)
+            session.commit()
 
         return new_trigger.to_crontab_message()
 
@@ -89,7 +92,6 @@ class CrontabService(CrontabTriggerServiceBase):
             )
 
             for crontab_trigger in crontab_triggers:
-                logging.info(crontab_trigger.to_crontab_message())
                 yield crontab_trigger.to_crontab_message()
 
     async def get_crontab_triggers(
