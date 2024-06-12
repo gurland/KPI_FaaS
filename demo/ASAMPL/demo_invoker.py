@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import json
+import os
 import subprocess
 from multiprocessing.connection import Listener
 
@@ -18,7 +19,10 @@ if __name__ == '__main__':
             with open("function.asa", "w") as f:
                 f.write(code)
 
-            logs = subprocess.check_output(['asampl', 'function.asa'])
+            source = os.path.dirname(__file__)
+            asampl_path = os.path.join(source, 'asampl')
+
+            logs = subprocess.check_output(f'{asampl_path} function.asa', shell=True).decode()
 
             conn.send(
                 json.dumps({

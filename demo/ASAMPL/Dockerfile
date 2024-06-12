@@ -22,4 +22,4 @@ COPY . .
 RUN chmod +x invoker
 
 # Command to run your application
-CMD ["./invoker"]
+CMD ["python", "invoker"]

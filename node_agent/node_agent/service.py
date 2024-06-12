@@ -72,14 +72,15 @@ class AgentService(AgentServiceBase):
                 runtime_container = client.containers.get(
                     f"runtime-container-{safe_tag}"
                 )
-                runtime_container.remove()
-                runtime_container = client.containers.run(
-                    request.runtime.tag,
-                    detach=True,
-                    name=f"runtime-container-{safe_tag}",
-                    network=network.name
-                )
-                logger.info(f"Re-Started runtime container. {runtime_container.name} | Tag: {request.runtime.tag}")
+                if runtime_container.status != "running":
+                    runtime_container.remove()
+                    runtime_container = client.containers.run(
+                        request.runtime.tag,
+                        detach=True,
+                        name=f"runtime-container-{safe_tag}",
+                        network=network.name
+                    )
+                    logger.info(f"Re-Started runtime container. {runtime_container.name} | Tag: {request.runtime.tag}")
         else:
             runtime_container = launched_runtimes[request.runtime.tag]
 
