@@ -9,6 +9,7 @@ services:
 
   node-agent:
     build: ./node_agent
+    container_name: kpi_faas-node-agent
     ports:
       - "50000:50000"
     volumes:
