@@ -55,7 +55,7 @@ def seed_runtimes():
     runtimes_to_seed = [
         ("base", 'FROM hello-world\nCMD ["/hello"]', "print(1)", "print(2)"),
         (
-            "runtimes/python:3.11", 
+            "python:3.11",
             (base_dir / "demo/Dockerfile").read_text(), 
             (base_dir / "demo/demo_invoker.py").read_text(),
             (base_dir / "demo/demo_function.py").read_text()
